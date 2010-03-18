@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+	android:id="@+id/SetsListItemLayout" 
+	android:layout_width="79dp"
+	android:layout_height="79dp"
+	android:background="#FFFFFF"
+	android:paddingLeft="4dp"
+	android:paddingRight="4dp"
+	android:paddingTop="4dp"
+	android:paddingBottom="4dp"
+	android:gravity="center"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	
+	<RelativeLayout 
+		android:id="@+id/SetsListItemLayoutBorder" 
+		android:layout_width="77dp"
+		android:layout_height="77dp"
+		android:background="#000000"
+		android:paddingLeft="2dp"
+		android:paddingRight="2dp"
+		android:paddingTop="2dp"
+		android:paddingBottom="2dp"
+		android:gravity="center"
+		xmlns:android="http://schemas.android.com/apk/res/android">
+		
+		<ImageView
+			android:id="@+id/ImageViewItem"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+
+	</RelativeLayout>
+
+</RelativeLayout>
