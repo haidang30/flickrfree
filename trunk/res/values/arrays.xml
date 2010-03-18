@@ -1,0 +1,47 @@
+<resources>
+
+	<string-array name="no_user_view_list">
+		<item>Manage Accounts</item>
+	    <item>Search</item>
+	</string-array>
+
+	<string-array name="main_user_view_list">
+		<item>Manage Accounts</item>
+		<item>Photostream</item>
+	    <item>Sets</item>
+	    <item>Collections</item>
+	    <item>Tags</item>
+	    <item>Favorites</item>
+		<item>Contacts</item>
+	    <item>Search</item>
+	</string-array>
+
+	<string-array name="user_view_list">
+		<item>Photostream</item>
+	    <item>Sets</item>
+	    <item>Collections</item>
+	    <item>Tags</item>
+	    <item>Favorites</item>
+		<item>Contacts</item>
+	</string-array>
+
+	<string-array name="account_view_list">
+		<item>Add Account</item>
+	    <item>Switch Accounts</item>
+	    <item>Log Out</item>
+	</string-array>
+
+	<string-array name="search_options_list">
+		<item>Photos</item>
+	    <item>Groups</item>
+	    <item>Tags</item>
+	    <item>Username</item>
+	</string-array>
+
+	<string-array name="search_photos_suboptions_list">
+		<item>All Photos</item>
+	    <item>Your Photostream</item>
+	    <item>Your Favorites</item>
+	</string-array>
+
+</resources>
