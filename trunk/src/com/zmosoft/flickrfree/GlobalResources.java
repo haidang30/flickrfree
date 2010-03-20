@@ -23,9 +23,9 @@ import android.view.Window;
 
 
 public class GlobalResources {
-    public static String m_apikey = "e760f6fca6560f7034a3e5bf55e567e0";
-    public static String m_secret = "c5625cb7dee83ade";
-    public static String m_AUTHURL = "http://www.flickr.com/auth-72157620555592781";
+    public static String m_apikey = "";
+    public static String m_secret = "";
+    public static String m_AUTHURL = "";
     public static String m_fulltoken = "";
     public static String m_imgDownloadDir = "";
     

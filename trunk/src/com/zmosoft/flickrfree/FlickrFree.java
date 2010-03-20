@@ -16,6 +16,11 @@ public class FlickrFree extends UserView {
         // Get the image download directory.
         GlobalResources.m_imgDownloadDir = Environment.getExternalStorageDirectory().toString() + "/download";
         
+        // Get the api key and secret.
+        GlobalResources.m_apikey = getResources().getString(R.string.apikey);
+        GlobalResources.m_secret = getResources().getString(R.string.secret);
+        GlobalResources.m_AUTHURL = getResources().getString(R.string.auth_url);
+        
         // If an authorization file exists, load it.
         String auth_filename = Environment.getExternalStorageDirectory().getAbsolutePath() + "/AuthInfo.txt";
         File auth_file = new File(auth_filename);
