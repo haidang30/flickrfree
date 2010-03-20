@@ -10,10 +10,10 @@ This is the changelog for the Flickr Free Android app.
 
 ==0.9.2==
 
-* Fixed stupid authentication bug that prevented it from linking to the new API key.
+ * Fixed stupid authentication bug that prevented it from linking to the new API key.
 
 ==0.9.1==
 
-* Changed to numeric keypad for entering authentication code.
+ * Changed to numeric keypad for entering authentication code.
 
-* Had to switch to a different API key for this version. Current users will have to re-authenticate. Apologies.
+ * Had to switch to a different API key for this version. Current users will have to re-authenticate. Apologies.
