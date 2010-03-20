@@ -7,7 +7,7 @@ FlickrFree for Android is a free, open-source Flickr client for Android devices.
 
 The goal of FlickrFree is to create a fully-featured, open-source Flickr client for Android devices. Current features of the app are as follows:
 
-* Log in to your Flickr account(s) to view your photostream, sets, collections and favorites.
+ * Log in to your Flickr account(s) to view your photostream, sets, collections and favorites.
 
 * Browse and search public Flickr photos.
 
