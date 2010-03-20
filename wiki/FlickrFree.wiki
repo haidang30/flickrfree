@@ -9,10 +9,10 @@ The goal of FlickrFree is to create a fully-featured, open-source Flickr client 
 
  * Log in to your Flickr account(s) to view your photostream, sets, collections and favorites.
 
-* Browse and search public Flickr photos.
+ * Browse and search public Flickr photos.
 
-* Set your favorites right from your phone.
+ * Set your favorites right from your phone.
 
-* Download photos to your phone.
+ * Download photos to your phone.
 
-* Supports multiple accounts.
+ * Supports multiple accounts.
