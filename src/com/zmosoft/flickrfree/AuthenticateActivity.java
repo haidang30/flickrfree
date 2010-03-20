@@ -124,6 +124,12 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
     		
 	        String[] paramNames = {"mini_token"};
 	        String[] paramVals = {miniToken};
+	        
+	        // We're about to request a full token from Flickr, so we need to clear the one currently
+	        // in memory to prevent the RestClient from trying to make an authenticated call.
+	        GlobalResources.m_fulltoken = "";
+	        
+	        // Make the API call to request the full token.
 			JSONObject json_obj = RestClient.CallFunction("flickr.auth.getFullToken",paramNames,paramVals);
 			try {
 				// Check that authentication was successful
