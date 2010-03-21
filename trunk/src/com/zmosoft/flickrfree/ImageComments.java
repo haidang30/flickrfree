@@ -54,6 +54,9 @@ public class ImageComments extends Activity implements OnClickListener {
 				// Add the title/value entry pair for the set of comments.
 				entry = View.inflate(this, R.layout.image_comment_entry, null);
 				((TextView)entry.findViewById(R.id.Author)).setText(key);
+				
+				// The comment might have HTML tags, so use the Html class to handle
+				// that.
 				CharSequence fString = Html.fromHtml(comments.get(key),null,null);
 				((TextView)entry.findViewById(R.id.Comment)).setText(fString);
 				
