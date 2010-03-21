@@ -5,23 +5,23 @@
 
  * Fixed handling of HTML markup in comment text.
 
-==0.9.4.1==
+=0.9.4.1=
 
  * Fixed a bug that can cause an exception on creation of UserView if RestClient is not able to return a valid JSONObject.
 
-==0.9.4==
+=0.9.4=
 
  * Fixed (hopefully for the last time) authentication bugs. Current users might need to re-authenticate one more time to clear things out. Apologies for the inconvenience.
 
-==0.9.3==
+=0.9.3=
 
  * Added ability to view photo comments through the long-press menu in Picture View screen.
 
-==0.9.2==
+=0.9.2=
 
  * Fixed stupid authentication bug that prevented it from linking to the new API key.
 
-==0.9.1==
+=0.9.1=
 
  * Changed to numeric keypad for entering authentication code.
 
