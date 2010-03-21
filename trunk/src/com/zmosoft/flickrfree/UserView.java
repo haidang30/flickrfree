@@ -346,7 +346,7 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
         if (!GlobalResources.m_fulltoken.equals("")) {
         	// If there is a token, then check to make sure it is still valid. 
 			JSONObject json_obj = RestClient.CallFunction("flickr.auth.checkToken",null,null);
-			auth_ok = json_obj.getString("stat").equals("ok");
+			auth_ok = json_obj.has("stat") && json_obj.getString("stat").equals("ok");
         }
 
         // If the authentication failed, then the token is invalid, so clear it and set
