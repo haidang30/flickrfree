@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
@@ -53,7 +54,8 @@ public class ImageComments extends Activity implements OnClickListener {
 				// Add the title/value entry pair for the set of comments.
 				entry = View.inflate(this, R.layout.image_comment_entry, null);
 				((TextView)entry.findViewById(R.id.Author)).setText(key);
-				((TextView)entry.findViewById(R.id.Comment)).setText(comments.get(key));
+				CharSequence fString = Html.fromHtml(comments.get(key),null,null);
+				((TextView)entry.findViewById(R.id.Comment)).setText(fString);
 				
 				//((TextView)entry.findViewById(R.id.InfoValue)).setClickable(true);
 				//((TextView)entry.findViewById(R.id.InfoValue)).setOnClickListener(this);
