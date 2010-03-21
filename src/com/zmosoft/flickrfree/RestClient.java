@@ -50,6 +50,12 @@ public class RestClient {
 
 	public static JSONObject CallFunction(String methodName, String[] paramNames, String[] paramVals)
 	{
+		return CallFunction(methodName, paramNames, paramVals, true);
+	}
+	
+
+	public static JSONObject CallFunction(String methodName, String[] paramNames, String[] paramVals, boolean authenticated)
+	{
 		JSONObject json = new JSONObject();
 		HttpClient httpclient = new DefaultHttpClient();
 
@@ -70,7 +76,7 @@ public class RestClient {
 			url += "&" + paramNames[i] + "=" + paramVals[i];
 		}
 		
-		boolean authenticated = !GlobalResources.m_fulltoken.equals("");
+		authenticated = authenticated && !GlobalResources.m_fulltoken.equals("");
 		if (authenticated) {
 			url += "&auth_token=" + GlobalResources.m_fulltoken;
 		}
