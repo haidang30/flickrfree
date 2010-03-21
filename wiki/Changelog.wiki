@@ -1,7 +1,7 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
-=0.9.4.2=
+===0.9.4.2===
 
  * Fixed handling of HTML markup in comment text.
 
