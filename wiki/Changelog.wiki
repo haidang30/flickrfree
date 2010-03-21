@@ -1,6 +1,10 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+==0.9.3==
+
+ * Added ability to view photo comments.
+
 ==0.9.2==
 
  * Fixed stupid authentication bug that prevented it from linking to the new API key.
