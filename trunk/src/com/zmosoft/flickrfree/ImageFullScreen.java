@@ -167,6 +167,7 @@ public class ImageFullScreen extends Activity {
 			}
 			menu.add(Menu.NONE, MENU_DOWNLOAD, Menu.NONE, R.string.mnu_imgdownload);
 	    	menu.add(Menu.NONE, MENU_IMGINFO, Menu.NONE, R.string.mnu_imginfo);
+	    	menu.add(Menu.NONE, MENU_IMGCOMMENTS, Menu.NONE, R.string.mnu_imgcomments);
 	    	if (!m_tags.equals("")) {
 	    		menu.add(Menu.NONE, MENU_IMGTAGS, Menu.NONE, R.string.mnu_imgtags);
 	    	}
@@ -201,6 +202,12 @@ public class ImageFullScreen extends Activity {
 				i.putExtra("isprivate", m_isprivate);
 				i.putExtra("imginfo", m_imginfo.toString());
 				i.putExtra("exif", m_exif.toString());
+				startActivity(i);
+				return true;
+			case MENU_IMGCOMMENTS:
+				i = new Intent(this, ImageComments.class);
+				i.putExtra("photo_id",m_extras.getString("photo_id"));
+				i.putExtra("imginfo", m_imginfo.toString());
 				startActivity(i);
 				return true;
 			case MENU_IMGCONTEXT:
@@ -383,13 +390,15 @@ public class ImageFullScreen extends Activity {
 	JSONObject m_imginfo;
 	JSONObject m_exif;
 	JSONObject m_imgcontexts;
+	JSONObject m_comment_list;
 	boolean m_isprivate;
 	
 	static final int MENU_IMGINFO = 0;
-	static final int MENU_IMGCONTEXT = 1;
-	static final int MENU_IMGTAGS = 2;
-	static final int MENU_DOWNLOAD = 3;
-	static final int MENU_SETFAVE = 4;
+	static final int MENU_IMGCOMMENTS = 1;
+	static final int MENU_IMGCONTEXT = 2;
+	static final int MENU_IMGTAGS = 3;
+	static final int MENU_DOWNLOAD = 4;
+	static final int MENU_SETFAVE = 5;
 	
-	static final int DIALOG_DOWNLOAD_IMG_SIZE = 5;
+	static final int DIALOG_DOWNLOAD_IMG_SIZE = 6;
 }

@@ -17,12 +17,14 @@
     <string name="imggrid_allphotos_search_results">Search Results</string>
     <string name="mnu_imgsize">Image Size</string>
     <string name="mnu_imginfo">Info</string>
+    <string name="mnu_imgcomments">Comments</string>
     <string name="mnu_imgdownload">Download</string>
     <string name="mnu_favorite">Favorite</string>
     <string name="mnu_imgcontext">Belongs To...</string>
     <string name="mnu_imgtags">Tags</string>
     <string name="dlg_imgsize_title">Choose Download Size</string>
     <string name="dlg_switch_accounts">Choose Account</string>
+    <string name="imagecomments">Photo Comments</string>
     <string name="imageinfo">Photo Info</string>
     <string name="imageinfo_owner">Owner</string>
     <string name="imageinfo_owner_location">Location</string>
