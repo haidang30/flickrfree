@@ -1,6 +1,10 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+==0.9.4==
+
+ * Fixed (hopefully for the last time) authentication bugs. Current users might need to re-authenticate one more time to clear things out. Apologies for the inconvenience.
+
 ==0.9.3==
 
  * Added ability to view photo comments.
