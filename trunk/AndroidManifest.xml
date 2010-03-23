@@ -12,13 +12,13 @@
         </activity>
         <activity android:name=".AuthenticateActivity" android:label="@string/authenticate">
             <intent-filter>
-                <action android:name="com.android.flickrfree.AUTHENTICATE" />
+                <action android:name="com.zmosoft.flickrfree.AUTHENTICATE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".ImageGrid" android:label="">
             <intent-filter>
-                <action android:name="com.android.flickrfree.IMAGEGRID" />
+                <action android:name="com.zmosoft.flickrfree.IMAGEGRID" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -26,67 +26,67 @@
         		  android:screenOrientation="sensor"
         		  android:label="@string/imgfullscreen">
             <intent-filter>
-                <action android:name="com.android.flickrfree.IMAGEFULLSCREEN" />
+                <action android:name="com.zmosoft.flickrfree.IMAGEFULLSCREEN" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".ImageInfo" android:label="@string/imageinfo">
             <intent-filter>
-                <action android:name="com.android.flickrfree.IMAGEINFO" />
+                <action android:name="com.zmosoft.flickrfree.IMAGEINFO" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".ImageComments" android:label="@string/imagecomments">
             <intent-filter>
-                <action android:name="com.android.flickrfree.IMAGECOMMENTS" />
+                <action android:name="com.zmosoft.flickrfree.IMAGECOMMENTS" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".ImageContext" android:label="@string/imagecontext">
             <intent-filter>
-                <action android:name="com.android.flickrfree.IMAGECONTEXT" />
+                <action android:name="com.zmosoft.flickrfree.IMAGECONTEXT" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".ImageSets" android:label="@string/imagesets">
             <intent-filter>
-                <action android:name="com.android.flickrfree.IMAGESETS" />
+                <action android:name="com.zmosoft.flickrfree.IMAGESETS" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".ImageCollections" android:label="@string/imagecollections">
             <intent-filter>
-                <action android:name="com.android.flickrfree.IMAGECOLLECTIONS" />
+                <action android:name="com.zmosoft.flickrfree.IMAGECOLLECTIONS" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".UserView" android:label="@string/userview">
             <intent-filter>
-                <action android:name="com.android.flickrfree.USERVIEW" />
+                <action android:name="com.zmosoft.flickrfree.USERVIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".AccountView" android:label="@string/accountview">
             <intent-filter>
-                <action android:name="com.android.flickrfree.ACCOUNTVIEW" />
+                <action android:name="com.zmosoft.flickrfree.ACCOUNTVIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".ContactsView" android:label="@string/contactsview">
             <intent-filter>
-                <action android:name="com.android.flickrfree.CONTACTSVIEW" />
+                <action android:name="com.zmosoft.flickrfree.CONTACTSVIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".SearchView" android:label="@string/contactsview">
             <intent-filter>
-                <action android:name="com.android.flickrfree.SEARCHVIEW" />
+                <action android:name="com.zmosoft.flickrfree.SEARCHVIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".ImageTags" android:label="@string/tagsview">
             <intent-filter>
-                <action android:name="android.intent.action.IMAGETAGS" />
+                <action android:name="com.zmosoft.flickrfree.IMAGETAGS" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
