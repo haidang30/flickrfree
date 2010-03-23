@@ -57,6 +57,9 @@ public class ImageComments extends Activity implements OnClickListener {
 				// Make the comment view clickable if there are links to photos or groups
 				// in the comment.
 				entry.setClickable(ReadLinksInComment(entry, comment));
+				if (entry.isClickable()) {
+					entry.setOnClickListener(this);
+				}
 				
 				// The comment might have HTML tags, so use the Html class to handle
 				// that.
@@ -159,25 +162,13 @@ public class ImageComments extends Activity implements OnClickListener {
     
 	@Override
 	public void onClick(View v) {
-//		if (v instanceof TextView) {
-//			try {
-//				String username = m_imginfo.getJSONObject("photo").getJSONObject("owner").getString("username");
-//				String nsid = GlobalResources.getNSIDFromName(username);
-//	
-//				Intent i = new Intent(this, UserView.class);
-//				i.putExtra("nsid", nsid);
-//				try {
-//					startActivity(i);
-//				} catch (ActivityNotFoundException e) {
-//					e.printStackTrace();
-//				}
-//			} catch (JSONException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//		else if (v.getId() == R.id.ImgInfoMapButton) {
-//			// TODO Add code to load Google Maps and move to given location.
-//		}
+		if (v instanceof CommentLayout) {
+			CommentLayout cl = (CommentLayout)v;
+			int ngroups = cl.m_group_links.size();
+			int nphotos = cl.m_photo_links.size();
+			
+			// TODO Add code to bring up selection menu for going to groups and photos.
+		}
 	}
 
 	Bundle m_extras;
