@@ -68,6 +68,46 @@ public class APICalls {
     	return RestClient.CallFunction("flickr.tags.getListUser", new String[]{"user_id"}, new String[]{userid});
     }
 
+    public static JSONObject groupsGetInfo(String groupid) {
+        return RestClient.CallFunction("flickr.groups.getInfo",new String[]{"group_id"},new String[]{groupid});
+    }
+    
+    public static String getGroupNameFromID(String groupid) {
+    	String name = "";
+    	
+    	JSONObject group_info = groupsGetInfo(groupid);
+    	try {
+			if (group_info.has("group") && group_info.getJSONObject("group").has("name")
+				&& group_info.getJSONObject("group").getJSONObject("name").has("_content")) {
+				name = group_info.getJSONObject("group").getJSONObject("name").getString("_content");
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	//TODO Parse group_info to get the name of the group.
+    	
+    	return name;
+    }
+    
+    public static String getPhotoNameFromID(String photoid) {
+    	String name = "";
+    	
+    	JSONObject photo_info = photosGetInfo(photoid);
+    	try {
+			if (photo_info.has("photo") && photo_info.getJSONObject("photo").has("title")
+				&& photo_info.getJSONObject("photo").getJSONObject("title").has("_content")) {
+				name = photo_info.getJSONObject("photo").getJSONObject("title").getString("_content");
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	//TODO Parse group_info to get the name of the group.
+    	
+    	return name;
+    }
+    
     public static boolean authCheckToken() {
 		JSONObject json_obj = RestClient.CallFunction("flickr.auth.checkToken",null,null);
 		boolean rval = false;
