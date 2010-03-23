@@ -50,13 +50,10 @@ public class ImageAdapter extends BaseAdapter {
 			}
 	   		((ImageView)itemView.findViewById(R.id.ImageViewItem)).setImageBitmap(b);
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	
