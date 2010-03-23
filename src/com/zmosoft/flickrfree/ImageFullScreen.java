@@ -33,14 +33,13 @@ public class ImageFullScreen extends Activity {
 		
 		@Override
 		protected Object doInBackground(Object... params) {
-	    	m_imginfo = GetImgInfo();
-	    	m_exif =  GetExifInfo();
-    		m_imgcontexts = GetImgContext();
+	    	m_imginfo = APICalls.photosGetInfo(m_extras.getString("photo_id"));
+	    	m_exif =  APICalls.photosGetExif(m_extras.getString("photo_id"));
+    		m_imgcontexts = APICalls.photosGetAllContexts(m_extras.getString("photo_id"));
 	    	try {
 	    		m_tags = GetTags();
 				m_imgsizes = GetImgSizes();
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -56,10 +55,8 @@ public class ImageFullScreen extends Activity {
 			try {
 				ShowImage();
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -133,10 +130,8 @@ public class ImageFullScreen extends Activity {
 				m_imgsizes = GetImgSizes();
 				ShowImage();
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         }
@@ -175,7 +170,6 @@ public class ImageFullScreen extends Activity {
     			menu.add(Menu.NONE, MENU_IMGCONTEXT, Menu.NONE, R.string.mnu_imgcontext);
     		}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
@@ -189,11 +183,13 @@ public class ImageFullScreen extends Activity {
 				return true;
 			case MENU_SETFAVE:
 				if (m_extras.containsKey("photo_id")) {
-					String[] paramNames = {"photo_id"};
-					String[] paramVals = {m_extras.getString("photo_id")};
-					RestClient.CallFunction(item.isChecked() ? "flickr.favorites.remove" : "flickr.favorites.add",
-							                paramNames, paramVals);
-					GetImgInfo();
+					if (item.isChecked()) {
+						APICalls.favoritesRemove(m_extras.getString("photo_id"));
+					}
+					else {
+						APICalls.favoritesAdd(m_extras.getString("photo_id"));
+					}
+					m_imginfo = APICalls.photosGetInfo(m_extras.getString("photo_id"));
 				}
 				return true;
 			case MENU_IMGINFO:
@@ -226,7 +222,6 @@ public class ImageFullScreen extends Activity {
 						i.putExtra("nsid", m_imginfo.getJSONObject("photo").getJSONObject("owner").getString("nsid"));
 					}
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				startActivity(i);
@@ -275,10 +270,8 @@ public class ImageFullScreen extends Activity {
 							GlobalResources.downloadImage(url, "", GlobalResources.m_imgDownloadDir, null, false);
 							dialog.dismiss();
 						} catch (MalformedURLException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -294,27 +287,13 @@ public class ImageFullScreen extends Activity {
     	return dialog;
     }
     
-    private JSONObject GetImgInfo() {
-    	String[] paramNames = {"photo_id"};
-        String[] paramVals = {m_extras.getString("photo_id")};
-        return RestClient.CallFunction("flickr.photos.getInfo",paramNames,paramVals);
-    }
-    
-    private JSONObject GetExifInfo() {
-    	String[] paramNames = {"photo_id"};
-        String[] paramVals = {m_extras.getString("photo_id")};
-        return RestClient.CallFunction("flickr.photos.getExif",paramNames,paramVals);
-    }
-    
     private TreeMap<ImgSize, String> GetImgSizes() throws JSONException {
     	TreeMap<ImgSize, String> imgsizesmap = new TreeMap<ImgSize, String>();
     	if (m_extras.containsKey("photo_id")) {
         	// Get the list of available image sizes for this photo.
-	        String[] paramNames = {"photo_id"};
-	        String[] paramVals = {m_extras.getString("photo_id")};
 	        
 			imgsizesmap = new TreeMap<ImgSize, String>();
-			JSONObject imgsizes_obj = RestClient.CallFunction("flickr.photos.getSizes",paramNames,paramVals);
+			JSONObject imgsizes_obj = APICalls.photosGetSizes(m_extras.getString("photo_id"));
 			if (imgsizes_obj.has("sizes")) {
 				JSONArray imgsizes = imgsizes_obj.getJSONObject("sizes").getJSONArray("size");
 				// Iterate through the Image Sizes array and fill the imgsizesmap hash map.
@@ -377,12 +356,6 @@ public class ImageFullScreen extends Activity {
 		return size_names_array;
     }
     
-	private JSONObject GetImgContext() {
-    	String[] paramNames = {"photo_id"};
-        String[] paramVals = {m_extras.getString("photo_id")};
-        return RestClient.CallFunction("flickr.photos.getAllContexts",paramNames,paramVals);
-    }        
-
 	Bundle m_extras;
 	String m_tags;
 	TreeMap<ImgSize, String> m_imgsizes;

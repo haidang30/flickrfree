@@ -111,9 +111,7 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 				// result to the listview.
 				try {
 					String nSets_str = "";
-					m_photosets = RestClient.CallFunction("flickr.photosets.getList",
-														  new String[]{"user_id"},
-														  new String[]{nsid});
+					m_photosets = APICalls.photosetsGetList(nsid);
 					if (m_photosets != null) {
 						int nSets = m_photosets.getJSONObject("photosets")
 						   					   .getJSONArray("photoset").length();
@@ -130,9 +128,7 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 
 				try {
 					String nCollections_str = "";
-					m_collections = RestClient.CallFunction("flickr.collections.getTree",
-														  new String[]{"user_id"},
-														  new String[]{nsid});
+					m_collections = APICalls.collectionsGetTree(nsid);
 					if (m_collections != null) {
 						int nCollections = m_collections.getJSONObject("collections")
 						   .getJSONArray("collection").length();
@@ -235,10 +231,9 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 			try {
 				CheckAuthentication(getSharedPreferences("Auth",0));
 				String nsid = extras.getString("nsid");
-				m_userinfo = GetUserInfo(nsid);
+				m_userinfo = APICalls.peopleGetInfo(nsid);
 				m_tags = GetTags(nsid);
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -257,26 +252,13 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 	    	try {
 				SetUserDisplay();
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 
-		private JSONObject GetUserInfo(String nsid) {
-			JSONObject userinfo = new JSONObject();
-			
-			if (!nsid.equals("")) {
-				userinfo = RestClient.CallFunction("flickr.people.getInfo",
-												    new String[]{"user_id"},
-													new String[]{nsid});
-			}
-			
-			return userinfo;
-		}
-		
 	    private String GetTags(String nsid) throws JSONException {
 			String tags_str = "";
-			JSONObject tag_obj = RestClient.CallFunction("flickr.tags.getListUser", new String[]{"user_id"}, new String[]{nsid});
+			JSONObject tag_obj = APICalls.tagsGetListUser(nsid);
 			if (tag_obj.has("who")) {
 				JSONArray tag_arr = tag_obj.getJSONObject("who").getJSONObject("tags").getJSONArray("tag");
 				for (int i = 0; i < tag_arr.length(); i++) {
@@ -345,8 +327,7 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
     	
         if (!GlobalResources.m_fulltoken.equals("")) {
         	// If there is a token, then check to make sure it is still valid. 
-			JSONObject json_obj = RestClient.CallFunction("flickr.auth.checkToken",null,null);
-			auth_ok = json_obj.has("stat") && json_obj.getString("stat").equals("ok");
+        	auth_ok = APICalls.authCheckToken();
         }
 
         // If the authentication failed, then the token is invalid, so clear it and set
@@ -495,7 +476,6 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 				try {
 					i.putExtra("setlist", m_photosets.getJSONObject("photosets").getJSONArray("photoset").toString());
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -537,7 +517,7 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 				i.putExtra("type", "favorites");
 				i.putExtra("nsid", m_extras.getString("nsid"));
 				if (m_favorites != null) {
-					i.putExtra("title", "Favorites for \"" + GlobalResources.getNameFromNSID(m_extras.getString("nsid")) + "\"");
+					i.putExtra("title", "Favorites for \"" + APICalls.getNameFromNSID(m_extras.getString("nsid")) + "\"");
 					i.putExtra("list_obj", m_favorites.toString());
 				}
 				if (m_extrainfotask != null && m_extrainfotask.getStatus() != AsyncTask.Status.FINISHED) {
@@ -548,7 +528,6 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 				}
 				startActivity(i);
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

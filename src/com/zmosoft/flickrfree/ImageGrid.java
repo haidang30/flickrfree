@@ -61,16 +61,12 @@ public class ImageGrid extends Activity implements OnItemClickListener, OnClickL
 					publishProgress(img_url, i);
 					GlobalResources.sleep(100);
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -173,7 +169,6 @@ public class ImageGrid extends Activity implements OnItemClickListener, OnClickL
     			try {
 					m_imglist = new JSONArray(savedInstanceState.getString("imglist"));
 				} catch (JSONException e) {
-					 //TODO Auto-generated catch block
 					e.printStackTrace();
 				}
     		}
@@ -238,7 +233,7 @@ public class ImageGrid extends Activity implements OnItemClickListener, OnClickL
 		    	        methodname = GlobalResources.isAppUser(this, m_extras.getString("nsid"))
 		    	                   ? "flickr.favorites.getList" : "flickr.favorites.getPublicList";
 						displayname = GlobalResources.isAppUser(this, m_extras.getString("nsid"))
-						           ? auth_prefs.getString("displayname", "") : GlobalResources.getNameFromNSID(m_extras.getString("nsid"));
+						           ? auth_prefs.getString("displayname", "") : APICalls.getNameFromNSID(m_extras.getString("nsid"));
 						m_title = getResources().getText(R.string.imggrid_favorites).toString() + " " + displayname;
 		    		}
 		    		else if (m_extras.getString("type").equals("photostream")) {
@@ -246,7 +241,7 @@ public class ImageGrid extends Activity implements OnItemClickListener, OnClickL
 						pVals.add(m_extras.getString("nsid"));
 						methodname = "flickr.photos.search";
 						displayname = GlobalResources.isAppUser(this, m_extras.getString("nsid"))
-						            ? auth_prefs.getString("displayname", "") : GlobalResources.getNameFromNSID(m_extras.getString("nsid"));
+						            ? auth_prefs.getString("displayname", "") : APICalls.getNameFromNSID(m_extras.getString("nsid"));
 						m_title = getResources().getText(R.string.imggrid_photostream).toString() +  " " + displayname;
 		    		}
 		    		else if (m_extras.getString("type").equals("set")) {
@@ -341,7 +336,6 @@ public class ImageGrid extends Activity implements OnItemClickListener, OnClickL
 	   			startActivity(i);
 			}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

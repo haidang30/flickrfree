@@ -12,8 +12,6 @@ import java.text.DecimalFormat;
 import java.util.Map;
 
 import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -100,31 +98,6 @@ public class GlobalResources {
     
     public static boolean isAppUser(Activity a, String nsid) {
     	return (nsid != "" && a.getSharedPreferences("Auth",0).getString("nsid", "").equals(nsid));
-    }
-    
-    public static String getNameFromNSID(String nsid) throws JSONException {
-		String[] paramNames = {"user_id"};
-		String[] paramVals = {nsid};
-		JSONObject json_obj = RestClient.CallFunction("flickr.people.getInfo", paramNames, paramVals);
-		if (json_obj.has("person")) {
-			if (json_obj.getJSONObject("person").has("username")) {
-				return json_obj.getJSONObject("person").getJSONObject("username").getString("_content");
-			}
-		}
-		
-		return "";
-    }
-    
-    public static String getNSIDFromName(String username) throws JSONException {
-		String[] paramNames = {"username"};
-		String[] paramVals = {username};
-		
-		JSONObject result = RestClient.CallFunction("flickr.people.findByUsername", paramNames, paramVals);
-		String nsid = "";
-		nsid = result.has("user") && result.getJSONObject("user").has("nsid")
-			 ? result.getJSONObject("user").getString("nsid") : "";
-
-		return nsid;
     }
     
     public static String getDisplayName(String username, String realname) {
@@ -292,7 +265,6 @@ public class GlobalResources {
 		try {
 			Thread.sleep(ms);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }

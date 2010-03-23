@@ -122,11 +122,7 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
     					+ "-" + ((EditText)findViewById(R.id.authnum2)).getText().toString()
     					+ "-" + ((EditText)findViewById(R.id.authnum3)).getText().toString();
     		
-	        String[] paramNames = {"mini_token"};
-	        String[] paramVals = {miniToken};
-	        
-	        // Make the API call to request the full token.
-			JSONObject json_obj = RestClient.CallFunction("flickr.auth.getFullToken",paramNames,paramVals,false);
+			JSONObject json_obj = APICalls.getFullToken(miniToken);
 			try {
 				// Check that authentication was successful
 				if (json_obj.getString("stat").equals("ok")) {
@@ -160,7 +156,6 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 				}
 				finish();
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
     	}
@@ -195,7 +190,6 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 				prefs_editor.commit();
 			}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
@@ -239,10 +233,8 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 	    	}
 	    	of.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
@@ -263,10 +255,8 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 			auth_prefs_edit.commit();
 			read_buf.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }

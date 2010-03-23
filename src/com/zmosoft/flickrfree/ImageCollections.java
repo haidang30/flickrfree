@@ -46,17 +46,13 @@ public class ImageCollections extends ListActivity implements OnItemClickListene
 		try {
 			FillCollectionMap();
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		FillListView();
 	}
 	
 	private void FillCollectionMap() throws JSONException {
-		String[] paramNames = {"user_id"};
-		String[] paramVals = {m_nsid};
-
-		JSONObject json_obj = RestClient.CallFunction("flickr.collections.getTree",paramNames,paramVals);
+		JSONObject json_obj = APICalls.collectionsGetTree(m_nsid);
 		if (json_obj.has("collections") && json_obj.getJSONObject("collections").has("collection")) {
 				JSONArray collectionslist = json_obj.getJSONObject("collections").getJSONArray("collection");
 				JSONArray setslist;
