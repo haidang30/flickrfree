@@ -72,6 +72,10 @@ public class APICalls {
         return RestClient.CallFunction("flickr.groups.getInfo",new String[]{"group_id"},new String[]{groupid});
     }
     
+    public static JSONObject groupsSearch(String text, String perpage) {
+        return RestClient.CallFunction("flickr.groups.search",new String[]{"text", "per_page"},new String[]{text, perpage});
+    }
+    
     public static String getGroupNameFromID(String groupid) {
     	String name = "";
     	
@@ -90,6 +94,25 @@ public class APICalls {
     	return name;
     }
     
+    public static String getGroupIDFromName(String groupname) {
+    	String nsid = "";
+    	
+    	JSONObject group_info = groupsSearch(groupname, "1");
+    	try {
+			if (group_info.has("groups") && group_info.getJSONObject("groups").has("group")
+				&& group_info.getJSONObject("groups").getJSONArray("group").length() > 0
+				&& group_info.getJSONObject("groups").getJSONArray("group").getJSONObject(0).has("nsid")) {
+				nsid = group_info.getJSONObject("groups").getJSONArray("group").getJSONObject(0).getString("nsid");
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	//TODO Parse group_info to get the name of the group.
+    	
+    	return nsid;
+    }
+    
     public static String getPhotoNameFromID(String photoid) {
     	String name = "";
     	
@@ -100,11 +123,8 @@ public class APICalls {
 				name = photo_info.getJSONObject("photo").getJSONObject("title").getString("_content");
 			}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	//TODO Parse group_info to get the name of the group.
-    	
     	return name;
     }
     
