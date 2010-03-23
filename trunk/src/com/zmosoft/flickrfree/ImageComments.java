@@ -111,15 +111,24 @@ public class ImageComments extends Activity implements OnClickListener {
 					// TODO Put code in here for getting the group name from the id.
 					// Or, alternatively, if the group URL only gives the name, then
 					// get the id.
-					entry.m_group_links.put("name", id);
+					String group_name = APICalls.getGroupNameFromID(id);
+					if (group_name.equals("")) {
+						group_name = "Unnamed Group";
+					}
+					entry.m_group_links.put(group_name, id);
 				}
 				else if (path.contains("photo")) {
-					id = path.substring(path.indexOf("photo/") + 6);
+					id = path.substring(path.indexOf("photos/") + 7);
 					if (id.contains("/")) {
-						id = id.substring(0, id.indexOf("/"));
+						id = id.substring(id.indexOf("/") + 1);
+						id = id.substring(0,id.indexOf("/"));
 					}
 					// TODO Put code in here for getting the photo name from the id.
-					entry.m_photo_links.put("name", id);
+					String photo_name = APICalls.getPhotoNameFromID(id);
+					if (photo_name.equals("")) {
+						photo_name = "Unnamed Photo";
+					}
+					entry.m_photo_links.put(photo_name, id);
 				}
 			}
 	    	url_pos = findURLPosInComment(comment, url_pos[1] + 1);
