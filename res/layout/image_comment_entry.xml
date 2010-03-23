@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout 
-	android:id="@+id/SetsListItemLayout" 
+<com.zmosoft.flickrfree.CommentLayout
+	android:id="@+id/CommentLayout" 
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	xmlns:android="http://schemas.android.com/apk/res/android">
@@ -19,7 +19,6 @@
 		<TextView
 			android:text="Comment"
 			android:id="@+id/Comment"
-			android:autoLink="all"
 			android:textSize="18sp"
 			android:background="#000000"
 			android:textColor="#FFFFFF"
@@ -29,4 +28,4 @@
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"/>
 			
-</RelativeLayout>
+</com.zmosoft.flickrfree.CommentLayout>
