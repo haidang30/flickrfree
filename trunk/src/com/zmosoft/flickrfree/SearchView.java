@@ -98,9 +98,8 @@ public class SearchView extends Activity implements OnClickListener, OnItemSelec
 				// Search by username
 				String nsid = "";
 				try {
-					nsid = GlobalResources.getNSIDFromName(((EditText)findViewById(R.id.EditSearchText)).getText().toString());
+					nsid = APICalls.getNSIDFromName(((EditText)findViewById(R.id.EditSearchText)).getText().toString());
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				

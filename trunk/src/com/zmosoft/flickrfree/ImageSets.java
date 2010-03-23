@@ -46,8 +46,6 @@ public class ImageSets extends ListActivity implements OnItemClickListener {
 	}
 	
 	private void FillSetMap() {
-		String[] paramNames = {"user_id"};
-		String[] paramVals = {m_nsid};
 		String set_title = "";
 		String set_id = "";
 
@@ -56,7 +54,7 @@ public class ImageSets extends ListActivity implements OnItemClickListener {
 				JSONObject json_obj = null;
 				JSONArray setslist = null;
 				if (m_extras.getString("type").equals("by_nsid")) {
-					json_obj = RestClient.CallFunction("flickr.photosets.getList",paramNames,paramVals);
+					json_obj = APICalls.photosetsGetList(m_nsid);
 					if (json_obj != null) {
 						if (json_obj.has("photosets") && json_obj.getJSONObject("photosets").has("photoset")) {
 							setslist = json_obj.getJSONObject("photosets").getJSONArray("photoset");
@@ -79,7 +77,7 @@ public class ImageSets extends ListActivity implements OnItemClickListener {
 								m_set_sizes.put(set_title, set_obj.getString("photos"));
 							}
 							else {
-								set_obj2 = RestClient.CallFunction("flickr.photosets.getInfo", new String[]{"photoset_id"}, new String[]{set_id});
+								set_obj2 = APICalls.photosetsGetInfo(set_id);
 								if (set_obj2 != null) {
 									m_set_sizes.put(set_title, set_obj2.getJSONObject("photoset").getString("photos"));
 								}
@@ -90,7 +88,6 @@ public class ImageSets extends ListActivity implements OnItemClickListener {
 				}
 			}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -47,7 +47,6 @@ public class ImageContext extends Activity implements OnItemClickListener{
     			finish();
     		}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         DisplayContexts();
@@ -157,11 +156,7 @@ public class ImageContext extends Activity implements OnItemClickListener{
     }
 
     private String GetPhotosetSize(String id) throws JSONException {
-    	String[] paramNames = null, paramVals = null;
-    	
-    	paramNames = new String[]{"photoset_id"};
-    	paramVals = new String[]{id};
-    	JSONObject json_obj = RestClient.CallFunction("flickr.photosets.getInfo", paramNames, paramVals);
+    	JSONObject json_obj = APICalls.photosetsGetInfo(id);
     	return (json_obj.has("photoset") && json_obj.getJSONObject("photoset").has("photos"))
     			? json_obj.getJSONObject("photoset").getString("photos")
     			: "";
