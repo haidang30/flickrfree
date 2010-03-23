@@ -33,13 +33,10 @@ public class GetCachedImageTask extends AsyncTask<Object, Integer, Bitmap> {
 	    		b = GlobalResources.GetCachedImage(img_url, m_activity);
 	    	}
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

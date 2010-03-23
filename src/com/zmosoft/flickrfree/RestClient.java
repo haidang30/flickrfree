@@ -100,7 +100,6 @@ public class RestClient {
 		try {
 			signature = JavaMD5Sum.computeSum(signature).toLowerCase();
 		} catch (NoSuchAlgorithmException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		url += "&api_sig=" + signature + "&format=json";
@@ -132,13 +131,10 @@ public class RestClient {
 			}
 			
 		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return json;

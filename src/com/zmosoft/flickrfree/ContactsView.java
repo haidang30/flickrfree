@@ -40,7 +40,6 @@ public class ContactsView extends ListActivity implements OnItemClickListener {
 		try {
 			FillContactsMap();
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		FillListView();

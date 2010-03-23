@@ -115,7 +115,6 @@ public class AccountView extends Activity implements OnItemClickListener {
     
 	@Override
 	public void onItemClick(AdapterView parent, View view, int position, long id) {
-		// TODO Auto-generated method stub
 		if (id == 0) {
 			Intent i = new Intent(this,AuthenticateActivity.class);
 			startActivityForResult(i,GlobalResources.ADD_ACCOUNT_REQ);
@@ -133,7 +132,6 @@ public class AccountView extends Activity implements OnItemClickListener {
 			try {
 				GetActiveAccounts();
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			SetCurrentAccount(getSharedPreferences("Auth",0).getString("username", ""));
