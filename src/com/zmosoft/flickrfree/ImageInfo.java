@@ -30,7 +30,6 @@ public class ImageInfo extends Activity implements OnClickListener {
 			m_exif = m_extras.containsKey("exif") ? new JSONObject(m_extras.getString("exif"))
 						: new JSONObject("");
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         FillTable();
@@ -141,7 +140,6 @@ public class ImageInfo extends Activity implements OnClickListener {
 				}
 			}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
@@ -151,7 +149,7 @@ public class ImageInfo extends Activity implements OnClickListener {
 		if (v instanceof TextView) {
 			try {
 				String username = m_imginfo.getJSONObject("photo").getJSONObject("owner").getString("username");
-				String nsid = GlobalResources.getNSIDFromName(username);
+				String nsid = APICalls.getNSIDFromName(username);
 	
 				Intent i = new Intent(this, UserView.class);
 				i.putExtra("nsid", nsid);
@@ -161,7 +159,6 @@ public class ImageInfo extends Activity implements OnClickListener {
 					e.printStackTrace();
 				}
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
