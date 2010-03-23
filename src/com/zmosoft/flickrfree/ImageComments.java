@@ -54,12 +54,10 @@ public class ImageComments extends Activity implements OnClickListener {
 				((TextView)entry.findViewById(R.id.Author)).setText(key);
 				
 				comment = comments.get(key);
-				if (ReadLinksInComment(entry, comment)) {
-					// Set the "Go To" button to visible and make it a link
-					// to go to the given group page.
-				}
+				// Make the comment view clickable if there are links to photos or groups
+				// in the comment.
+				entry.setClickable(ReadLinksInComment(entry, comment));
 				
-				//comment = ConvertURLstoURIs(comment);
 				// The comment might have HTML tags, so use the Html class to handle
 				// that.
 				formatted_comment = Html.fromHtml(comments.get(key),null,null);
@@ -77,12 +75,11 @@ public class ImageComments extends Activity implements OnClickListener {
     }
     
     public boolean ReadLinksInComment(CommentLayout entry, String comment) {
-    	int links_found = 0;
+    	boolean links_found = false;
     	
     	Integer[] url_pos = findURLPosInComment(comment, 0);
     	
     	while (url_pos != null) {
-    		++links_found;
 			String url_str = comment.substring(url_pos[0], url_pos[1]);
 			URL url;
     		try {
@@ -108,14 +105,21 @@ public class ImageComments extends Activity implements OnClickListener {
 					if (id.contains("/")) {
 						id = id.substring(0, id.indexOf("/"));
 					}
-					// TODO Put code in here for getting the group name from the id.
-					// Or, alternatively, if the group URL only gives the name, then
-					// get the id.
-					String group_name = APICalls.getGroupNameFromID(id);
-					if (group_name.equals("")) {
-						group_name = "Unnamed Group";
+					String group_name;
+					if (!(id.substring(id.length() - 4, id.length() - 3).equals("@"))) {
+						// TODO This method is used for getting the group ID from a URL with a name
+						// instead of an ID. For example:
+						// http://www.flickr.com/groups/oneofmypics
+						// As opposed to:
+						// http://www.flickr.com/groups/906097@N21
+						// However, it doesn't work that well. I need something better.
+						id = APICalls.getGroupIDFromName(id);
 					}
-					entry.m_group_links.put(group_name, id);
+					group_name = APICalls.getGroupNameFromID(id);
+					if (!group_name.equals("")) {
+			    		links_found = true;
+						entry.m_group_links.put(group_name, id);
+					}
 				}
 				else if (path.contains("photo")) {
 					id = path.substring(path.indexOf("photos/") + 7);
@@ -123,51 +127,17 @@ public class ImageComments extends Activity implements OnClickListener {
 						id = id.substring(id.indexOf("/") + 1);
 						id = id.substring(0,id.indexOf("/"));
 					}
-					// TODO Put code in here for getting the photo name from the id.
 					String photo_name = APICalls.getPhotoNameFromID(id);
-					if (photo_name.equals("")) {
-						photo_name = "Unnamed Photo";
+					if (!photo_name.equals("")) {
+			    		links_found = true;
+						entry.m_photo_links.put(photo_name, id);
 					}
-					entry.m_photo_links.put(photo_name, id);
 				}
 			}
 	    	url_pos = findURLPosInComment(comment, url_pos[1] + 1);
     	}
     	
-    	return (links_found > 0);
-    }
-    
-    public String ConvertURLstoURIs(String comment) {
-    	Integer[] url_pos = findURLPosInComment(comment, 0);
-    	
-    	while (url_pos != null) {
-			String url_str = comment.substring(url_pos[0], url_pos[1]);
-			URL url;
-    		try {
-    			if (url_str.substring(0, 1).equals("/")) {
-    				// If the URL starts with "/", then it is probably a relative URL.
-    				// We need to prepend the rest of the Flickr URL onto it so it can
-    				// be read correctly.
-    				url_str = "http://www.flickr.com" + url_str;
-    			}
-    			url = new URL(url_str);
-			} catch (MalformedURLException e) {
-		    	url_pos = findURLPosInComment(comment, url_pos[1] + 1);
-				continue;
-			}
-			String path = url.getPath();
-			if (url.getProtocol().equals("http") && path.contains("groups")) {
-				String group_id = path.substring(path.indexOf("groups/") + 7);
-				if (group_id.contains("/")) {
-					group_id = group_id.substring(0, group_id.indexOf("/"));
-				}
-				String uri = "flickr://flickrfree/?group_id=" + group_id;
-				comment = comment.substring(0, url_pos[0]) + uri + comment.substring(url_pos[1]);
-			}
-	    	url_pos = findURLPosInComment(comment, url_pos[1] + 1);
-    	}
-    	
-    	return comment;
+    	return links_found;
     }
     
     Integer[] findURLPosInComment(String comment) {
