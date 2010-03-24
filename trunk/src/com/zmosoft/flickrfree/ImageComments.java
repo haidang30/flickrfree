@@ -24,10 +24,10 @@ public class ImageComments extends Activity implements OnClickListener {
         setContentView(R.layout.imagecomments);
         m_extras = getIntent().getExtras();
         m_comment_list = APICalls.photosCommentsGetList(m_extras.getString("photo_id"));
-        FillTable();
+        FillCommentList();
     }
 
-    private void FillTable() {
+    private void FillCommentList() {
     	try {
 			LinkedHashMap<String,String> comments = new LinkedHashMap<String,String>();
 			
@@ -104,25 +104,24 @@ public class ImageComments extends Activity implements OnClickListener {
 			if (url.getProtocol().equals("http")) {
 				String id;
 				if (path.contains("groups")) {
-					id = path.substring(path.indexOf("groups/") + 7);
+					String[] groupinfo = APICalls.getGroupInfoFromURL(url.toString());
+					if (groupinfo != null) {
+						entry.m_group_links.put(groupinfo[0], groupinfo[1]);
+					}
+/*					id = path.substring(path.indexOf("groups/") + 7);
 					if (id.contains("/")) {
 						id = id.substring(0, id.indexOf("/"));
 					}
 					String group_name;
 					if (!(id.substring(id.length() - 4, id.length() - 3).equals("@"))) {
-						// TODO This method is used for getting the group ID from a URL with a name
-						// instead of an ID. For example:
-						// http://www.flickr.com/groups/oneofmypics
-						// As opposed to:
-						// http://www.flickr.com/groups/906097@N21
-						// However, it doesn't work that well. I need something better.
-						id = APICalls.getGroupIDFromName(id);
+						id = APICalls.getGroupIDFromURL(url.toString());
 					}
 					group_name = APICalls.getGroupNameFromID(id);
 					if (!group_name.equals("")) {
 			    		links_found = true;
 						entry.m_group_links.put(group_name, id);
 					}
+*/
 				}
 				else if (path.contains("photo")) {
 					id = path.substring(path.indexOf("photos/") + 7);
@@ -148,12 +147,13 @@ public class ImageComments extends Activity implements OnClickListener {
     }
     
     Integer[] findURLPosInComment(String comment, int start) {
-    	int href_start = comment.indexOf("<a href=\"", start);
-    	int href_end = comment.indexOf("\">", href_start);
+    	String start_string = "<a href=\"";
+    	int href_start = comment.indexOf(start_string, start);
+    	int href_end = comment.indexOf("\"", href_start + start_string.length());
     	Integer[] range = null;
     	
     	if (href_start >= 0) {
-    		href_start += 9;
+    		href_start += start_string.length();
     		range = new Integer[]{href_start, href_end};
     	}
     	

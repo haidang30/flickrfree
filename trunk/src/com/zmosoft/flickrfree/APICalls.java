@@ -94,15 +94,17 @@ public class APICalls {
     	return name;
     }
     
-    public static String getGroupIDFromName(String groupname) {
-    	String nsid = "";
+    public static String[] getGroupInfoFromURL(String url) {
+    	String[] info = null;
     	
-    	JSONObject group_info = groupsSearch(groupname, "1");
+    	JSONObject group_info = RestClient.CallFunction("flickr.urls.lookupGroup", new String[]{"url"}, new String[]{url});
     	try {
-			if (group_info.has("groups") && group_info.getJSONObject("groups").has("group")
-				&& group_info.getJSONObject("groups").getJSONArray("group").length() > 0
-				&& group_info.getJSONObject("groups").getJSONArray("group").getJSONObject(0).has("nsid")) {
-				nsid = group_info.getJSONObject("groups").getJSONArray("group").getJSONObject(0).getString("nsid");
+			if (group_info.has("group") && group_info.getJSONObject("group").has("groupname")
+				&& group_info.getJSONObject("group").getJSONObject("groupname").has("_content")
+				&& group_info.getJSONObject("group").has("id")) {
+				String name = group_info.getJSONObject("group").getJSONObject("groupname").getString("_content");
+				String id = group_info.getJSONObject("group").getString("id");
+				info = new String[] {name, id};
 			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -110,7 +112,7 @@ public class APICalls {
 		}
     	//TODO Parse group_info to get the name of the group.
     	
-    	return nsid;
+    	return info;
     }
     
     public static String getPhotoNameFromID(String photoid) {
