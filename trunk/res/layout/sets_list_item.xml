@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout 
-	android:id="@+id/TagsListItemLayout" 
+	android:id="@+id/SetsListItemLayout" 
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:background="#FFFFFF"
