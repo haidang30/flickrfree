@@ -19,7 +19,7 @@
 			xmlns:android="http://schemas.android.com/apk/res/android">
 
 			<TextView
-				android:text="Sets This Photo Belongs To"
+				android:text="@string/lblsetscontext"
 				android:id="@+id/TextSetsLabel"
 				android:gravity="center_horizontal"
 				android:background="#ffffff"
@@ -38,7 +38,7 @@
 			xmlns:android="http://schemas.android.com/apk/res/android">
 
 			<TextView
-				android:text="Pools This Photo Belongs To"
+				android:text="@string/lblgroupscontext"
 				android:id="@+id/TextPoolsLabel"
 				android:gravity="center_horizontal"
 				android:background="#ffffff"

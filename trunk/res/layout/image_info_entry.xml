@@ -6,7 +6,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	
 		<TextView
-			android:text="Title"
+			android:text="@string/lbltitle"
 			android:id="@+id/InfoTitle"
 			android:textSize="18sp"
 			android:background="#FFFFFF"
@@ -17,7 +17,7 @@
 			android:layout_height="wrap_content"/>
 
 		<TextView
-			android:text="Value"
+			android:text="@string/lblvalue"
 			android:id="@+id/InfoValue"
 			android:autoLink="all"
 			android:textSize="18sp"

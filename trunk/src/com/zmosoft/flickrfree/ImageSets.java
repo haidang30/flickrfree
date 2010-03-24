@@ -97,7 +97,7 @@ public class ImageSets extends ListActivity implements OnItemClickListener {
 		for (String key : m_set_ids.keySet()) {
 			Map<String, String> m = new HashMap<String, String>();
 			m.put("setname", key);
-			m.put("nphotos", m_set_sizes.containsKey(key) ? m_set_sizes.get(key) + " Photos" : "");
+			m.put("nphotos", m_set_sizes.containsKey(key) ? m_set_sizes.get(key) + " " + R.string.lblnphotos : "");
 			setList.add(m);
 		}
 		

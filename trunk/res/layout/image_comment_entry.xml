@@ -6,7 +6,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	
 		<TextView
-			android:text="Author"
+			android:text="@string/lblauthor"
 			android:id="@+id/Author"
 			android:textSize="18sp"
 			android:background="#FFFFFF"
@@ -17,7 +17,7 @@
 			android:layout_height="wrap_content"/>
 
 		<TextView
-			android:text="Comment"
+			android:text="@string/lblcomment"
 			android:id="@+id/Comment"
 			android:textSize="18sp"
 			android:background="#000000"

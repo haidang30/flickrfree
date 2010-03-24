@@ -8,7 +8,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<TextView
-		android:text="Search For:"
+		android:text="@string/lblsearch"
 		android:id="@+id/TextSearchLabel"
 		android:gravity="center_horizontal"
 		android:background="#000000"
@@ -33,7 +33,7 @@
 		android:layout_height="wrap_content"/>
 
 	<Button
-		android:text="Search"
+		android:text="@string/btnsearch"
 		android:id="@+id/BtnSearch"
 		android:paddingLeft="50px"
 		android:paddingRight="50px"
