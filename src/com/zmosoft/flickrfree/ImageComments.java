@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
@@ -106,22 +107,9 @@ public class ImageComments extends Activity implements OnClickListener {
 				if (path.contains("groups")) {
 					String[] groupinfo = APICalls.getGroupInfoFromURL(url.toString());
 					if (groupinfo != null) {
+			    		links_found = true;
 						entry.m_group_links.put(groupinfo[0], groupinfo[1]);
 					}
-/*					id = path.substring(path.indexOf("groups/") + 7);
-					if (id.contains("/")) {
-						id = id.substring(0, id.indexOf("/"));
-					}
-					String group_name;
-					if (!(id.substring(id.length() - 4, id.length() - 3).equals("@"))) {
-						id = APICalls.getGroupIDFromURL(url.toString());
-					}
-					group_name = APICalls.getGroupNameFromID(id);
-					if (!group_name.equals("")) {
-			    		links_found = true;
-						entry.m_group_links.put(group_name, id);
-					}
-*/
 				}
 				else if (path.contains("photo")) {
 					id = path.substring(path.indexOf("photos/") + 7);
@@ -163,11 +151,13 @@ public class ImageComments extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		if (v instanceof CommentLayout) {
-			CommentLayout cl = (CommentLayout)v;
-			int ngroups = cl.m_group_links.size();
-			int nphotos = cl.m_photo_links.size();
+			JSONObject group_links = new JSONObject(((CommentLayout)v).m_group_links);
+			JSONObject photo_links = new JSONObject(((CommentLayout)v).m_photo_links);
 			
-			// TODO Add code to bring up selection menu for going to groups and photos.
+			Intent i = new Intent(this, CommentLinkView.class);
+			i.putExtra("groups", group_links.toString());
+			i.putExtra("photos", photo_links.toString());
+			startActivity(i);
 		}
 	}
 
