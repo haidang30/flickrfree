@@ -1,6 +1,12 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===0.9.5===
+
+ * Improved Image Context view.
+
+ * Added clickable links to image comments. If a comment has URLs referring to other groups, just tap the comment and it will bring up a list of those groups. Tap on one of them to be taken to that group inside the app.
+
 ===0.9.4.2===
 
  * Fixed handling of HTML markup in comment text.
