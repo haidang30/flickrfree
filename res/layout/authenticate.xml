@@ -42,7 +42,7 @@
 		android:layout_width="90dip"
 		android:layout_x="50dip"
 		android:id="@+id/btnGetCode"
-		android:text="Get Code">
+		android:text="@string/btngetcode">
 	</Button>
 
 	<Button
@@ -51,7 +51,7 @@
 		android:layout_width="120dip"
 		android:layout_x="150dip"
 		android:id="@+id/btnAuthenticate"
-		android:text="Authenticate">
+		android:text="@string/btnauthenticate">
 	</Button>
 
 	

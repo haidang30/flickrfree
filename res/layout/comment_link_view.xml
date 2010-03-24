@@ -20,7 +20,7 @@
 				xmlns:android="http://schemas.android.com/apk/res/android">
 	
 				<TextView
-					android:text="Groups"
+					android:text="@string/lblgroups"
 					android:id="@+id/Groups"
 					android:textSize="18sp"
 					android:background="#FFFFFF"
@@ -40,7 +40,7 @@
 				xmlns:android="http://schemas.android.com/apk/res/android">
 	
 				<TextView
-					android:text="Photos"
+					android:text="@string/lblphotos"
 					android:id="@+id/Photos"
 					android:textSize="18sp"
 					android:background="#FFFFFF"

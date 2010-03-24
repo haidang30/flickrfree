@@ -70,7 +70,7 @@
 				android:gravity="center"
 				android:layout_toRightOf="@+id/EditPageNumber"
 				android:minEms="4"
-				android:text="OK"/> 
+				android:text="@string/btnok"/> 
 			
 			<Button
 				android:id="@+id/BtnPageChangeCancel"
@@ -79,7 +79,7 @@
 				android:gravity="center"
 				android:layout_toRightOf="@+id/BtnPageChangeOK"
 				android:minEms="4"
-				android:text="Cancel"/> 
+				android:text="@string/btncancel"/> 
 			
 		</RelativeLayout>
 	
