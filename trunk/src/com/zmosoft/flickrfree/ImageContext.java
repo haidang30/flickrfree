@@ -1,9 +1,5 @@
 package com.zmosoft.flickrfree;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 import org.json.JSONArray;
@@ -15,13 +11,12 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
+import android.view.View.OnClickListener;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
-public class ImageContext extends Activity implements OnItemClickListener{
+public class ImageContext extends Activity implements OnClickListener{
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,10 +27,8 @@ public class ImageContext extends Activity implements OnItemClickListener{
     	if (m_extras.containsKey("isprivate")) {
     		m_isprivate = m_extras.getBoolean("isprivate");
     	}
-    	((TextView)findViewById(R.id.TextSetsLabel)).setVisibility(View.GONE);
-    	((TextView)findViewById(R.id.TextPoolsLabel)).setVisibility(View.GONE);
-    	((ListView)findViewById(R.id.ContextSetsListView)).setVisibility(View.GONE);
-    	((ListView)findViewById(R.id.ContextPoolsListView)).setVisibility(View.GONE);
+    	((LinearLayout)findViewById(R.id.ImgContextSetsLayout)).setVisibility(View.GONE);
+    	((LinearLayout)findViewById(R.id.ImgContextPoolsLayout)).setVisibility(View.GONE);
 
     	try {
     		if (m_extras.containsKey("contexts")) {
@@ -52,77 +45,45 @@ public class ImageContext extends Activity implements OnItemClickListener{
         DisplayContexts();
     }
 
-	@Override
-	public void onItemClick(AdapterView parent, View view, int position, long id) {
-		String title = "";
-		Intent i = new Intent(this,ImageGrid.class);
-		if (parent.getAdapter() == ((ListView)findViewById(R.id.ContextSetsListView)).getAdapter()) {
-			title = ((TextView)view.findViewById(R.id.SetTitle)).getText().toString();
-			i.putExtra("photoset_id", m_set_ids.get(title));
-			i.putExtra("type", "set");
-			i.putExtra("isprivate", m_isprivate);
-		}
-		else if (parent.getAdapter() == ((ListView)findViewById(R.id.ContextPoolsListView)).getAdapter()) {
-			title = ((TextView)view.findViewById(R.id.PoolTitle)).getText().toString();
-			i.putExtra("group_id", m_pool_ids.get(title));
-			i.putExtra("type", "pool");
-		}
-		i.putExtra("title", title);
-		
-		try {
-			startActivity(i);
-		} catch (ActivityNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-
     private void DisplayContexts() {
-		ListView lv;
+		LinearLayout lv;
 		
 		if (m_set_ids.size() > 0) {
-			List < Map<String,String> > setList = new ArrayList < Map<String,String> >();
-	    	lv = (ListView)findViewById(R.id.ContextSetsListView);
-	    	((TextView)findViewById(R.id.TextSetsLabel)).setVisibility(View.VISIBLE);
-	    	((ListView)findViewById(R.id.ContextSetsListView)).setVisibility(View.VISIBLE);
+	    	lv = (LinearLayout)findViewById(R.id.ImgContextSetsLayout);
+	    	((LinearLayout)findViewById(R.id.ImgContextSetsLayout)).setVisibility(View.VISIBLE);
+			RelativeLayout entry;
 			for (String key : m_set_ids.keySet()) {
-				Map<String, String> m = new HashMap<String, String>();
-				m.put("setname", key);
-				m.put("nphotos", (m_set_sizes.containsKey(key) && !m_set_sizes.get(key).equals("")
-									? m_set_sizes.get(key) + " Photos"
-									: ""));
-				setList.add(m);
+	    		entry = (RelativeLayout)View.inflate(this, R.layout.pools_list_item, null);
+	    		((TextView)entry.findViewById(R.id.PoolTitle)).setText(key);
+	    		((TextView)entry.findViewById(R.id.PoolNPhotos)).setText(
+	    				(m_set_sizes.containsKey(key) && !m_set_sizes.get(key).equals("")
+						? m_set_sizes.get(key) + " Photos"
+								: ""));
+	    		
+				entry.setClickable(true);
+				entry.setOnClickListener(this);
+	    		lv.addView(entry);
+
 			}
-			
-	        lv.setAdapter(new SimpleAdapter(
-							this,
-							setList,
-							R.layout.sets_list_item,
-							new String[]{"setname","nphotos"},
-							new int[]{R.id.SetTitle, R.id.SetNPhotos}));
-	        lv.setOnItemClickListener(this);
 		}
 
 		if (m_pool_ids.size() > 0) {
-			List < Map<String,String> > poolList = new ArrayList < Map<String,String> >();
-	    	lv = (ListView)findViewById(R.id.ContextPoolsListView);
-	    	((TextView)findViewById(R.id.TextPoolsLabel)).setVisibility(View.VISIBLE);
-	    	((ListView)findViewById(R.id.ContextPoolsListView)).setVisibility(View.VISIBLE);
+	    	lv = (LinearLayout)findViewById(R.id.ImgContextPoolsLayout);
+	    	((LinearLayout)findViewById(R.id.ImgContextPoolsLayout)).setVisibility(View.VISIBLE);
+			RelativeLayout entry;
 			for (String key : m_pool_ids.keySet()) {
-				Map<String, String> m = new HashMap<String, String>();
-				m.put("poolname", key);
-				m.put("nphotos", (m_pool_sizes.containsKey(key) && !m_pool_sizes.get(key).equals("")
-									? m_pool_sizes.get(key) + " Photos"
-									: ""));
-				poolList.add(m);
+	    		entry = (RelativeLayout)View.inflate(this, R.layout.pools_list_item, null);
+	    		((TextView)entry.findViewById(R.id.PoolTitle)).setText(key);
+	    		((TextView)entry.findViewById(R.id.PoolNPhotos)).setText(
+	    				(m_pool_sizes.containsKey(key) && !m_pool_sizes.get(key).equals("")
+						? m_pool_sizes.get(key) + " Photos"
+								: ""));
+	    		
+				entry.setClickable(true);
+				entry.setOnClickListener(this);
+	    		lv.addView(entry);
+
 			}
-			
-	        lv.setAdapter(new SimpleAdapter(
-							this,
-							poolList,
-							R.layout.pools_list_item,
-							new String[]{"poolname","nphotos"},
-							new int[]{R.id.PoolTitle, R.id.PoolNPhotos}));
-	        lv.setOnItemClickListener(this);
 		}
     }
     
@@ -162,7 +123,31 @@ public class ImageContext extends Activity implements OnItemClickListener{
     			: "";
     }
     
-    Bundle m_extras;
+	@Override
+	public void onClick(View view) {
+		String title = "";
+		Intent i = new Intent(this,ImageGrid.class);
+		if (view.getParent() == findViewById(R.id.ImgContextSetsLayout)) {
+			title = ((TextView)view.findViewById(R.id.PoolTitle)).getText().toString();
+			i.putExtra("photoset_id", m_set_ids.get(title));
+			i.putExtra("type", "set");
+			i.putExtra("isprivate", m_isprivate);
+		}
+		if (view.getParent() == findViewById(R.id.ImgContextPoolsLayout)) {
+			title = ((TextView)view.findViewById(R.id.PoolTitle)).getText().toString();
+			i.putExtra("group_id", m_pool_ids.get(title));
+			i.putExtra("type", "pool");
+		}
+		i.putExtra("title", title);
+		
+		try {
+			startActivity(i);
+		} catch (ActivityNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	Bundle m_extras;
     TreeMap<String,String> m_set_ids;
     TreeMap<String,String> m_set_sizes;
     TreeMap<String,String> m_pool_ids;
