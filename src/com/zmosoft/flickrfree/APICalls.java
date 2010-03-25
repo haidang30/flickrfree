@@ -32,6 +32,10 @@ public class APICalls {
         return RestClient.CallFunction("flickr.photos.comments.getList",new String[]{"photo_id"},new String[]{photo_id});
     }
     
+    public static JSONObject photosCommentsAddComment(String photo_id, String comment) {
+        return RestClient.CallFunction("flickr.photos.comments.addComment",new String[]{"photo_id", "comment_text"},new String[]{photo_id, comment});
+    }
+    
     public static JSONObject photosetsGetList(String userid) {
     	return RestClient.CallFunction("flickr.photosets.getList",new String[]{"user_id"},new String[]{userid});
     }
