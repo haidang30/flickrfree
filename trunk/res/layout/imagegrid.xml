@@ -79,7 +79,7 @@
 				android:gravity="center"
 				android:layout_toRightOf="@+id/BtnPageChangeOK"
 				android:minEms="4"
-				android:text="@string/btncancel"/> 
+				android:text="@string/btncancellabel"/> 
 			
 		</RelativeLayout>
 	
