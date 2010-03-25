@@ -6,11 +6,12 @@
 
     <string name="btnaddcommentlabel">Add Comment</string>
     <string name="btnauthenticate">Authenticate</string>
-    <string name="btncancel">Cancel</string>
+    <string name="btncancellabel">Cancel</string>
     <string name="btngetcode">Get Code</string>
     <string name="btnmap">Show On Map</string>
     <string name="btnok">OK</string>
     <string name="btnsearch">Search</string>
+    <string name="btnsendlabel">Send</string>
 
     <string name="contactsview">Contacts</string>
 
@@ -41,6 +42,7 @@
 	<string name="lblsetscontext">Sets This Photo Belongs To</string>
 	<string name="lblgroupscontext">Groups This Photo Belongs To</string>
 	<string name="lblsearch">Search For:</string>
+	<string name="lbladdcomment">Comment:</string>
 	<string name="lblauthor">Author</string>
 	<string name="lblcomment">Comment</string>
 	<string name="lblgroups">Groups</string>

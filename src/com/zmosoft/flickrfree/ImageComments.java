@@ -4,6 +4,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedHashMap;
 
+import android.widget.RelativeLayout;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,6 +16,7 @@ import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,6 +26,13 @@ public class ImageComments extends Activity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.imagecomments);
+        ((RelativeLayout)findViewById(R.id.ImgAddCommentLayout)).setVisibility(View.GONE);
+        ((Button)findViewById(R.id.BtnAddComment)).setVisibility(View.VISIBLE);
+
+        ((Button)findViewById(R.id.BtnAddComment)).setOnClickListener(this);
+        ((Button)findViewById(R.id.BtnAddCommentSend)).setOnClickListener(this);
+        ((Button)findViewById(R.id.BtnAddCommentCancel)).setOnClickListener(this);
+
         m_extras = getIntent().getExtras();
         m_comment_list = APICalls.photosCommentsGetList(m_extras.getString("photo_id"));
         FillCommentList();
@@ -158,6 +168,20 @@ public class ImageComments extends Activity implements OnClickListener {
 			i.putExtra("groups", group_links.toString());
 			i.putExtra("photos", photo_links.toString());
 			startActivity(i);
+		}
+		else if (v.getId() == R.id.BtnAddComment) {
+	        ((RelativeLayout)findViewById(R.id.ImgAddCommentLayout)).setVisibility(View.VISIBLE);
+	        ((Button)findViewById(R.id.BtnAddComment)).setVisibility(View.GONE);
+		}
+		else if (v.getId() == R.id.BtnAddCommentCancel) {
+	        ((RelativeLayout)findViewById(R.id.ImgAddCommentLayout)).setVisibility(View.GONE);
+	        ((Button)findViewById(R.id.BtnAddComment)).setVisibility(View.VISIBLE);
+		}
+		else if (v.getId() == R.id.BtnAddCommentSend) {
+			// TODO Add code to send comment.
+			
+	        ((RelativeLayout)findViewById(R.id.ImgAddCommentLayout)).setVisibility(View.GONE);
+	        ((Button)findViewById(R.id.BtnAddComment)).setVisibility(View.VISIBLE);
 		}
 	}
 
