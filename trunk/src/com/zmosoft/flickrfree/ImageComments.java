@@ -17,6 +17,7 @@ import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -179,6 +180,9 @@ public class ImageComments extends Activity implements OnClickListener {
 		}
 		else if (v.getId() == R.id.BtnAddCommentSend) {
 			// TODO Add code to send comment.
+			
+			String comment = ((EditText)findViewById(R.id.CommentText)).getText().toString();
+			APICalls.photosCommentsAddComment(m_extras.getString("photo_id"), comment);
 			
 	        ((RelativeLayout)findViewById(R.id.ImgAddCommentLayout)).setVisibility(View.GONE);
 	        ((Button)findViewById(R.id.BtnAddComment)).setVisibility(View.VISIBLE);
