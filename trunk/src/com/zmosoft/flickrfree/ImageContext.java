@@ -57,7 +57,7 @@ public class ImageContext extends Activity implements OnClickListener{
 	    		((TextView)entry.findViewById(R.id.PoolTitle)).setText(key);
 	    		((TextView)entry.findViewById(R.id.PoolNPhotos)).setText(
 	    				(m_set_sizes.containsKey(key) && !m_set_sizes.get(key).equals("")
-						? m_set_sizes.get(key) + " " + R.string.lblnphotos
+						? m_set_sizes.get(key) + " " + getResources().getString(R.string.lblnphotos)
 								: ""));
 	    		
 				entry.setClickable(true);
@@ -76,7 +76,7 @@ public class ImageContext extends Activity implements OnClickListener{
 	    		((TextView)entry.findViewById(R.id.PoolTitle)).setText(key);
 	    		((TextView)entry.findViewById(R.id.PoolNPhotos)).setText(
 	    				(m_pool_sizes.containsKey(key) && !m_pool_sizes.get(key).equals("")
-						? m_pool_sizes.get(key) + " " + R.string.lblnphotos
+						? m_pool_sizes.get(key) + " " + getResources().getString(R.string.lblnphotos)
 								: ""));
 	    		
 				entry.setClickable(true);
