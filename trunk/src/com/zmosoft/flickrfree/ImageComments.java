@@ -19,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class ImageComments extends Activity implements OnClickListener {
@@ -36,17 +37,45 @@ public class ImageComments extends Activity implements OnClickListener {
 
         m_extras = getIntent().getExtras();
         m_comment_list = APICalls.photosCommentsGetList(m_extras.getString("photo_id"));
+        
+        m_comments_per_page = 20;
+        m_current_page = 0;
+        
         FillCommentList();
     }
 
+    private void ClearCommentList() {
+    	LinearLayout comment_layout = (LinearLayout)findViewById(R.id.ImgCommentsLayout);
+    	// Delete all of the children of the comment layout -- except the first. That
+    	// one is not a comment; it is the layout for the "Add Comments" section.
+    	while (comment_layout.getChildCount() > 1) {
+    		int nComments = comment_layout.getChildCount();
+    		comment_layout.removeViewAt(1);
+    	}
+    }
+    
     private void FillCommentList() {
+    	FillCommentList(0);
+    }
+    
+    private void FillCommentList(int start) {
     	try {
 			LinkedHashMap<String,String> comments = new LinkedHashMap<String,String>();
+			boolean overflow = false;
+			int end = 0;
+			JSONArray comment_arr = new JSONArray();
 			
 			if (m_comment_list.has("comments") && m_comment_list.getJSONObject("comments").has("comment")) {
-				JSONArray comment_arr = m_comment_list.getJSONObject("comments").getJSONArray("comment");
 				JSONObject comment_obj;
-				for (int i = 0; i < comment_arr.length(); i++) {
+
+				comment_arr = m_comment_list.getJSONObject("comments").getJSONArray("comment");
+				end = start + m_comments_per_page;
+				overflow = comment_arr.length() > end;
+				if (!overflow) {
+					end = comment_arr.length();
+				}
+				
+				for (int i = start; i < end; i++) {
 					comment_obj = null;
 					comment_obj = comment_arr.getJSONObject(i);
 					if (comment_obj != null
@@ -57,9 +86,13 @@ public class ImageComments extends Activity implements OnClickListener {
 				}
 			}
 
+			((TextView)findViewById(R.id.ImgCommentCount)).setText(R.string.lblwordcomments + " " + (start+1)
+				+ " - " + end + " " + R.string.lblwordof + " " + String.valueOf(comment_arr.length()));
+
 			CommentLayout entry;
 			String comment;
 			CharSequence formatted_comment;
+			LinearLayout comment_layout = ((LinearLayout)findViewById(R.id.ImgCommentsLayout));
 			for (String key : comments.keySet()) {
 				// Add the title/value entry pair for the set of comments.
 				entry = (CommentLayout)View.inflate(this, R.layout.image_comment_entry, null);
@@ -82,7 +115,15 @@ public class ImageComments extends Activity implements OnClickListener {
 				//((TextView)entry.findViewById(R.id.InfoValue)).setClickable(true);
 				//((TextView)entry.findViewById(R.id.InfoValue)).setOnClickListener(this);
 
-				((LinearLayout)findViewById(R.id.ImgCommentsLayout)).addView(entry);
+				comment_layout.addView(entry);
+			}
+			
+			if (overflow) {
+				View v = View.inflate(this, R.layout.entry_more_comments, null);
+				v.setClickable(true);
+				v.setOnClickListener(this);
+				
+				comment_layout.addView(v);
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -187,8 +228,17 @@ public class ImageComments extends Activity implements OnClickListener {
 	        ((RelativeLayout)findViewById(R.id.ImgAddCommentLayout)).setVisibility(View.GONE);
 	        ((Button)findViewById(R.id.BtnAddComment)).setVisibility(View.VISIBLE);
 		}
+		else if (v.getId() == R.id.EntryMoreCommentsLayout) {
+			((ScrollView)findViewById(R.id.ImgCommentsScroll)).smoothScrollTo(0,0);
+			ClearCommentList();
+			++m_current_page;
+			FillCommentList(m_comments_per_page * m_current_page);
+		}
 	}
 
 	Bundle m_extras;
 	JSONObject m_comment_list;
+	
+	int m_comments_per_page;
+	int m_current_page;
 }
