@@ -3,9 +3,9 @@
 
 ===0.9.6===
 
-* Users can now add comments.
+ * Users can now add comments.
 
-* Photos with large number of comments are now handled better.
+ * Photos with large number of comments are now handled better.
 
 ===0.9.5===
 
