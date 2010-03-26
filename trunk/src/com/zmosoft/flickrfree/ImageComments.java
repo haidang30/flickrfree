@@ -49,7 +49,6 @@ public class ImageComments extends Activity implements OnClickListener {
     	// Delete all of the children of the comment layout -- except the first. That
     	// one is not a comment; it is the layout for the "Add Comments" section.
     	while (comment_layout.getChildCount() > 1) {
-    		int nComments = comment_layout.getChildCount();
     		comment_layout.removeViewAt(1);
     	}
     }
