@@ -86,8 +86,8 @@ public class ImageComments extends Activity implements OnClickListener {
 				}
 			}
 
-			((TextView)findViewById(R.id.ImgCommentCount)).setText(R.string.lblwordcomments + " " + (start+1)
-				+ " - " + end + " " + R.string.lblwordof + " " + String.valueOf(comment_arr.length()));
+			((TextView)findViewById(R.id.ImgCommentCount)).setText(getResources().getString(R.string.lblwordcomments) + " " + (start+1)
+				+ " - " + end + " " + getResources().getString(R.string.lblwordof) + " " + String.valueOf(comment_arr.length()));
 
 			CommentLayout entry;
 			String comment;
@@ -111,17 +111,12 @@ public class ImageComments extends Activity implements OnClickListener {
 				formatted_comment = Html.fromHtml(comments.get(key),null,null);
 				((TextView)entry.findViewById(R.id.Comment)).setText(formatted_comment);
 				
-				
-				//((TextView)entry.findViewById(R.id.InfoValue)).setClickable(true);
-				//((TextView)entry.findViewById(R.id.InfoValue)).setOnClickListener(this);
-
 				comment_layout.addView(entry);
 			}
 			
 			if (overflow) {
 				View v = View.inflate(this, R.layout.entry_more_comments, null);
-				v.setClickable(true);
-				v.setOnClickListener(this);
+				v.findViewById(R.id.BtnMoreComments).setOnClickListener(this);
 				
 				comment_layout.addView(v);
 			}
@@ -228,7 +223,7 @@ public class ImageComments extends Activity implements OnClickListener {
 	        ((RelativeLayout)findViewById(R.id.ImgAddCommentLayout)).setVisibility(View.GONE);
 	        ((Button)findViewById(R.id.BtnAddComment)).setVisibility(View.VISIBLE);
 		}
-		else if (v.getId() == R.id.EntryMoreCommentsLayout) {
+		else if (v.getId() == R.id.BtnMoreComments) {
 			((ScrollView)findViewById(R.id.ImgCommentsScroll)).smoothScrollTo(0,0);
 			ClearCommentList();
 			++m_current_page;
