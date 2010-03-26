@@ -234,7 +234,7 @@ public class ImageGrid extends Activity implements OnItemClickListener, OnClickL
 		    	                   ? "flickr.favorites.getList" : "flickr.favorites.getPublicList";
 						displayname = GlobalResources.isAppUser(this, m_extras.getString("nsid"))
 						           ? auth_prefs.getString("displayname", "") : APICalls.getNameFromNSID(m_extras.getString("nsid"));
-						m_title = getResources().getText(R.string.imggrid_favorites).toString() + " " + displayname;
+						m_title = getResources().getString(R.string.imggrid_favorites) + " " + displayname;
 		    		}
 		    		else if (m_extras.getString("type").equals("photostream")) {
 						pNames.add("user_id");
@@ -242,14 +242,14 @@ public class ImageGrid extends Activity implements OnItemClickListener, OnClickL
 						methodname = "flickr.photos.search";
 						displayname = GlobalResources.isAppUser(this, m_extras.getString("nsid"))
 						            ? auth_prefs.getString("displayname", "") : APICalls.getNameFromNSID(m_extras.getString("nsid"));
-						m_title = getResources().getText(R.string.imggrid_photostream).toString() +  " " + displayname;
+						m_title = getResources().getString(R.string.imggrid_photostream) +  " " + displayname;
 		    		}
 		    		else if (m_extras.getString("type").equals("set")) {
 						pNames.add("photoset_id");
 						pVals.add(m_extras.getString("photoset_id"));
 						methodname = "flickr.photosets.getPhotos";
 						obj_toplevel_key = "photoset";
-						m_title = getResources().getText(R.string.imggrid_set).toString();
+						m_title = getResources().getString(R.string.imggrid_set);
 						if (m_extras.containsKey("title") && !m_extras.getString("title").equals("")) {
 							m_title += " \"" + m_extras.getString("title") + "\"";
 						}
@@ -258,13 +258,13 @@ public class ImageGrid extends Activity implements OnItemClickListener, OnClickL
 						pNames.add("group_id");
 						pVals.add(m_extras.getString("group_id"));
 						methodname = "flickr.groups.pools.getPhotos";
-						m_title = getResources().getText(R.string.imggrid_pool).toString();
+						m_title = getResources().getString(R.string.imggrid_pool);
 						if (m_extras.containsKey("title") && !m_extras.getString("title").equals("")) {
 							m_title += " \"" + m_extras.getString("title") + "\"";
 						}
 		    		}
 		    		else if (m_extras.getString("type").equals("photo_search")) {
-						m_title = getResources().getText(R.string.imggrid_allphotos_search_results).toString();
+						m_title = getResources().getString(R.string.imggrid_allphotos_search_results);
 						methodname = "flickr.photos.search";
 						
 			    		if (m_extras.containsKey("text") && !m_extras.getString("text").equals("")) {
