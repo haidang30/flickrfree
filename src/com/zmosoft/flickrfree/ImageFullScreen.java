@@ -322,14 +322,12 @@ public class ImageFullScreen extends Activity {
     
     private void ShowImage() throws JSONException, IOException {
     	String img_url = "";
+
     	if (m_imgsizes.containsKey(ImgSize.MED)) {
     		img_url = m_imgsizes.get(ImgSize.MED);
     	}
     	else if (m_imgsizes.containsKey(ImgSize.SMALL)) {
     		img_url = m_imgsizes.get(ImgSize.SMALL);
-    	}
-    	else {
-    		//TODO: Display an error image to indicate that the image URL cannot be found
     	}
     	
     	if (img_url != "") {
@@ -338,8 +336,16 @@ public class ImageFullScreen extends Activity {
     		setProgress(Window.PROGRESS_START);
     		new GetCachedImageTask().execute(this, (ImageView)findViewById(R.id.imgview), img_url, true);
     	}
-    	
-		if (m_imginfo.has("photo") && m_imginfo.getJSONObject("photo").has("title")) {
+    	else {
+    		// TODO If the image information doesn't exist, it can't load the image, so
+    		// this kicks the user back to the previous page. This is an improvement over
+    		// what it did before, which was to try to load the image forever. However,
+    		// I should probably have it display some sort of error message so the user
+    		// knows that something went wrong.
+    		this.finish();
+    	}
+
+    	if (m_imginfo.has("photo") && m_imginfo.getJSONObject("photo").has("title")) {
     		setTitle("\t" + m_imginfo.getJSONObject("photo").getJSONObject("title").getString("_content"));
     	}
     }
