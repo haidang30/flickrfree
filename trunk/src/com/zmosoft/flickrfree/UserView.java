@@ -181,9 +181,16 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 					else {
 						// TODO Add call to flickr.people.getPublicGroups to get the list of public groups
 						// a user belongs to.
+						m_groups = APICalls.peopleGetPublicGroups(nsid);
 					}
 					if (m_groups != null) {
-						int nGroups = Integer.valueOf(m_groups.getJSONObject("groups").getString("total"));
+						int nGroups;
+						if (m_groups.getJSONObject("groups").has("total")) {
+							nGroups = Integer.valueOf(m_groups.getJSONObject("groups").getString("total"));
+						}
+						else {
+							nGroups = Integer.valueOf(m_groups.getJSONObject("groups").getJSONArray("group").length());
+						}
 						if (nGroups > 0) {
 							nGroups_str = nGroups + " Group";
 							if (nGroups > 1) {

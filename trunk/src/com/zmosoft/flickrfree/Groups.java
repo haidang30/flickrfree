@@ -54,14 +54,19 @@ public class Groups extends ListActivity implements OnItemClickListener {
 				JSONArray grouplist = new JSONArray(m_extras.getString("grouplist"));
 
 				if (grouplist != null) {
-					JSONObject group_obj, group_photos = null;
+					JSONObject group_obj = null;
 					for (int i = 0; i < grouplist.length(); i++) {
 						group_obj = grouplist.getJSONObject(i);
-						if (group_obj != null && group_obj.has("photos") && group_obj.has("id")) {
+						if (group_obj != null && group_obj.has("nsid")) {
 							group_name = group_obj.getString("name");
-							group_id = group_obj.getString("id");
+							group_id = group_obj.getString("nsid");
 							
-							m_group_sizes.put(group_name, group_obj.getString("photos"));
+							if (group_obj.has("photos")) {
+								m_group_sizes.put(group_name, group_obj.getString("photos"));
+							}
+							else {
+								m_group_sizes.put(group_name, "");
+							}
 							m_group_ids.put(group_name, group_id);
 						}
 					}
@@ -77,8 +82,13 @@ public class Groups extends ListActivity implements OnItemClickListener {
 		for (String key : m_group_ids.keySet()) {
 			Map<String, String> m = new HashMap<String, String>();
 			m.put("groupname", key);
-			m.put("nphotos", m_group_sizes.containsKey(key) ? m_group_sizes.get(key) + " "
-				  + getResources().getString(R.string.lblnphotos) : "");
+			if (m_group_sizes.get(key).equals("")) {
+				m.put("nphotos", "");
+			}
+			else {
+				m.put("nphotos", m_group_sizes.containsKey(key) ? m_group_sizes.get(key) + " "
+					  + getResources().getString(R.string.lblnphotos) : "");
+			}
 			setList.add(m);
 		}
 		

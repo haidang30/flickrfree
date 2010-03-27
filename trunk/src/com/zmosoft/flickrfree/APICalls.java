@@ -9,6 +9,10 @@ public class APICalls {
 		return RestClient.CallFunction("flickr.people.getInfo", new String[]{"user_id"}, new String[]{userid});
 	}
 	
+	public static JSONObject peopleGetPublicGroups(String userid) {
+		return RestClient.CallFunction("flickr.people.getPublicGroups", new String[]{"user_id"}, new String[]{userid});
+	}
+	
 	public static JSONObject peopleFindByUsername(String username) {
 		return RestClient.CallFunction("flickr.people.findByUsername", new String[]{"username"}, new String[]{username});
 	}
