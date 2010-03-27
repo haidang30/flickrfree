@@ -1,6 +1,10 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===0.9.7===
+
+ * Users can now look at their groups and other users' (public) groups.
+
 ===0.9.6===
 
  * Users can now comment on photos.
