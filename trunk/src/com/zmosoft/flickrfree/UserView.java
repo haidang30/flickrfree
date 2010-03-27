@@ -41,8 +41,8 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 			try {
 				// Get the user's buddy icon and display it.
 				if (m_userinfo != null) {
-					int iconserver = m_userinfo.getJSONObject("person").getInt("iconserver");
-					int iconfarm = m_userinfo.getJSONObject("person").getInt("iconfarm");
+					int iconserver = JSONParser.getInt(m_userinfo, "person/iconserver");
+					int iconfarm = JSONParser.getInt(m_userinfo, "person/iconfarm");
 					String icon_url = "";
 					if (iconserver > 0 && iconfarm > 0) {
 						icon_url = "http://farm"
@@ -62,7 +62,6 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 						}
 					}
 				}
-			} catch (JSONException e) {
 			} catch (MalformedURLException e) {
 			} catch (IOException e) {
 			} catch (InterruptedException e) {
@@ -88,59 +87,45 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 			
 			// Get the number of photos in the user's photostream and publish that
 			// result to the listview.
-			try {
-				String nPhotos_str = "";
-				if (m_userinfo != null) {
-					int nPhotos = m_userinfo.getJSONObject("person")
-					   .getJSONObject("photos")
-					   .getJSONObject("count")
-					   .getInt("_content");
-					if (nPhotos > 0) {
-						nPhotos_str = nPhotos + " Photo";
-						if (nPhotos > 1) {
-							nPhotos_str += "s";
-						}
+			String nPhotos_str = "";
+			if (m_userinfo != null) {
+				int nPhotos = JSONParser.getInt(m_userinfo, "person/photos/count/_content");
+				if (nPhotos > 0) {
+					nPhotos_str = nPhotos + " Photo";
+					if (nPhotos > 1) {
+						nPhotos_str += "s";
 					}
-					publishProgress(m_actionnames[ACTION_PHOTOSTREAM], nPhotos_str);
 				}
-			} catch (JSONException e) {
+				publishProgress(m_actionnames[ACTION_PHOTOSTREAM], nPhotos_str);
 			}
 			
 			if (!nsid.equals("")) {
 				// Get the number of sets in the user's account and publish that
 				// result to the listview.
-				try {
-					String nSets_str = "";
-					m_photosets = APICalls.photosetsGetList(nsid);
-					if (m_photosets != null) {
-						int nSets = m_photosets.getJSONObject("photosets")
-						   					   .getJSONArray("photoset").length();
-						if (nSets > 0) {
-							nSets_str = nSets + " Set";
-							if (nSets > 1) {
-								nSets_str += "s";
-							}
+				String nSets_str = "";
+				m_photosets = APICalls.photosetsGetList(nsid);
+				if (m_photosets != null) {
+					int nSets = JSONParser.getArray(m_photosets, "photosets/photoset").length();
+					if (nSets > 0) {
+						nSets_str = nSets + " Set";
+						if (nSets > 1) {
+							nSets_str += "s";
 						}
-						publishProgress(m_actionnames[ACTION_SETS], nSets_str);
 					}
-				} catch (JSONException e) {
+					publishProgress(m_actionnames[ACTION_SETS], nSets_str);
 				}
 
-				try {
-					String nCollections_str = "";
-					m_collections = APICalls.collectionsGetTree(nsid);
-					if (m_collections != null) {
-						int nCollections = m_collections.getJSONObject("collections")
-						   .getJSONArray("collection").length();
-						if (nCollections > 0) {
-							nCollections_str = nCollections + " Collection";
-							if (nCollections > 1) {
-								nCollections_str += "s";
-							}
+				String nCollections_str = "";
+				m_collections = APICalls.collectionsGetTree(nsid);
+				if (m_collections != null) {
+					int nCollections = JSONParser.getArray(m_collections, "collections/collection").length();
+					if (nCollections > 0) {
+						nCollections_str = nCollections + " Collection";
+						if (nCollections > 1) {
+							nCollections_str += "s";
 						}
-						publishProgress(m_actionnames[ACTION_COLLECTIONS], nCollections_str);
 					}
-				} catch (JSONException e) {
+					publishProgress(m_actionnames[ACTION_COLLECTIONS], nCollections_str);
 				}
 
 				String nTags_str = "";
@@ -153,24 +138,21 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 				}
 				publishProgress(m_actionnames[ACTION_TAGS], nTags_str);
 
-				try {
-					String nFavorites_str = "";
-					m_favorites = RestClient.CallFunction(GlobalResources.isAppUser(m_activity, nsid) 
-														  ? "flickr.favorites.getList"
-														  : "flickr.favorites.getPublicList",
-														  new String[]{"user_id"},
-														  new String[]{nsid});
-					if (m_favorites != null) {
-						int nFavorites = Integer.valueOf(m_favorites.getJSONObject("photos").getString("total"));
-						if (nFavorites > 0) {
-							nFavorites_str = nFavorites + " Favorite";
-							if (nFavorites > 1) {
-								nFavorites_str += "s";
-							}
+				String nFavorites_str = "";
+				m_favorites = RestClient.CallFunction(GlobalResources.isAppUser(m_activity, nsid) 
+													  ? "flickr.favorites.getList"
+													  : "flickr.favorites.getPublicList",
+													  new String[]{"user_id"},
+													  new String[]{nsid});
+				if (m_favorites != null) {
+					int nFavorites = JSONParser.getInt(m_favorites, "photos/total");
+					if (nFavorites > 0) {
+						nFavorites_str = nFavorites + " Favorite";
+						if (nFavorites > 1) {
+							nFavorites_str += "s";
 						}
-						publishProgress(m_actionnames[ACTION_FAVORITES], nFavorites_str);
 					}
-				} catch (JSONException e) {
+					publishProgress(m_actionnames[ACTION_FAVORITES], nFavorites_str);
 				}
 
 				try {
@@ -179,17 +161,15 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 						m_groups = APICalls.groupsPoolsGetGroups();
 					}
 					else {
-						// TODO Add call to flickr.people.getPublicGroups to get the list of public groups
-						// a user belongs to.
 						m_groups = APICalls.peopleGetPublicGroups(nsid);
 					}
 					if (m_groups != null) {
 						int nGroups;
 						if (m_groups.getJSONObject("groups").has("total")) {
-							nGroups = Integer.valueOf(m_groups.getJSONObject("groups").getString("total"));
+							nGroups = JSONParser.getInt(m_groups, "groups/total");
 						}
 						else {
-							nGroups = Integer.valueOf(m_groups.getJSONObject("groups").getJSONArray("group").length());
+							nGroups = JSONParser.getArray(m_groups, "groups/group").length();
 						}
 						if (nGroups > 0) {
 							nGroups_str = nGroups + " Group";
