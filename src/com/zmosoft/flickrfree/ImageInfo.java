@@ -121,13 +121,18 @@ public class ImageInfo extends Activity implements OnClickListener {
 				// Add the title/value entry pair for this set of information.
 				entry = View.inflate(this, R.layout.image_info_entry, null);
 				((TextView)entry.findViewById(R.id.InfoTitle)).setText(key);
+				if (key.equals(getResources().getString(R.string.imageinfo_owner))) {
+					((Button)entry.findViewById(R.id.btnImageInfo)).setVisibility(View.VISIBLE);
+					((Button)entry.findViewById(R.id.btnImageInfo)).setText(getResources().getString(R.string.btnuserpagelabel));
+					((Button)entry.findViewById(R.id.btnImageInfo)).setOnClickListener(this);
+				}
+				else {
+					((Button)entry.findViewById(R.id.btnImageInfo)).setVisibility(View.GONE);
+					((Button)entry.findViewById(R.id.btnImageInfo)).setText("");
+				}
+				
 				((TextView)entry.findViewById(R.id.InfoValue)).setText(info.get(key));
 				
-				if (key.equals(getResources().getString(R.string.imageinfo_owner))) {
-					((TextView)entry.findViewById(R.id.InfoValue)).setClickable(true);
-					((TextView)entry.findViewById(R.id.InfoValue)).setOnClickListener(this);
-				}
-
 				((LinearLayout)findViewById(R.id.ImgInfoLayout)).addView(entry);
 
 				if (key.equals(getResources().getString(R.string.imageinfo_locationtaken))) {
@@ -146,20 +151,22 @@ public class ImageInfo extends Activity implements OnClickListener {
     
 	@Override
 	public void onClick(View v) {
-		if (v instanceof TextView) {
-			try {
-				String username = m_imginfo.getJSONObject("photo").getJSONObject("owner").getString("username");
-				String nsid = APICalls.getNSIDFromName(username);
-	
-				Intent i = new Intent(this, UserView.class);
-				i.putExtra("nsid", nsid);
+		if (v.getId() == R.id.btnImageInfo) {
+			if (((Button)v).getText().equals(getResources().getString(R.string.btnuserpagelabel))) {
 				try {
-					startActivity(i);
-				} catch (ActivityNotFoundException e) {
+					String username = m_imginfo.getJSONObject("photo").getJSONObject("owner").getString("username");
+					String nsid = APICalls.getNSIDFromName(username);
+		
+					Intent i = new Intent(this, UserView.class);
+					i.putExtra("nsid", nsid);
+					try {
+						startActivity(i);
+					} catch (ActivityNotFoundException e) {
+						e.printStackTrace();
+					}
+				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-			} catch (JSONException e) {
-				e.printStackTrace();
 			}
 		}
 		else if (v.getId() == R.id.ImgInfoMapButton) {
