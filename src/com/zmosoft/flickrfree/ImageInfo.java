@@ -117,32 +117,31 @@ public class ImageInfo extends Activity implements OnClickListener {
 	    	}
 	
 			View entry;
+			Button entry_button;
 			for (String key : info.keySet()) {
 				// Add the title/value entry pair for this set of information.
 				entry = View.inflate(this, R.layout.image_info_entry, null);
-				((TextView)entry.findViewById(R.id.InfoTitle)).setText(key);
+				entry_button = ((Button)entry.findViewById(R.id.btnImageInfo));
+
+				// Set up the button (if there is one) for this entry.
+				entry_button.setOnClickListener(this);
+				entry_button.setVisibility(View.VISIBLE);
 				if (key.equals(getResources().getString(R.string.imageinfo_owner))) {
-					((Button)entry.findViewById(R.id.btnImageInfo)).setVisibility(View.VISIBLE);
-					((Button)entry.findViewById(R.id.btnImageInfo)).setText(getResources().getString(R.string.btnuserpagelabel));
-					((Button)entry.findViewById(R.id.btnImageInfo)).setOnClickListener(this);
+					entry_button.setText(getResources().getString(R.string.btnuserpagelabel));
+				}
+				else if (key.equals(getResources().getString(R.string.imageinfo_locationtaken))) {
+					entry_button.setText(getResources().getString(R.string.btnmap));
 				}
 				else {
-					((Button)entry.findViewById(R.id.btnImageInfo)).setVisibility(View.GONE);
-					((Button)entry.findViewById(R.id.btnImageInfo)).setText("");
+					entry_button.setVisibility(View.GONE);
+					entry_button.setText("");
 				}
 				
+				// Set the content of the title and value for this entry.
+				((TextView)entry.findViewById(R.id.InfoTitle)).setText(key);
 				((TextView)entry.findViewById(R.id.InfoValue)).setText(info.get(key));
 				
 				((LinearLayout)findViewById(R.id.ImgInfoLayout)).addView(entry);
-
-				if (key.equals(getResources().getString(R.string.imageinfo_locationtaken))) {
-					// If this value is a geo location, add a button to take the user to that
-					// location in Google Maps.
-					((LinearLayout)findViewById(R.id.ImgInfoLayout)).addView(View.inflate(this, R.layout.image_info_map_button, null));
-					Button b = ((Button)findViewById(R.id.ImgInfoMapButton));
-					b.setOnClickListener(this);
-					b.setEnabled(false);
-				}
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -168,9 +167,9 @@ public class ImageInfo extends Activity implements OnClickListener {
 					e.printStackTrace();
 				}
 			}
-		}
-		else if (v.getId() == R.id.ImgInfoMapButton) {
-			// TODO Add code to load Google Maps and move to given location.
+			if (((Button)v).getText().equals(getResources().getString(R.string.btnmap))) {
+				// TODO Add code to load Google Maps and move to given location.
+			}
 		}
 	}
 
