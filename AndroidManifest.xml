@@ -60,6 +60,12 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".Groups" android:label="@string/groups">
+            <intent-filter>
+                <action android:name="com.zmosoft.flickrfree.GROUPS" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity android:name=".ImageCollections" android:label="@string/imagecollections">
             <intent-filter>
                 <action android:name="com.zmosoft.flickrfree.IMAGECOLLECTIONS" />
