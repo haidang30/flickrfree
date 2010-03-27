@@ -12,7 +12,7 @@
     <string name="btnok">OK</string>
     <string name="btnsearch">Search</string>
     <string name="btnsendlabel">Send</string>
-
+    <string name="btnuserpagelabel">User Page</string>
     <string name="contactsview">Contacts</string>
 
     <string name="dlg_imgsize_title">Choose Download Size</string>
