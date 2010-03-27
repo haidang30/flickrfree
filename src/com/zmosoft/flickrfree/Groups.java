@@ -85,9 +85,9 @@ public class Groups extends ListActivity implements OnItemClickListener {
         setListAdapter(new SimpleAdapter(
 							this,
 							setList,
-							R.layout.sets_list_item,
+							R.layout.groups_list_item,
 							new String[]{"groupname","nphotos"},
-							new int[]{R.id.SetTitle, R.id.SetNPhotos}));
+							new int[]{R.id.GroupTitle, R.id.GroupNPhotos}));
         getListView().setTextFilterEnabled(true);
         getListView().setOnItemClickListener(this);
 	}
@@ -98,6 +98,7 @@ public class Groups extends ListActivity implements OnItemClickListener {
 			Intent i = new Intent(this, ImageGrid.class);
 			i.putExtra("group_id", m_group_ids.get(groupname));
 			i.putExtra("type", "pool");
+			i.putExtra("title", groupname);
 			i.putExtra("isprivate", m_isprivate);
 			try {
 				startActivity(i);
