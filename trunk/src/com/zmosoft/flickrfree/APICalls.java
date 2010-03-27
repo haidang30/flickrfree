@@ -76,6 +76,14 @@ public class APICalls {
         return RestClient.CallFunction("flickr.groups.getInfo",new String[]{"group_id"},new String[]{groupid});
     }
     
+    public static JSONObject groupsPoolsGetGroups() {
+        return RestClient.CallFunction("flickr.groups.pools.getgroups",null,null);
+    }
+    
+    public static JSONObject groupsPoolsGetPhotos(String groupid) {
+        return RestClient.CallFunction("flickr.groups.pools.getgroups",new String[]{"group_id"}, new String[]{groupid});
+    }
+    
     public static JSONObject groupsSearch(String text, String perpage) {
         return RestClient.CallFunction("flickr.groups.search",new String[]{"text", "per_page"},new String[]{text, perpage});
     }

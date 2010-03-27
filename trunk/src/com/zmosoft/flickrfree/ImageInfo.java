@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -139,7 +140,7 @@ public class ImageInfo extends Activity implements OnClickListener {
 				
 				// Set the content of the title and value for this entry.
 				((TextView)entry.findViewById(R.id.InfoTitle)).setText(key);
-				((TextView)entry.findViewById(R.id.InfoValue)).setText(info.get(key));
+				((TextView)entry.findViewById(R.id.InfoValue)).setText(Html.fromHtml(info.get(key)));
 				
 				((LinearLayout)findViewById(R.id.ImgInfoLayout)).addView(entry);
 			}
@@ -167,7 +168,7 @@ public class ImageInfo extends Activity implements OnClickListener {
 					e.printStackTrace();
 				}
 			}
-			if (((Button)v).getText().equals(getResources().getString(R.string.btnmap))) {
+			else if (((Button)v).getText().equals(getResources().getString(R.string.btnmap))) {
 				// TODO Add code to load Google Maps and move to given location.
 			}
 		}

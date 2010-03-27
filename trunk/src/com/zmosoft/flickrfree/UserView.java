@@ -172,6 +172,28 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 					}
 				} catch (JSONException e) {
 				}
+
+				try {
+					String nGroups_str = "";
+					if (GlobalResources.isAppUser(m_activity, nsid)) {
+						m_groups = APICalls.groupsPoolsGetGroups();
+					}
+					else {
+						// TODO Add call to flickr.people.getPublicGroups to get the list of public groups
+						// a user belongs to.
+					}
+					if (m_groups != null) {
+						int nGroups = Integer.valueOf(m_groups.getJSONObject("groups").getString("total"));
+						if (nGroups > 0) {
+							nGroups_str = nGroups + " Group";
+							if (nGroups > 1) {
+								nGroups_str += "s";
+							}
+						}
+						publishProgress(m_actionnames[ACTION_GROUPS], nGroups_str);
+					}
+				} catch (JSONException e) {
+				}
 			}
 
 			return null;
@@ -186,11 +208,7 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 				ListView listview = (ListView)findViewById(R.id.UserListView);
 				HashMap <String, String> m = new HashMap<String, String>();
 				if (m_extrainfomap.containsKey(action)) {
-					if (info.equals("")) {
-						listview.getChildAt(m_extrainfomap.get(action)).setEnabled(false);
-					}
-					else {
-						listview.getChildAt(m_extrainfomap.get(action)).setEnabled(true);
+					if (!info.equals("")) {
 						m = new HashMap<String, String>();
 						m.put("action_name", action);
 						m.put("extra_info", info);
@@ -300,6 +318,7 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
         m_extrainfotask = null;
         m_photosets = null;
         m_favorites = null;
+        m_groups = null;
         
 		m_actionnames = getResources().getStringArray(R.array.main_user_view_list);
     	
@@ -488,7 +507,6 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 			startActivity(i);
 		}
 		else if (command.equals(m_actionnames[ACTION_COLLECTIONS])) {
-			//TODO: This is borken right now. Fix it.
 			Intent i = new Intent(this, ImageCollections.class);
 			i.putExtra("nsid", m_extras.getString("nsid"));
 			if (m_extrainfotask != null && m_extrainfotask.getStatus() != AsyncTask.Status.FINISHED) {
@@ -531,6 +549,22 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 				e.printStackTrace();
 			}
 		}
+		else if (command.equals(m_actionnames[ACTION_GROUPS])) {
+			Intent i = new Intent(this, Groups.class);
+			try {
+				i.putExtra("grouplist", m_groups.getJSONObject("groups").getJSONArray("group").toString());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (m_extrainfotask != null && m_extrainfotask.getStatus() != AsyncTask.Status.FINISHED) {
+				m_extrainfotask.cancel(true);
+				while (!m_extrainfotask.isCancelled()) {
+					GlobalResources.sleep(50);
+				}
+			}
+			startActivity(i);
+		}
 		else if (command.equals(m_actionnames[ACTION_CONTACTS])) {
 			Intent i = new Intent(this, ContactsView.class);
 			i.putExtra("nsid", getSharedPreferences("Auth",0).getString("nsid", ""));
@@ -565,8 +599,9 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
     static final int ACTION_COLLECTIONS = 3;
     static final int ACTION_TAGS = 4;
     static final int ACTION_FAVORITES = 5;
-    static final int ACTION_CONTACTS = 6;
-    static final int ACTION_SEARCH = 7;
+    static final int ACTION_GROUPS = 6;
+    static final int ACTION_CONTACTS = 7;
+    static final int ACTION_SEARCH = 8;
     
 	Bundle m_extras;
 	Activity m_activity = this;
@@ -580,4 +615,5 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 	JSONObject m_photosets;
 	JSONObject m_collections;
 	JSONObject m_favorites;
+	JSONObject m_groups;
 }

@@ -33,6 +33,7 @@
     <string name="imageinfo_owner_location">Location</string>
     <string name="imageinfo_tags">Photo Tags</string>
     <string name="imagesets">Photosets</string>
+    <string name="groups">Groups</string>
     <string name="imgfullscreen">View Photo</string>
     <string name="imggrid_allphotos_search_results">Search Results</string>
     <string name="imggrid_favorites">Favorites of</string>

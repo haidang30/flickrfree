@@ -20,7 +20,7 @@
 		<TextView
 			android:text="@string/lblvalue"
 			android:id="@+id/InfoValue"
-			android:autoLink="all"
+			android:autoLink="none"
 			android:textSize="18sp"
 			android:background="#000000"
 			android:textColor="#FFFFFF"
