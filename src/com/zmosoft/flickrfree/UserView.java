@@ -118,7 +118,10 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 				String nCollections_str = "";
 				m_collections = APICalls.collectionsGetTree(nsid);
 				if (m_collections != null) {
-					int nCollections = JSONParser.getArray(m_collections, "collections/collection").length();
+					JSONArray collections_list = JSONParser.getArray(m_collections, "collections/collection");
+					int nCollections = collections_list != null
+					                   ? collections_list.length()
+					                   : 0;
 					if (nCollections > 0) {
 						nCollections_str = nCollections + " Collection";
 						if (nCollections > 1) {
