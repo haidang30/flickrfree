@@ -60,16 +60,16 @@ public class ContactsView extends ListActivity implements OnItemClickListener {
 			paramNames = new String[]{"user_id"};
 			paramVals = new String[]{m_nsid};
 		}
-		JSONObject json_obj = RestClient.CallFunction(methodName,paramNames,paramVals);
-		if (json_obj.has("contacts")) {
-				JSONArray contactslist = json_obj.getJSONObject("contacts").getJSONArray("contact");
-				JSONObject set_obj;
-				for (int i = 0; i < contactslist.length(); i++) {
-					set_obj = contactslist.getJSONObject(i);
-					if (set_obj.has("username") && set_obj.has("nsid")) {
-						m_contactsmap.put(set_obj.getString("username"), set_obj.getString("nsid"));
-					}
-				}
+		JSONArray contactslist = JSONParser.getArray(RestClient.CallFunction(methodName,paramNames,paramVals),
+													 "contacts/contact");
+		JSONObject set_obj;
+		for (int i = 0; contactslist != null && i < contactslist.length(); i++) {
+			set_obj = contactslist.getJSONObject(i);
+			String username = JSONParser.getString(set_obj, "username");
+			String nsid = JSONParser.getString(set_obj, "nsid");
+			if (username != null && nsid != null) {
+				m_contactsmap.put(username, nsid);
+			}
 		}
 	}
 	
