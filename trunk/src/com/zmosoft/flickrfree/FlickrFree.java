@@ -1,7 +1,6 @@
 package com.zmosoft.flickrfree;
 
 import android.os.Bundle;
-import android.os.Environment;
 
 // This is the main class for the application. It is an extension of the UserView
 // class, so when this is loaded the app will show the UserView screen.
@@ -10,9 +9,6 @@ public class FlickrFree extends UserView {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        // Get the image download directory.
-        GlobalResources.m_imgDownloadDir = Environment.getExternalStorageDirectory().toString() + "/download";
         
         // TODO I have a serious problem here. It seems that if the app force closes
         // at any point, when it reloads, the API key information is wiped out. I
