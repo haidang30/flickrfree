@@ -35,11 +35,11 @@ public class JSONParser {
 
 	public static JSONArray getArray(JSONObject obj, String path) {
 		JSONArray r_obj = null;
-		String partial_path = path.substring(0,path.lastIndexOf("/"));
+		String partial_path = path.contains("/") ? path.substring(0,path.lastIndexOf("/")) : "";
 		String array_name = path.substring(path.lastIndexOf("/") + 1);
 
 		try {
-			JSONObject json_obj = getObject(obj, partial_path);
+			JSONObject json_obj = partial_path.equals("") ? obj : getObject(obj, partial_path);
 			if (json_obj != null && json_obj.has(array_name)) {
 				r_obj = json_obj.getJSONArray(array_name);
 			}
@@ -53,11 +53,11 @@ public class JSONParser {
 
 	public static String getString(JSONObject obj, String path) {
 		String r_str = null;
-		String partial_path = path.substring(0,path.lastIndexOf("/"));
+		String partial_path = path.contains("/") ? path.substring(0,path.lastIndexOf("/")) : "";
 		String string_name = path.substring(path.lastIndexOf("/") + 1);
 
 		try {
-			JSONObject json_obj = getObject(obj, partial_path);
+			JSONObject json_obj = partial_path.equals("") ? obj : getObject(obj, partial_path);
 			if (json_obj != null && json_obj.has(string_name)) {
 				r_str = json_obj.getString(string_name);
 			}
@@ -71,11 +71,11 @@ public class JSONParser {
 
 	public static Integer getInt(JSONObject obj, String path) {
 		Integer r_int = 0;
-		String partial_path = path.substring(0,path.lastIndexOf("/"));
+		String partial_path = path.contains("/") ? path.substring(0,path.lastIndexOf("/")) : "";
 		String string_name = path.substring(path.lastIndexOf("/") + 1);
 
 		try {
-			JSONObject json_obj = getObject(obj, partial_path);
+			JSONObject json_obj = partial_path.equals("") ? obj : getObject(obj, partial_path);
 			if (json_obj != null && json_obj.has(string_name)) {
 				r_int = json_obj.getInt(string_name);
 			}
