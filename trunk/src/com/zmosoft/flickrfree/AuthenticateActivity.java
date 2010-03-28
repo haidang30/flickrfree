@@ -127,8 +127,8 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 				// Check that authentication was successful
 				if (json_obj.getString("stat").equals("ok")) {
 					// Retrieve the username and fullname from the object.
-					String username = json_obj.getJSONObject("auth").getJSONObject("user").getString("username");
-					String fullname = json_obj.getJSONObject("auth").getJSONObject("user").getString("fullname");
+					String username = JSONParser.getString(json_obj, "auth/user/username");
+					String fullname = JSONParser.getString(json_obj, "auth/user/fullname");
 					
 					// Get the "Auth" Shared preferences object to save authentication information
 					auth_prefs = getSharedPreferences("Auth",0);
@@ -138,9 +138,9 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 					
 					// Save all of the current authentication information. This will be the default account
 					// the next time the app is started.
-					auth_prefs_editor.putString("full_token", json_obj.getJSONObject("auth").getJSONObject("token").getString("_content"));
-					auth_prefs_editor.putString("perms", json_obj.getJSONObject("auth").getJSONObject("perms").getString("_content"));
-					auth_prefs_editor.putString("nsid", json_obj.getJSONObject("auth").getJSONObject("user").getString("nsid"));
+					auth_prefs_editor.putString("full_token", JSONParser.getString(json_obj, "auth/token/_content"));
+					auth_prefs_editor.putString("perms", JSONParser.getString(json_obj, "auth/perms/_content"));
+					auth_prefs_editor.putString("nsid", JSONParser.getString(json_obj, "auth/user/nsid"));
 					auth_prefs_editor.putString("username", username);
 					auth_prefs_editor.putString("realname", fullname);
 					auth_prefs_editor.putString("displayname", fullname.equals("") ? username : fullname + " (" + username + ")");
@@ -181,9 +181,9 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 
 				// Save all of the current authentication information. This will be the default account
 				// the next time the app is started.
-				prefs_editor.putString("full_token", user_obj.getJSONObject("auth").getJSONObject("token").getString("_content"));
-				prefs_editor.putString("perms", user_obj.getJSONObject("auth").getJSONObject("perms").getString("_content"));
-				prefs_editor.putString("nsid", user_obj.getJSONObject("auth").getJSONObject("user").getString("nsid"));
+				prefs_editor.putString("full_token", JSONParser.getString(user_obj, "auth/token/_content"));
+				prefs_editor.putString("perms", JSONParser.getString(user_obj, "auth/perms/_content"));
+				prefs_editor.putString("nsid", JSONParser.getString(user_obj, "auth/user/nsid"));
 				prefs_editor.putString("username", username);
 				prefs_editor.putString("realname", fullname);
 				prefs_editor.putString("displayname", fullname.equals("") ? username : fullname + " (" + username + ")");
