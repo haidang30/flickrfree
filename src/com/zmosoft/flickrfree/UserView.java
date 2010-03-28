@@ -105,7 +105,10 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 				String nSets_str = "";
 				m_photosets = APICalls.photosetsGetList(nsid);
 				if (m_photosets != null) {
-					int nSets = JSONParser.getArray(m_photosets, "photosets/photoset").length();
+					JSONArray sets_arr = JSONParser.getArray(m_photosets, "photosets/photoset");
+					int nSets = sets_arr != null
+					            ? sets_arr.length()
+					            : 0;
 					if (nSets > 0) {
 						nSets_str = nSets + " Set";
 						if (nSets > 1) {
@@ -172,7 +175,10 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 							nGroups = JSONParser.getInt(m_groups, "groups/total");
 						}
 						else {
-							nGroups = JSONParser.getArray(m_groups, "groups/group").length();
+							JSONArray groups_arr = JSONParser.getArray(m_groups, "groups/group");
+							nGroups = groups_arr != null
+							          ? groups_arr.length()
+							          : 0;
 						}
 						if (nGroups > 0) {
 							nGroups_str = nGroups + " Group";
