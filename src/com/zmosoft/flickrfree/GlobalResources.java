@@ -16,6 +16,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Window;
 
@@ -25,7 +26,6 @@ public class GlobalResources {
     public static String m_secret = "";
     public static String m_AUTHURL = "";
     public static String m_fulltoken = "";
-    public static String m_imgDownloadDir = "";
     
 	public static int API_DELAY_MS = 1000;
 	public static int ERROR_DELAY_MS = 1000;
@@ -150,6 +150,13 @@ public class GlobalResources {
 		return img_url;
     }
 
+    public static void downloadImage(String url, String filename, Activity callingActivity, boolean show_progress) throws MalformedURLException, IOException {
+    	String dlpath = GetDownloadDir();
+    	if (!dlpath.equals("")) {
+    		downloadImage(url, filename, dlpath, callingActivity, show_progress);
+    	}
+    }
+    
     public static void downloadImage(String url, String filename, String dlpath, Activity callingActivity, boolean show_progress) throws MalformedURLException, IOException {
     	if (filename.equals("")) {
     		filename = url.substring(url.lastIndexOf("/") + 1);
@@ -198,13 +205,61 @@ public class GlobalResources {
 		imgfile.close();
     }
 
+    public static boolean CheckDir(String dir_name) {
+    	boolean result = false;
+    	
+        if (dir_name != null && dir_name != "") {
+    		File Dir = new File(dir_name);
+    		if (Dir.exists() || Dir.mkdir()) {
+    			result = true;
+    		}
+        }
+        
+        return result;
+    }
+    
+    public static String GetAppDir() {
+        // Check for the app directory. If it doesn't exist, create it.
+        String app_dir = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)
+        ? Environment.getExternalStorageDirectory().toString() + "/FlickrFree/"
+        : "";
+        
+        return CheckDir(app_dir) ? app_dir : "";
+    }
+    
+    public static String GetCacheDir(Activity callingActivity) {
+    	String app_dir = GetAppDir();
+    	
+    	// If the app directory can be found, set the cache directory to be the subdirectory
+    	// "cache" in the app directory. If not, it will be the default Android cache
+    	// location for this app.
+        String cache_dir = (app_dir == null) || app_dir.equals("")
+                           ? callingActivity.getCacheDir().getAbsolutePath()
+        		           : app_dir + "cache";
+
+        return CheckDir(cache_dir) ? cache_dir : "";
+    }
+    
+    public static String GetDownloadDir() {
+    	String app_dir = GetAppDir();
+    	
+    	// If the app directory can be found, set the cache directory to be the subdirectory
+    	// "download" in the app directory. If not, there is no download path -- files cannot
+    	// be downloaded.
+        String dl_dir = (app_dir == null) || app_dir.equals("")
+				        ? ""
+				        : app_dir + "download";
+
+        return CheckDir(dl_dir) ? dl_dir : "";
+    }
+    
     public static String CachedImageFilename(String url) {
 		return (url.replaceAll(":", "").replace("/", ""));
     }
     
     public static boolean CacheImage(String url, Activity callingActivity, boolean show_progress) throws MalformedURLException, IOException, InterruptedException {
 		String filename = CachedImageFilename(url);
-		String cachedir = callingActivity.getCacheDir().getAbsolutePath();
+		String cachedir = GetCacheDir(callingActivity);
 		File img_cache = new File(cachedir + "/" + filename);
 		
 		// Check to see if a cached image with this name already exists. If not, then
@@ -222,7 +277,7 @@ public class GlobalResources {
     
     public static Bitmap GetCachedImage(String url, Activity callingActivity) throws MalformedURLException, IOException, InterruptedException {
     	Bitmap b = null;
-		File img_cache = new File(callingActivity.getCacheDir().getAbsolutePath()
+		File img_cache = new File(GetCacheDir(callingActivity)
 									+ "/" + CachedImageFilename(url));
 		
 		if (img_cache.exists()) {

@@ -267,7 +267,7 @@ public class ImageFullScreen extends Activity {
 
 						try {
 							String url = m_imgsizes.get(size_chosen);
-							GlobalResources.downloadImage(url, "", GlobalResources.m_imgDownloadDir, null, false);
+							GlobalResources.downloadImage(url, "", null, false);
 							dialog.dismiss();
 						} catch (MalformedURLException e) {
 							e.printStackTrace();
