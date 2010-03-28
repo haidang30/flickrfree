@@ -13,7 +13,7 @@ public class JSONParser {
 		
 		try {
 			for (int i = 0; i < path_arr.length; ++i) {
-				if (!obj.has(path_arr[i])) {
+				if (obj == null || !obj.has(path_arr[i])) {
 					// Something is wrong with the path, or the object
 					// requested does not exist.
 					break;
