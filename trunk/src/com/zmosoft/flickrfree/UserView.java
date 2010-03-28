@@ -263,16 +263,13 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 
 	    private String GetTags(String nsid) throws JSONException {
 			String tags_str = "";
-			JSONObject tag_obj = APICalls.tagsGetListUser(nsid);
-			if (tag_obj.has("who")) {
-				JSONArray tag_arr = tag_obj.getJSONObject("who").getJSONObject("tags").getJSONArray("tag");
-				for (int i = 0; i < tag_arr.length(); i++) {
-					tags_str = tags_str + tag_arr.getJSONObject(i).getString("_content");
-					if (i < tag_arr.length() - 1) {
-						tags_str = tags_str + " ";
-					}
+			JSONArray tag_arr = JSONParser.getArray(APICalls.tagsGetListUser(nsid), "who/tags/tag");
+			for (int i = 0; i < tag_arr.length(); i++) {
+				tags_str = tags_str + tag_arr.getJSONObject(i).getString("_content");
+				if (i < tag_arr.length() - 1) {
+					tags_str = tags_str + " ";
 				}
-	    	}
+			}
 	    	return tags_str;
 	    }
 	}
@@ -360,8 +357,8 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 		String location = "";
 		JSONObject userinfo = new JSONObject();
 		int array_resource = R.array.no_user_view_list;
-		if (m_userinfo.has("stat") && m_userinfo.getString("stat").equals("ok")) {
-			userinfo = m_userinfo.getJSONObject("person");
+		if (JSONParser.getString(m_userinfo, "stat").equals("ok")) {
+			userinfo = JSONParser.getObject(m_userinfo, "person");
 			nsid = userinfo.getString("nsid");
 		}
 		
@@ -372,10 +369,8 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
     		m_usertype  = GlobalResources.isAppUser(this,nsid)
     					? UsrType.APPUSER
     					: UsrType.OTHERUSER;
-        	username = userinfo.getJSONObject("username").getString("_content");
-        	if (userinfo.has("location")) {
-            	location = userinfo.getJSONObject("location").getString("_content");
-        	}
+    		username = JSONParser.getString(userinfo, "username/_content");
+       		location = JSONParser.getString(userinfo, "location/_content");
     	}
 
 //		LinearLayout cl = (LinearLayout)findViewById(R.id.LayoutContact);
@@ -479,11 +474,7 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 			}
 			else {
 				i.putExtra("type","by_setlist");
-				try {
-					i.putExtra("setlist", m_photosets.getJSONObject("photosets").getJSONArray("photoset").toString());
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
+				i.putExtra("setlist", JSONParser.getString(m_photosets, "photosets/photoset"));
 			}
 			if (m_extrainfotask != null && m_extrainfotask.getStatus() != AsyncTask.Status.FINISHED) {
 				m_extrainfotask.cancel(true);
@@ -538,12 +529,7 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 		}
 		else if (command.equals(m_actionnames[ACTION_GROUPS])) {
 			Intent i = new Intent(this, Groups.class);
-			try {
-				i.putExtra("grouplist", m_groups.getJSONObject("groups").getJSONArray("group").toString());
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			i.putExtra("grouplist", JSONParser.getString(m_groups, "groups/group"));
 			if (m_extrainfotask != null && m_extrainfotask.getStatus() != AsyncTask.Status.FINISHED) {
 				m_extrainfotask.cancel(true);
 				while (!m_extrainfotask.isCancelled()) {
