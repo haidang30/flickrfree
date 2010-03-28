@@ -267,7 +267,7 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 	    private String GetTags(String nsid) throws JSONException {
 			String tags_str = "";
 			JSONArray tag_arr = JSONParser.getArray(APICalls.tagsGetListUser(nsid), "who/tags/tag");
-			for (int i = 0; i < tag_arr.length(); i++) {
+			for (int i = 0; tag_arr != null && i < tag_arr.length(); i++) {
 				tags_str = tags_str + tag_arr.getJSONObject(i).getString("_content");
 				if (i < tag_arr.length() - 1) {
 					tags_str = tags_str + " ";
