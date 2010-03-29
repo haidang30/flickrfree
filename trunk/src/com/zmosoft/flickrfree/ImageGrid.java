@@ -290,8 +290,8 @@ public class ImageGrid extends Activity implements OnItemClickListener, OnClickL
 	    		}
 	    		
 	    		if (json_obj != null) {
-					m_imglist = json_obj.getJSONObject(obj_toplevel_key).getJSONArray("photo");
-					nPics = json_obj.getJSONObject(obj_toplevel_key).getInt("total");
+	    			m_imglist = JSONParser.getArray(json_obj, obj_toplevel_key + "/photo");
+	    			nPics = JSONParser.getInt(json_obj, obj_toplevel_key + "/total");
 	    		}
 	    	}
 
