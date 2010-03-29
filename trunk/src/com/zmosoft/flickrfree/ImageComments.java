@@ -60,33 +60,34 @@ public class ImageComments extends Activity implements OnClickListener {
     private void FillCommentList(int start) {
     	try {
 			LinkedHashMap<String,String> comments = new LinkedHashMap<String,String>();
-			boolean overflow = false;
-			int end = 0;
-			JSONArray comment_arr = new JSONArray();
-			
-			if (m_comment_list.has("comments") && m_comment_list.getJSONObject("comments").has("comment")) {
-				JSONObject comment_obj;
+			JSONArray comment_arr = JSONParser.getArray(m_comment_list, "comments/comment");
+			int end = (comment_arr == null) ? 0 : start + m_comments_per_page;
+			boolean overflow = comment_arr != null && comment_arr.length() > end;
 
-				comment_arr = m_comment_list.getJSONObject("comments").getJSONArray("comment");
-				end = start + m_comments_per_page;
-				overflow = comment_arr.length() > end;
-				if (!overflow) {
-					end = comment_arr.length();
-				}
-				
-				for (int i = start; i < end; i++) {
-					comment_obj = null;
-					comment_obj = comment_arr.getJSONObject(i);
-					if (comment_obj != null
-						&& comment_obj.has("authorname")
-						&& comment_obj.has("_content")) {
-						comments.put(comment_obj.getString("authorname"), comment_obj.getString("_content"));
-					}
+			if (!overflow) {
+				end = comment_arr.length();
+			}
+			
+			JSONObject comment_obj;
+			for (int i = start; i < end; i++) {
+				comment_obj = null;
+				comment_obj = comment_arr.getJSONObject(i);
+				String author_name = JSONParser.getString(comment_obj, "authorname");
+				String comment = JSONParser.getString(comment_obj, "_content");
+				if (author_name != null && comment != null) {
+					comments.put(author_name, comment);
 				}
 			}
 
-			((TextView)findViewById(R.id.ImgCommentCount)).setText(getResources().getString(R.string.lblwordcomments) + " " + (start+1)
-				+ " - " + end + " " + getResources().getString(R.string.lblwordof) + " " + String.valueOf(comment_arr.length()));
+			((TextView)findViewById(R.id.ImgCommentCount)).setText(getResources().getString(R.string.lblwordcomments)
+					                                               + " "
+					                                               + (start+1)
+					                                               + " - "
+					                                               + end
+					                                               + " "
+					                                               + getResources().getString(R.string.lblwordof)
+					                                               + " "
+					                                               + String.valueOf(comment_arr.length()));
 
 			CommentLayout entry;
 			String comment;
