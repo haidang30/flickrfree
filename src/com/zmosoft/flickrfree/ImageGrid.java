@@ -9,7 +9,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -114,7 +117,7 @@ public class ImageGrid extends Activity implements OnItemClickListener, OnClickL
 	    		e.printStackTrace();
 	    	}
 			
-			return null;
+    		return null;
 		}
 		
 		@Override
@@ -126,6 +129,9 @@ public class ImageGrid extends Activity implements OnItemClickListener, OnClickL
 		@Override
 		protected void onPostExecute(Object result) {
 	    	UpdateGrid(m_currentPage);
+	    	if (m_fail_msg != null) {
+	    		showDialog(DIALOG_ERR);
+	    	}
 	    	setProgressBarVisibility(false);
 	    	setProgressBarIndeterminateVisibility(false);
 		}
@@ -203,6 +209,7 @@ public class ImageGrid extends Activity implements OnItemClickListener, OnClickL
 
     private void GetImageList(int perPage, int page, boolean newload) throws JSONException {
     	String displayname = "";
+    	m_fail_msg = null;
     	int nPics = -1;
     	SharedPreferences auth_prefs = getSharedPreferences("Auth",0);
     	
@@ -290,11 +297,19 @@ public class ImageGrid extends Activity implements OnItemClickListener, OnClickL
 	    		}
 	    		
 	    		if (json_obj != null) {
-	    			m_imglist = JSONParser.getArray(json_obj, obj_toplevel_key + "/photo");
-	    			if (m_imglist == null) {
-	    				m_imglist = new JSONArray();
+	    			if (JSONParser.getString(json_obj, "stat").equals("fail")) {
+	    				m_fail_msg = JSONParser.getString(json_obj, "message");
+	    				if (m_fail_msg == null) {
+	    					m_fail_msg = "Unknown Error while reading pool";
+	    				}
 	    			}
-	    			nPics = JSONParser.getInt(json_obj, obj_toplevel_key + "/total");
+	    			else {
+		    			m_imglist = JSONParser.getArray(json_obj, obj_toplevel_key + "/photo");
+		    			if (m_imglist == null) {
+		    				m_imglist = new JSONArray();
+		    			}
+		    			nPics = JSONParser.getInt(json_obj, obj_toplevel_key + "/total");
+	    			}
 	    		}
 	    	}
 
@@ -320,6 +335,27 @@ public class ImageGrid extends Activity implements OnItemClickListener, OnClickL
         m_getthumbnailstask.execute(this);
 
     	setTitle(m_title);
+    }
+    
+    protected Dialog onCreateDialog(int id) {
+		Dialog err_dialog = null;
+		
+    	switch(id) {
+    	case DIALOG_ERR:
+
+    		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(m_fail_msg)
+		           .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+		                             public void onClick(DialogInterface dialog, int id) {
+		                            	 m_fail_msg = null;
+		                                 ImageGrid.this.finish();
+		                             }
+		            });
+			err_dialog = builder.create();
+			break;
+    	}
+
+		return err_dialog;
     }
     
 	@Override
@@ -416,6 +452,7 @@ public class ImageGrid extends Activity implements OnItemClickListener, OnClickL
 	GetThumbnailsTask m_getthumbnailstask;
 	Bundle m_extras;
 	String m_title;
+	String m_fail_msg;
 	int m_currentPage;
 	int m_numPages;
 	boolean m_newload;
@@ -424,4 +461,6 @@ public class ImageGrid extends Activity implements OnItemClickListener, OnClickL
 	static final int HEADER_MODE_PAGER = 1;
 	static final int HEADER_MODE_SETPAGE = 2;
     static final int MENU_REFRESH = 3;
+    
+    static final int DIALOG_ERR = 3;
 }
