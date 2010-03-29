@@ -41,7 +41,7 @@ public class ImageGrid extends Activity implements OnItemClickListener, OnClickL
 			}
 			Activity activity = (Activity)params[0];
 			m_adapter = (ImageAdapter)((GridView)activity.findViewById(R.id.gridview)).getAdapter();
-	        if (m_imglist.length() <= GlobalResources.IMGS_PER_PAGE) {
+	        if (m_imglist != null && m_imglist.length() <= GlobalResources.IMGS_PER_PAGE) {
 	        	m_size = m_imglist.length();
 	        }
 	        else {
@@ -291,6 +291,9 @@ public class ImageGrid extends Activity implements OnItemClickListener, OnClickL
 	    		
 	    		if (json_obj != null) {
 	    			m_imglist = JSONParser.getArray(json_obj, obj_toplevel_key + "/photo");
+	    			if (m_imglist == null) {
+	    				m_imglist = new JSONArray();
+	    			}
 	    			nPics = JSONParser.getInt(json_obj, obj_toplevel_key + "/total");
 	    		}
 	    	}
