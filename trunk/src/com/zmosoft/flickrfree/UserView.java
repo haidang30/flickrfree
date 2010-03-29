@@ -38,33 +38,25 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 			// be an empty string, indicating no user.
 			String nsid = m_extras.containsKey("nsid") ? m_extras.getString("nsid") : "";
 
+			// Get the user's buddy icon and display it.
+			String icon_url = GlobalResources.GetBuddyIcon(m_userinfo);
+			
 			try {
-				// Get the user's buddy icon and display it.
-				if (m_userinfo != null) {
-					int iconserver = JSONParser.getInt(m_userinfo, "person/iconserver");
-					int iconfarm = JSONParser.getInt(m_userinfo, "person/iconfarm");
-					String icon_url = "";
-					if (iconserver > 0 && iconfarm > 0) {
-						icon_url = "http://farm"
-									+ iconfarm
-									+ ".static.flickr.com/"
-									+ iconserver + "/buddyicons/"
-									+ nsid + ".jpg";
-					}
-					else {
-						icon_url = "http://www.flickr.com/images/buddyicon.jpg";
-					}
-					
-					if (icon_url != "" && GlobalResources.CacheImage(icon_url, m_activity, false)) {
-						Bitmap buddyicon = GlobalResources.GetCachedImage(icon_url, m_activity);
-						if (buddyicon != null) {
-							publishProgress(buddyicon);
-						}
+				if (icon_url != "" && GlobalResources.CacheImage(icon_url, m_activity, false)) {
+					Bitmap buddyicon = GlobalResources.GetCachedImage(icon_url, m_activity);
+					if (buddyicon != null) {
+						publishProgress(buddyicon);
 					}
 				}
-			} catch (MalformedURLException e) {
-			} catch (IOException e) {
-			} catch (InterruptedException e) {
+			} catch (MalformedURLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 			
 			// Get the number of accounts and publish that result to the listview.
