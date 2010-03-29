@@ -12,6 +12,8 @@ import java.text.DecimalFormat;
 import java.util.Map;
 
 import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -287,6 +289,30 @@ public class GlobalResources {
     	return b;
     }
     
+    public static String GetBuddyIcon(String nsid) {
+    	return GetBuddyIcon(APICalls.peopleGetInfo(nsid));
+    }
+    
+    public static String GetBuddyIcon(JSONObject userinfo) {
+		int iconserver = JSONParser.getInt(userinfo, "person/iconserver");
+		int iconfarm = JSONParser.getInt(userinfo, "person/iconfarm");
+		String nsid = JSONParser.getString(userinfo, "person/nsid");
+		String icon_url = "";
+		
+		if (iconserver > 0 && iconfarm > 0) {
+			icon_url = "http://farm"
+						+ iconfarm
+						+ ".static.flickr.com/"
+						+ iconserver + "/buddyicons/"
+						+ nsid + ".jpg";
+		}
+		else {
+			icon_url = "http://www.flickr.com/images/buddyicon.jpg";
+		}
+		
+		return icon_url;
+    }    
+
     public static double LatLongToDecimal(String val) {
     	double deg, min, sec;
     	String[] string_arr;
