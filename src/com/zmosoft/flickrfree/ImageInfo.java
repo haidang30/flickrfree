@@ -1,5 +1,7 @@
 package com.zmosoft.flickrfree;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -10,11 +12,13 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -105,24 +109,38 @@ public class ImageInfo extends Activity implements OnClickListener {
 			}
 	
 			View entry;
-			Button entry_button;
+			ImageButton entry_button;
 			for (String key : info.keySet()) {
 				// Add the title/value entry pair for this set of information.
 				entry = View.inflate(this, R.layout.image_info_entry, null);
-				entry_button = ((Button)entry.findViewById(R.id.btnImageInfo));
+				entry_button = ((ImageButton)entry.findViewById(R.id.btnImageInfo));
 
 				// Set up the button (if there is one) for this entry.
 				entry_button.setOnClickListener(this);
 				entry_button.setVisibility(View.VISIBLE);
 				if (key.equals(getResources().getString(R.string.imageinfo_owner))) {
-					entry_button.setText(getResources().getString(R.string.btnuserpagelabel));
+					String nsid = JSONParser.getString(owner, "nsid");
+					String icon_url = GlobalResources.GetBuddyIcon(nsid);
+					try {
+						if (icon_url != "" && GlobalResources.CacheImage(icon_url, this, false)) {
+							Bitmap buddyicon = GlobalResources.GetCachedImage(icon_url, this);
+							entry_button.setImageBitmap(buddyicon);
+							entry_button.setTag("user_page");
+						}
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 				else if (key.equals(getResources().getString(R.string.imageinfo_locationtaken))) {
-					entry_button.setText(getResources().getString(R.string.btnmap));
+					// TODO Set the button image to the Maps icon.
+					entry_button.setTag("map");
 				}
 				else {
 					entry_button.setVisibility(View.GONE);
-					entry_button.setText("");
 				}
 				
 				// Set the content of the title and value for this entry.
@@ -139,7 +157,7 @@ public class ImageInfo extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.btnImageInfo) {
-			if (((Button)v).getText().equals(getResources().getString(R.string.btnuserpagelabel))) {
+			if (((ImageButton)v).getTag().equals("user_page")) {
 				try {
 					String username = JSONParser.getString(m_imginfo, "photo/owner/username");
 					String nsid = APICalls.getNSIDFromName(username);
