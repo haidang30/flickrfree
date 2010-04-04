@@ -1,6 +1,10 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===0.9.7.2===
+
+ * Added some code to provide more useful information and some help if user authentication fails.
+
 ===0.9.7.1===
 
  * Code cleanup
