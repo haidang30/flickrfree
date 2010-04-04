@@ -179,15 +179,17 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
     protected Dialog onCreateDialog(int id) {
 		Dialog err_dialog = null;
 		
+		AlertDialog.Builder builder;
     	switch(id) {
     	case DIALOG_ERR:
-    		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    		builder = new AlertDialog.Builder(this);
 			builder.setMessage(m_fail_msg)
 			       .setTitle(R.string.ttlerror)
 			       .setIcon(android.R.drawable.ic_dialog_alert)
 		           .setPositiveButton("Help", new DialogInterface.OnClickListener() {
 		                             public void onClick(DialogInterface dialog, int id) {
 		                            	 m_fail_msg = "";
+		                            	 showDialog(DIALOG_HELP);
 		                             }
 		            })
 		           .setNegativeButton("Close", new DialogInterface.OnClickListener() {
@@ -198,6 +200,24 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 		            });
 			err_dialog = builder.create();
 			break;
+    	case DIALOG_HELP:
+    		builder = new AlertDialog.Builder(this);
+			builder.setMessage(R.string.msgauthhelp)
+			       .setTitle(R.string.ttlhelp)
+			       .setIcon(android.R.drawable.ic_dialog_info)
+		           .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		                             public void onClick(DialogInterface dialog, int id) {
+		                            	 startActivity(new Intent(Intent.ACTION_VIEW,
+		                         				Uri.parse(GlobalResources.m_EDITPERMS_URL)));
+		                             }
+		            })
+		           .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		                             public void onClick(DialogInterface dialog, int id) {
+		                            	 AuthenticateActivity.this.finish();
+		                             }
+		            });
+			err_dialog = builder.create();
+    		break;
     	}
 
 		return err_dialog;
@@ -303,5 +323,6 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 
 	String m_fail_msg;
 	
-    static final int DIALOG_ERR = 3;
+    static final int DIALOG_ERR = 1;
+    static final int DIALOG_HELP = 2;
 }
