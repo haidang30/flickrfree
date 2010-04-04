@@ -69,6 +69,8 @@
     <string name="mnu_imgsize">Image Size</string>
     <string name="mnu_imgtags">Tags</string>
 
+	<string name="msgauthhelp">It is possible that you already have FlickrFree authenticated on your account with a different key.\n\nI will take you to the \"Apps You\'re Using\" page on Flickr to check this. When the page opens, check to see if \"FlickrFree\" is listed in the table under the \"Application\" column. If it is, tap the link titled \"Remove permission?\" next to it (you may have to scroll to the right a bit to see it).\n\nOn the next page, check the checkbox and tap the button titled \"REVOKE PERMISSIONS\".\n\nWhen this is done, return to FlickrFree and try to add your account again.\n\nHit "OK" if you want to try this, "Cancel" if you want to go back.</string>
+
     <string name="otherslabel">Others</string>
 
     <string name="tab1">You</string>
@@ -81,6 +83,7 @@
     <string name="textauthlabel">Authentication</string>
 
 	<string name="ttlerror">Error</string>
+	<string name="ttlhelp">Help</string>
 	
     <string name="userview">User Page</string>
 
