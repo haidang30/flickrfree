@@ -13,6 +13,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -29,7 +32,8 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    	auth_prefs = getSharedPreferences("Auth",0);
+    	m_auth_prefs = getSharedPreferences("Auth",0);
+    	m_fail_msg = "";
 		setResult(Activity.RESULT_CANCELED);
 
         setContentView(R.layout.authenticate);
@@ -131,10 +135,10 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 					String fullname = JSONParser.getString(json_obj, "auth/user/fullname");
 					
 					// Get the "Auth" Shared preferences object to save authentication information
-					auth_prefs = getSharedPreferences("Auth",0);
+					m_auth_prefs = getSharedPreferences("Auth",0);
 					
 					// Get the editor for auth_prefs
-					SharedPreferences.Editor auth_prefs_editor = auth_prefs.edit();
+					SharedPreferences.Editor auth_prefs_editor = m_auth_prefs.edit();
 					
 					// Save all of the current authentication information. This will be the default account
 					// the next time the app is started.
@@ -153,8 +157,15 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 					if (auth_prefs_editor.commit()) {
 						setResult(Activity.RESULT_OK);
 					}
+					finish();
 				}
-				finish();
+				else {
+					m_fail_msg = JSONParser.getString(json_obj, "message");
+					if (m_fail_msg == null) {
+						m_fail_msg = "Unknown Error";
+					}
+					showDialog(DIALOG_ERR);
+				}
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -163,6 +174,25 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
     		startActivity(new Intent(Intent.ACTION_VIEW,
     				Uri.parse(GlobalResources.m_AUTHURL)));
     	}
+    }
+    
+    protected Dialog onCreateDialog(int id) {
+		Dialog err_dialog = null;
+		
+    	switch(id) {
+    	case DIALOG_ERR:
+    		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(m_fail_msg)
+		           .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+		                             public void onClick(DialogInterface dialog, int id) {
+		                            	 m_fail_msg = null;
+		                             }
+		            });
+			err_dialog = builder.create();
+			break;
+    	}
+
+		return err_dialog;
     }
     
     public static void SetActiveUser(SharedPreferences prefs, String username) {
@@ -261,5 +291,9 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 		}
     }
     
-	SharedPreferences auth_prefs;
+	SharedPreferences m_auth_prefs;
+
+	String m_fail_msg;
+	
+    static final int DIALOG_ERR = 3;
 }
