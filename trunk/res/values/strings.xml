@@ -8,6 +8,7 @@
     <string name="btnauthenticate">Authenticate</string>
     <string name="btncancellabel">Cancel</string>
     <string name="btngetcode">Get Code</string>
+    <string name="btnhelp">Help</string>
     <string name="btnmap">Show On Map</string>
     <string name="btnok">OK</string>
     <string name="btnsearch">Search</string>
@@ -79,6 +80,8 @@
     <string name="tagsview">Picture Tags</string>
     <string name="textauthlabel">Authentication</string>
 
+	<string name="ttlerror">Error</string>
+	
     <string name="userview">User Page</string>
 
     <string name="youraccountlabel">Your Account</string>
