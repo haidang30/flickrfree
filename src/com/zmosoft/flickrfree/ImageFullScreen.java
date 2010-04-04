@@ -244,6 +244,7 @@ public class ImageFullScreen extends Activity {
 			
     		AlertDialog.Builder dbuilder = new AlertDialog.Builder(this)
     			.setTitle(R.string.dlg_imgsize_title)
+    			.setIcon(android.R.drawable.ic_dialog_info)
     			.setSingleChoiceItems(size_names, ImgSize.MED.getNum(),
     				new DialogInterface.OnClickListener() {
 						@Override
