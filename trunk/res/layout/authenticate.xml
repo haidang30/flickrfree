@@ -1,61 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<AbsoluteLayout
-	android:id="@+id/AbsoluteLayout01"
+<RelativeLayout
+	android:id="@+id/AuthLayout"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
+	android:gravity="center"
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	
 	<EditText
 		android:id="@+id/authnum1"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_x="60dip"
-		android:layout_y="100dip"
-		android:layout_width="60dip"
 		android:inputType="phone"
+		android:layout_margin="5dp"
+		android:minEms="3"
 		android:text="">
 	</EditText>
   		
 	<EditText
 		android:id="@+id/authnum2"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_x="130dip"
-		android:layout_y="100dip"
-		android:layout_width="60dip"
+		android:layout_toRightOf="@id/authnum1"
 		android:inputType="phone"
+		android:layout_margin="5dp"
+		android:minEms="3"
 		android:text="">
 	</EditText>
   		
 	<EditText
 		android:id="@+id/authnum3"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_x="200dip"
-		android:layout_y="100dip"
-		android:layout_width="60dip"
+		android:layout_toRightOf="@id/authnum2"
 		android:inputType="phone"
+		android:layout_margin="5dp"
+		android:minEms="3"
 		android:text="">
 	</EditText>
   		
 	<Button
-		android:layout_y="187dip"
-		android:layout_height="wrap_content"
-		android:layout_width="90dip"
-		android:layout_x="50dip"
 		android:id="@+id/btnGetCode"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:layout_below="@id/authnum1"
+		android:layout_alignLeft="@id/authnum1"
 		android:text="@string/btngetcode">
 	</Button>
 
 	<Button
-		android:layout_y="187dip"
-		android:layout_height="wrap_content"
-		android:layout_width="120dip"
-		android:layout_x="150dip"
 		android:id="@+id/btnAuthenticate"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:layout_below="@id/authnum3"
+		android:layout_toRightOf="@id/btnGetCode"
+		android:layout_alignRight="@id/authnum3"
 		android:text="@string/btnauthenticate">
 	</Button>
-
 	
-	
-	
-	
-</AbsoluteLayout>
+</RelativeLayout>
