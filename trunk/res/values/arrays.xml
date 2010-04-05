@@ -1,12 +1,10 @@
 <resources>
 
 	<string-array name="no_user_view_list">
-		<item>Manage Accounts</item>
 	    <item>Search</item>
 	</string-array>
 
 	<string-array name="main_user_view_list">
-		<item>Manage Accounts</item>
 		<item>Photostream</item>
 	    <item>Sets</item>
 	    <item>Collections</item>

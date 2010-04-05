@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="accountview">Manage Accounts</string>
     <string name="app_name">Flickr Free</string>
     <string name="authenticate">Authentication Screen</string>
 
+    <string name="btnaddaccount">Add Account</string>
     <string name="btnaddcommentlabel">Add Comment</string>
     <string name="btnauthenticate">Authenticate</string>
     <string name="btncancellabel">Cancel</string>
+    <string name="btndelete">Delete</string>
     <string name="btngetcode">Get Code</string>
     <string name="btnhelp">Help</string>
+    <string name="btnmanageaccts">Accounts</string>
     <string name="btnmap">Show On Map</string>
     <string name="btnok">OK</string>
+    <string name="btnremoveaccount">Remove Account</string>
     <string name="btnsearch">Search</string>
     <string name="btnsendlabel">Send</string>
     <string name="btnuserpagelabel">User Page</string>
@@ -49,7 +52,7 @@
 	<string name="lblauthor">Author</string>
 	<string name="lblcomment">Comment</string>
 	<string name="lblgroups">Groups</string>
-	<string name="lbluser">User</string>
+	<string name="lblacccountdialog">Choose Account</string>
 	<string name="lblmanageaccounts">Manage Accounts</string>
 	<string name="lblphotos">Photos</string>
 	<string name="lblcontact">Contact</string>
@@ -68,6 +71,8 @@
     <string name="mnu_imginfo">Info</string>
     <string name="mnu_imgsize">Image Size</string>
     <string name="mnu_imgtags">Tags</string>
+
+	<string name="newaccount">New Account</string>
 
 	<string name="msgauthhelp">It is possible that you already have FlickrFree authenticated on your account with a different key.\n\nI will take you to the \"Apps You\'re Using\" page on Flickr to check this. When the page opens, check to see if \"FlickrFree\" is listed in the table under the \"Application\" column. If it is, tap the link titled \"Remove permission?\" next to it (you may have to scroll to the right a bit to see it).\n\nOn the next page, check the checkbox and tap the button titled \"REVOKE PERMISSIONS\".\n\nWhen this is done, return to FlickrFree and try to add your account again.\n\nHit "OK" if you want to try this, "Cancel" if you want to go back.</string>
 
