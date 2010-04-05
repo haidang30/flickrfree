@@ -190,7 +190,9 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 						m.put("extra_info", info);
 						m_extrainfolist.set(m_extrainfomap.get(action), m);
 					}
-					((SimpleAdapter)listview.getAdapter()).notifyDataSetChanged();
+					if (listview.getAdapter() instanceof SimpleAdapter) {
+						((SimpleAdapter)listview.getAdapter()).notifyDataSetChanged();
+					}
 				}
 			}
 			if (values.length == 1 && values[0] instanceof Bitmap) {
