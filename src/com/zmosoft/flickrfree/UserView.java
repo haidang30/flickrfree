@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,13 +23,18 @@ import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 
-public class UserView extends Activity implements OnItemClickListener, OnClickListener {
+public class UserView extends Activity implements OnItemClickListener, OnItemSelectedListener, OnClickListener {
 
 	private class GetExtraInfoTask extends AsyncTask<Object, Object, Object> {
 		@Override
@@ -58,24 +64,6 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
-			// Get the number of accounts and publish that result to the listview.
-			int nAccounts = 0;
-			String nAccounts_str = "";
-			SharedPreferences auth_prefs = getSharedPreferences("Auth",0);
-			Map<String, ?> auth_prefs_map = auth_prefs.getAll();
-			for (String key : auth_prefs_map.keySet()) {
-				if (key.contains("FlickrUsername_")) {
-					++nAccounts;
-				}
-			}
-			if (nAccounts > 0) {
-				nAccounts_str = nAccounts + " Account";
-				if (nAccounts > 1) {
-					nAccounts_str += "s";
-				}
-			}
-			publishProgress(m_actionnames[ACTION_ACCOUNTS], nAccounts_str);
 			
 			// Get the number of photos in the user's photostream and publish that
 			// result to the listview.
@@ -284,6 +272,10 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 		setContentView(R.layout.userview);
 
 		((ListView)findViewById(R.id.UserListView)).setOnItemClickListener(this);
+		((Button)findViewById(R.id.btnManageAccounts)).setOnClickListener(this);
+		((Button)findViewById(R.id.btnOK)).setOnClickListener(this);
+		((Button)findViewById(R.id.btnCancel)).setOnClickListener(this);
+		((Button)findViewById(R.id.btnRemoveAccount)).setOnClickListener(this);
 //		((CheckBox)findViewById(R.id.CheckBoxFriend)).setOnClickListener(this);
 //		((CheckBox)findViewById(R.id.CheckBoxFamily)).setOnClickListener(this);
 
@@ -293,7 +285,6 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
     	m_extras = getIntent().getExtras();
     	if (m_extras == null) {
     		m_extras = new Bundle();
-    		m_extras.putString("nsid", getSharedPreferences("Auth",0).getString("nsid", ""));
     	}
 
 		refresh();
@@ -307,19 +298,15 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
         
 		m_actionnames = getResources().getStringArray(R.array.main_user_view_list);
     	
-       	new GetUserInfoTask().execute(m_extras);
-	}
-	
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == GlobalResources.MANAGE_ACCOUNTS_REQ) {
-			SharedPreferences auth_prefs = getSharedPreferences("Auth",0);
-			m_extras.putString("nsid", auth_prefs.getString("nsid", ""));
+    	try {
+    		GetActiveAccounts();
+    	} catch (JSONException e) {
+    		e.printStackTrace();
+    	}
 
-	        m_photosets = null;
-	        m_favorites = null;
-	        ((ImageView)findViewById(R.id.BuddyIcon)).setImageBitmap(null);
-        	new GetUserInfoTask().execute(m_extras);
-		}
+		m_extras.putString("nsid", getSharedPreferences("Auth",0).getString("nsid", ""));
+
+		new GetUserInfoTask().execute(m_extras);
 	}
 	
 	// This method takes the authentication token stored in memory and checks it against
@@ -346,6 +333,7 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
 
 	private void ClearUserDisplay() {
 		((TextView)findViewById(R.id.TextUsername)).setText("");
+		((TextView)findViewById(R.id.TextLocation)).setText("");
 		
 		ListView lv = ((ListView)findViewById(R.id.UserListView));
 		lv.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new String[]{}));
@@ -429,33 +417,145 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
         m_extrainfotask.execute();
 	}
 
-	@Override
-	public void onClick(View v) {
-//		if (v.getId() == R.id.CheckBoxContact) {
-//			
-//		}
-//		else if (v.getId() == R.id.CheckBoxFriend) {
-//			
-//		}
-//		else if (v.getId() == R.id.CheckBoxFamily) {
-//			
-//		}
+	private void GetActiveAccounts() throws JSONException {
+		SharedPreferences auth_prefs = getSharedPreferences("Auth",0);
+		m_accounts = new TreeMap<String, JSONObject>();
+		
+		for (String key : auth_prefs.getAll().keySet()) {
+			if (key.contains("FlickrUsername_") && key.indexOf("FlickrUsername_") == 0) {
+				m_accounts.put(key.substring(15), new JSONObject(auth_prefs.getString(key, "")));
+			}
+		}
+	}
+	
+	private void FillAccountSpinner() {
+		Spinner spnAccts = (Spinner)findViewById(R.id.spnChooseAccount);
+		ArrayList<String> spnItems = new ArrayList<String>();
+		String[] spnItemsArray = new String[]{};
+		
+		if (m_accounts != null) {
+			spnItems.add(getResources().getString(R.string.newaccount));
+			for (String key : m_accounts.keySet()) {
+				spnItems.add(key);
+			}
+			spnItemsArray = spnItems.toArray(spnItemsArray);
+
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+		            android.R.layout.simple_spinner_item, spnItemsArray);
+			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			spnAccts.setAdapter(adapter);
+		}
+	}
+	
+	private void SetActiveAccount(String username) {
+		if (username.equals(getResources().getString(R.string.newaccount))) {
+			Intent i = new Intent(this,AuthenticateActivity.class);
+			startActivityForResult(i,GlobalResources.ADD_ACCOUNT_REQ);
+		}
+		else {
+			AuthenticateActivity.SetActiveUser(getSharedPreferences("Auth",0), username);
+		}
+	}
+	
+	private void setSpinnerTo(String username) {
+		Spinner spnAccounts = ((Spinner)findViewById(R.id.spnChooseAccount));
+		int i;
+		String name = "";
+		for (i = 0; !name.equals(username) && i < spnAccounts.getAdapter().getCount(); ++i) {
+			name = spnAccounts.getAdapter().getItem(i).toString();
+			if (name.equals(username)) {
+				spnAccounts.setSelection(i);
+			}
+		}
+	}
+
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == GlobalResources.MANAGE_ACCOUNTS_REQ) {
+			m_extras.putString("nsid", getSharedPreferences("Auth",0).getString("nsid", ""));
+
+	        m_photosets = null;
+	        m_favorites = null;
+	        ((ImageView)findViewById(R.id.BuddyIcon)).setImageBitmap(null);
+        	new GetUserInfoTask().execute(m_extras);
+		}
+		else if (requestCode == GlobalResources.ADD_ACCOUNT_REQ) {
+			((LinearLayout)findViewById(R.id.manageAccountsHeader)).setVisibility(View.GONE);
+			((RelativeLayout)findViewById(R.id.accountHeader)).setVisibility(View.VISIBLE);
+
+			if (resultCode == AuthenticateActivity.AUTH_SUCCESS) {
+				try {
+					GetActiveAccounts();
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+		        m_photosets = null;
+		        m_favorites = null;
+				SetActiveAccount(getSharedPreferences("Auth",0).getString("username", ""));
+	
+				m_extras.putString("nsid", getSharedPreferences("Auth",0).getString("nsid", ""));
+	
+		        ((ImageView)findViewById(R.id.BuddyIcon)).setImageBitmap(null);
+	        	new GetUserInfoTask().execute(m_extras);
+			}
+		}
 	}
 	
 	@Override
-	public void onItemClick(AdapterView parent, View view, int position, long id) {
-		String command = ((TextView)view.findViewById(R.id.ActionTitle)).getText().toString();
-		if (command.equals(m_actionnames[ACTION_ACCOUNTS])) {
-			Intent i = new Intent(this, AccountView.class);
-			if (m_extrainfotask != null && m_extrainfotask.getStatus() != AsyncTask.Status.FINISHED) {
-				m_extrainfotask.cancel(true);
-				while (!m_extrainfotask.isCancelled()) {
-					GlobalResources.sleep(50);
+	public void onClick(View v) {
+		if (v.getId() == R.id.btnManageAccounts) {
+			((LinearLayout)findViewById(R.id.manageAccountsHeader)).setVisibility(View.VISIBLE);
+			((RelativeLayout)findViewById(R.id.accountHeader)).setVisibility(View.GONE);
+    		FillAccountSpinner();
+			setSpinnerTo(getSharedPreferences("Auth",0).getString("username", ""));
+		}
+		else if (v.getId() == R.id.btnRemoveAccount) {
+			Spinner spnAccounts = ((Spinner)findViewById(R.id.spnChooseAccount));
+			if (spnAccounts != null) {
+				View sv = spnAccounts.getSelectedView();
+				if (sv != null) {
+					String sel_acct = ((TextView)sv).getText().toString();
+					AuthenticateActivity.RemoveUser(getSharedPreferences("Auth",0), sel_acct);
 				}
 			}
-			startActivityForResult(i,GlobalResources.MANAGE_ACCOUNTS_REQ);
+			((LinearLayout)findViewById(R.id.manageAccountsHeader)).setVisibility(View.GONE);
+			((RelativeLayout)findViewById(R.id.accountHeader)).setVisibility(View.VISIBLE);
+			refresh();
 		}
-		else if (command.equals(m_actionnames[ACTION_PHOTOSTREAM])) {		
+		else if (v.getId() == R.id.btnOK) {
+			String sel_user = ((TextView)((Spinner)findViewById(R.id.spnChooseAccount)).getSelectedView()).getText().toString();
+			SetActiveAccount(sel_user);
+			((LinearLayout)findViewById(R.id.manageAccountsHeader)).setVisibility(View.GONE);
+			((RelativeLayout)findViewById(R.id.accountHeader)).setVisibility(View.VISIBLE);
+			
+			m_extras.putString("nsid", getSharedPreferences("Auth",0).getString("nsid", ""));
+
+	        m_photosets = null;
+	        m_favorites = null;
+	        ((ImageView)findViewById(R.id.BuddyIcon)).setImageBitmap(null);
+        	new GetUserInfoTask().execute(m_extras);
+		}
+		else if (v.getId() == R.id.btnCancel) {
+			((LinearLayout)findViewById(R.id.manageAccountsHeader)).setVisibility(View.GONE);
+			((RelativeLayout)findViewById(R.id.accountHeader)).setVisibility(View.VISIBLE);
+		}
+	}
+	
+	@Override
+	public void onItemSelected(AdapterView arg0, View arg1, int arg2, long arg3) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onItemClick(AdapterView parent, View view, int position, long id) {
+		String command = ((TextView)view.findViewById(R.id.ActionTitle)).getText().toString();
+		if (command.equals(m_actionnames[ACTION_PHOTOSTREAM])) {		
 			Intent i = new Intent(this, ImageGrid.class);
 			i.putExtra("type", "photostream");
 			i.putExtra("nsid", m_extras.getString("nsid"));
@@ -567,21 +667,22 @@ public class UserView extends Activity implements OnItemClickListener, OnClickLi
     	APPUSER, OTHERUSER, NOUSER;
     }
 
-    static final int ACTION_ACCOUNTS = 0;
-    static final int ACTION_PHOTOSTREAM = 1;
-    static final int ACTION_SETS = 2;
-    static final int ACTION_COLLECTIONS = 3;
-    static final int ACTION_TAGS = 4;
-    static final int ACTION_FAVORITES = 5;
-    static final int ACTION_GROUPS = 6;
-    static final int ACTION_CONTACTS = 7;
-    static final int ACTION_SEARCH = 8;
+    static final int ACTION_PHOTOSTREAM = 0;
+    static final int ACTION_SETS = 1;
+    static final int ACTION_COLLECTIONS = 2;
+    static final int ACTION_TAGS = 3;
+    static final int ACTION_FAVORITES = 4;
+    static final int ACTION_GROUPS = 5;
+    static final int ACTION_CONTACTS = 6;
+    static final int ACTION_SEARCH = 7;
     
 	Bundle m_extras;
 	Activity m_activity = this;
 	UsrType m_usertype;
 	HashMap <String, Integer> m_extrainfomap;
 	List < Map<String,String> > m_extrainfolist;
+    TreeMap<String, JSONObject> m_accounts;
+    String m_currentAccount;
 	GetExtraInfoTask m_extrainfotask;
 	String[] m_actionnames;
 	String m_tags;

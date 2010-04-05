@@ -157,6 +157,7 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 					if (auth_prefs_editor.commit()) {
 						setResult(Activity.RESULT_OK);
 					}
+               	 	setResult(AUTH_SUCCESS);
 					finish();
 				}
 				else {
@@ -195,6 +196,7 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 		           .setNegativeButton("Close", new DialogInterface.OnClickListener() {
 		                             public void onClick(DialogInterface dialog, int id) {
 		                            	 m_fail_msg = "";
+		                            	 AuthenticateActivity.this.setResult(AUTH_ERR);
 		                            	 AuthenticateActivity.this.finish();
 		                             }
 		            });
@@ -325,4 +327,6 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 	
     static final int DIALOG_ERR = 1;
     static final int DIALOG_HELP = 2;
+    static final public int AUTH_ERR = 3;
+    static final public int AUTH_SUCCESS = 4;
 }
