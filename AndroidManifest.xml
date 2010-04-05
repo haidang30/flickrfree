@@ -77,12 +77,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".AccountView" android:label="@string/accountview">
-            <intent-filter>
-                <action android:name="com.zmosoft.flickrfree.ACCOUNTVIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
         <activity android:name=".ContactsView" android:label="@string/contactsview">
             <intent-filter>
                 <action android:name="com.zmosoft.flickrfree.CONTACTSVIEW" />
