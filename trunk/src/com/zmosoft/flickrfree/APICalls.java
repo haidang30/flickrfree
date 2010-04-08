@@ -102,11 +102,8 @@ public class APICalls {
 				name = group_info.getJSONObject("group").getJSONObject("name").getString("_content");
 			}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	//TODO Parse group_info to get the name of the group.
-    	
     	return name;
     }
     
@@ -123,11 +120,8 @@ public class APICalls {
 				info = new String[] {name, id};
 			}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	//TODO Parse group_info to get the name of the group.
-    	
     	return info;
     }
     

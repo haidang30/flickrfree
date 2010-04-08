@@ -217,8 +217,6 @@ public class ImageComments extends Activity implements OnClickListener {
 	        ((Button)findViewById(R.id.BtnAddComment)).setVisibility(View.VISIBLE);
 		}
 		else if (v.getId() == R.id.BtnAddCommentSend) {
-			// TODO Add code to send comment.
-			
 			String comment = ((EditText)findViewById(R.id.CommentText)).getText().toString();
 			APICalls.photosCommentsAddComment(m_extras.getString("photo_id"), comment);
 			

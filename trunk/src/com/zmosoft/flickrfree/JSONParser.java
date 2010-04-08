@@ -27,7 +27,6 @@ public class JSONParser {
 				}
 			}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return r_obj;
@@ -44,7 +43,6 @@ public class JSONParser {
 				r_obj = json_obj.getJSONArray(array_name);
 			}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -62,7 +60,6 @@ public class JSONParser {
 				r_str = json_obj.getString(string_name);
 			}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -80,7 +77,6 @@ public class JSONParser {
 				r_int = json_obj.getInt(string_name);
 			}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
