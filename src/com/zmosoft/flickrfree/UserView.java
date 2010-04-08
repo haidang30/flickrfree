@@ -13,6 +13,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -55,13 +58,10 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 					}
 				}
 			} catch (MalformedURLException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			
@@ -473,6 +473,27 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 		}
 	}
 
+	private String getSelectedName() {
+		Spinner spnAccounts = ((Spinner)findViewById(R.id.spnChooseAccount));
+		if (spnAccounts != null) {
+			View sv = spnAccounts.getSelectedView();
+			if (sv != null) {
+				return ((TextView)sv).getText().toString();
+			}
+		}
+		return "";
+	}
+	
+	private void removeSelectedAccount() {
+		String sel_acct = getSelectedName();
+		if (!sel_acct.equals("")) {
+			AuthenticateActivity.RemoveUser(getSharedPreferences("Auth",0), sel_acct);
+		}
+		((LinearLayout)findViewById(R.id.manageAccountsHeader)).setVisibility(View.GONE);
+		((RelativeLayout)findViewById(R.id.accountHeader)).setVisibility(View.VISIBLE);
+		refresh();
+	}
+
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == GlobalResources.MANAGE_ACCOUNTS_REQ) {
 			m_extras.putString("nsid", getSharedPreferences("Auth",0).getString("nsid", ""));
@@ -505,6 +526,40 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 	}
 	
 	@Override
+	protected void onPrepareDialog(int id, Dialog dialog) {
+		dialog.setTitle("Account \"" + getSelectedName() + "\"");
+	}
+	
+	@Override
+    protected Dialog onCreateDialog(int id) {
+		Dialog dialog = null;
+		
+		AlertDialog.Builder builder;
+    	switch(id) {
+    	case DIALOG_WARN_REMOVE_ACCOUNT:
+    		builder = new AlertDialog.Builder(this);
+			builder.setMessage(R.string.msgremoveaccount)
+				   .setTitle("Account")
+			       .setIcon(android.R.drawable.ic_dialog_alert)
+		           .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+		                             public void onClick(DialogInterface dialog, int id) {
+		                            	 removeSelectedAccount();
+		                            	 dialog.dismiss();
+		                             }
+		            })
+		           .setNegativeButton("No", new DialogInterface.OnClickListener() {
+		                             public void onClick(DialogInterface dialog, int id) {
+		                            	 dialog.dismiss();
+		                             }
+		            });
+			dialog = builder.create();
+			break;
+    	}
+
+		return dialog;
+    }
+    
+	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.btnManageAccounts) {
 			((LinearLayout)findViewById(R.id.manageAccountsHeader)).setVisibility(View.VISIBLE);
@@ -513,17 +568,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 			setSpinnerTo(getSharedPreferences("Auth",0).getString("username", ""));
 		}
 		else if (v.getId() == R.id.btnRemoveAccount) {
-			Spinner spnAccounts = ((Spinner)findViewById(R.id.spnChooseAccount));
-			if (spnAccounts != null) {
-				View sv = spnAccounts.getSelectedView();
-				if (sv != null) {
-					String sel_acct = ((TextView)sv).getText().toString();
-					AuthenticateActivity.RemoveUser(getSharedPreferences("Auth",0), sel_acct);
-				}
-			}
-			((LinearLayout)findViewById(R.id.manageAccountsHeader)).setVisibility(View.GONE);
-			((RelativeLayout)findViewById(R.id.accountHeader)).setVisibility(View.VISIBLE);
-			refresh();
+			showDialog(DIALOG_WARN_REMOVE_ACCOUNT);
 		}
 		else if (v.getId() == R.id.btnOK) {
 			String sel_user = ((TextView)((Spinner)findViewById(R.id.spnChooseAccount)).getSelectedView()).getText().toString();
@@ -546,14 +591,11 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 	
 	@Override
 	public void onItemSelected(AdapterView arg0, View arg1, int arg2, long arg3) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onNothingSelected(AdapterView arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -679,6 +721,8 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
     static final int ACTION_GROUPS = 5;
     static final int ACTION_CONTACTS = 6;
     static final int ACTION_SEARCH = 7;
+    
+    static final int DIALOG_WARN_REMOVE_ACCOUNT = 8;
     
 	Bundle m_extras;
 	Activity m_activity = this;

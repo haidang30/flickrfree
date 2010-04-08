@@ -27,7 +27,6 @@ public class CommentLinkView extends Activity implements OnClickListener {
 			m_group_links = new JSONObject(m_extras.getString("groups"));
 			m_photo_links = new JSONObject(m_extras.getString("photos"));
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -64,7 +63,6 @@ public class CommentLinkView extends Activity implements OnClickListener {
 					startActivity(i);
 				}
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
