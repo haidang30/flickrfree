@@ -28,6 +28,9 @@ public class ImageInfo extends Activity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.imageinfo);
+        
+        RestClient.setAuth(this);
+        
         m_extras = getIntent().getExtras();
         try {
 			m_imginfo = m_extras.containsKey("imginfo") ? new JSONObject(m_extras.getString("imginfo"))

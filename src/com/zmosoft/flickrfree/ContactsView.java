@@ -23,6 +23,8 @@ public class ContactsView extends ListActivity implements OnItemClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        RestClient.setAuth(this);
+        
     	m_extras = getIntent().getExtras();
     	m_isprivate = false;
     	m_contactsmap = new TreeMap<String,String>();

@@ -22,6 +22,9 @@ public class ImageContext extends Activity implements OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.imagecontext);
+        
+        RestClient.setAuth(this);
+        
         m_extras = getIntent().getExtras();
 		m_isprivate = false;
     	if (m_extras.containsKey("isprivate")) {

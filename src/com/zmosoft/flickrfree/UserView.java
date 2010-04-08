@@ -281,7 +281,9 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 //		((CheckBox)findViewById(R.id.CheckBoxFriend)).setOnClickListener(this);
 //		((CheckBox)findViewById(R.id.CheckBoxFamily)).setOnClickListener(this);
 
-        // If getExtras() returns null, then this is the root activity.
+    	RestClient.setAuth(this);
+
+    	// If getExtras() returns null, then this is the root activity.
         // Create a new Bundle for m_extras, and see if we can find an
         // nsid to put in it.
     	m_extras = getIntent().getExtras();
@@ -316,9 +318,9 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 	private boolean CheckAuthentication(SharedPreferences auth_prefs) throws JSONException {
         boolean auth_ok = false;
         
-    	GlobalResources.m_fulltoken = auth_prefs.getString("full_token", "");
+    	RestClient.m_fulltoken = auth_prefs.getString("full_token", "");
     	
-        if (!GlobalResources.m_fulltoken.equals("")) {
+        if (!RestClient.m_fulltoken.equals("")) {
         	// If there is a token, then check to make sure it is still valid. 
         	auth_ok = APICalls.authCheckToken();
         }

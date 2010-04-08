@@ -35,6 +35,8 @@ public class ImageComments extends Activity implements OnClickListener {
         ((Button)findViewById(R.id.BtnAddCommentSend)).setOnClickListener(this);
         ((Button)findViewById(R.id.BtnAddCommentCancel)).setOnClickListener(this);
 
+        RestClient.setAuth(this);
+        
         m_extras = getIntent().getExtras();
         m_comment_list = APICalls.photosCommentsGetList(m_extras.getString("photo_id"));
         

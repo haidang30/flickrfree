@@ -151,6 +151,8 @@ public class ImageGrid extends Activity implements OnItemClickListener, OnClickL
         ((Button)findViewById(R.id.BtnPageChangeOK)).setOnClickListener(this);
         ((Button)findViewById(R.id.BtnPageChangeCancel)).setOnClickListener(this);
         
+        RestClient.setAuth(this);
+        
         refresh(savedInstanceState);
     }
     

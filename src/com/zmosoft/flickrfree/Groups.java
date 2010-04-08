@@ -27,6 +27,8 @@ public class Groups extends ListActivity implements OnItemClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        RestClient.setAuth(this);
+        
     	m_extras = getIntent().getExtras();
     	m_isprivate = false;
     	m_group_ids = new TreeMap<String,String>();
