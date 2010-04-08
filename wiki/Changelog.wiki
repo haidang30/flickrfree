@@ -1,6 +1,12 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===0.9.8===
+
+ * Better interface for adding, switching, and removing accounts.
+
+ * Fixed annoying bug that can cause authentication to be lost if account force-closes or is idle for a long time.
+
 ===0.9.7.2===
 
  * Added some code to provide more useful information and some help if user authentication fails.
