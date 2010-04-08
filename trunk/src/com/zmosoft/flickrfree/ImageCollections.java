@@ -27,6 +27,8 @@ public class ImageCollections extends ListActivity implements OnItemClickListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        RestClient.setAuth(this);
+        
     	m_extras = getIntent().getExtras();
     	m_isprivate = false;
     	m_collection_ids = new TreeMap<String,String>();

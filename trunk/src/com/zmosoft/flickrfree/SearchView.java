@@ -22,6 +22,8 @@ public class SearchView extends Activity implements OnClickListener, OnItemSelec
 
         setContentView(R.layout.searchview);
         
+        RestClient.setAuth(this);
+        
         Spinner s = (Spinner)findViewById(R.id.SearchOptionsSpinner);
         ArrayAdapter adapter = ArrayAdapter.createFromResource(
                 this, R.array.search_options_list, android.R.layout.simple_spinner_item);

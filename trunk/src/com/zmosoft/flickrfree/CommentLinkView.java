@@ -20,6 +20,8 @@ public class CommentLinkView extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.comment_link_view);
         
+        RestClient.setAuth(this);
+        
     	m_extras = getIntent().getExtras();
     	try {
 			m_group_links = new JSONObject(m_extras.getString("groups"));

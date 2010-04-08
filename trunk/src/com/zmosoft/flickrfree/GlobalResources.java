@@ -24,11 +24,7 @@ import android.view.Window;
 
 
 public class GlobalResources {
-    public static String m_apikey = "";
-    public static String m_secret = "";
-    public static String m_AUTHURL = "";
     public static String m_EDITPERMS_URL = "http://www.flickr.com/services/auth/list.gne";
-    public static String m_fulltoken = "";
     
 	public static int API_DELAY_MS = 1000;
 	public static int ERROR_DELAY_MS = 1000;

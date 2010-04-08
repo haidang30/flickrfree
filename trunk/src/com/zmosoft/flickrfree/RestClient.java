@@ -18,9 +18,21 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
+
 public class RestClient {
 
-	private static String convertStreamToString(InputStream is) {
+    public static String m_apikey = "";
+    public static String m_secret = "";
+    public static String m_fulltoken = "";
+
+    public static void setAuth(Activity activity) {
+        m_apikey = activity.getResources().getString(R.string.apikey);
+        m_secret = activity.getResources().getString(R.string.secret);
+        m_fulltoken = activity.getSharedPreferences("Auth",0).getString("full_token", "");
+    }
+    
+    private static String convertStreamToString(InputStream is) {
 		/*
 		 * To convert the InputStream to String we use the BufferedReader.readLine()
 		 * method. We iterate until the BufferedReader return null which means
@@ -71,29 +83,29 @@ public class RestClient {
 		}
 
 		String url = m_RESTURL + "?method=" + methodName
-					+ "&api_key=" + GlobalResources.m_apikey;
+					+ "&api_key=" + m_apikey;
 		for (int i = 0; i < paramNames.length; i++) {
 			url += "&" + paramNames[i] + "=" + paramVals[i];
 		}
 		
-		authenticated = authenticated && !GlobalResources.m_fulltoken.equals("");
+		authenticated = authenticated && !m_fulltoken.equals("");
 		if (authenticated) {
-			url += "&auth_token=" + GlobalResources.m_fulltoken;
+			url += "&auth_token=" + m_fulltoken;
 		}
 		
 		// Generate the signature
 		String signature = "";
 		SortedMap<String,String> sig_params = new TreeMap<String,String>();
-		sig_params.put("api_key", GlobalResources.m_apikey);
+		sig_params.put("api_key", m_apikey);
 		sig_params.put("method", methodName);
 		sig_params.put("format", "json");
 		for (int i = 0; i < paramNames.length; i++) {
 			sig_params.put(paramNames[i],paramVals[i]);
 		}
 		if (authenticated) {
-			sig_params.put("auth_token",GlobalResources.m_fulltoken);
+			sig_params.put("auth_token",m_fulltoken);
 		}
-		signature = GlobalResources.m_secret;
+		signature = m_secret;
 		for (Map.Entry<String,String> entry : sig_params.entrySet()) {
 			signature = signature + entry.getKey() + entry.getValue();
 		}		

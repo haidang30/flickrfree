@@ -115,6 +115,9 @@ public class ImageTags extends Activity implements OnItemClickListener {
         setContentView(R.layout.imagetags);
         
     	m_tagsearchtask = null;
+    	
+    	RestClient.setAuth(this);
+    	
         m_extras = getIntent().getExtras();
         m_tagmap = new HashMap <String, JSONObject>();
         if (m_extras != null) {

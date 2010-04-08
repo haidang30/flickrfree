@@ -173,7 +173,7 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
     	}
     	else if (v.getId() == R.id.btnGetCode) {
     		startActivity(new Intent(Intent.ACTION_VIEW,
-    				Uri.parse(GlobalResources.m_AUTHURL)));
+    				Uri.parse(getResources().getString(R.string.auth_url))));
     	}
     }
     
