@@ -289,6 +289,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
     	m_extras = getIntent().getExtras();
     	if (m_extras == null) {
     		m_extras = new Bundle();
+    		m_extras.putString("nsid", getSharedPreferences("Auth",0).getString("nsid", ""));
     	}
 
 		refresh();
@@ -307,8 +308,6 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
     	} catch (JSONException e) {
     		e.printStackTrace();
     	}
-
-		m_extras.putString("nsid", getSharedPreferences("Auth",0).getString("nsid", ""));
 
 		new GetUserInfoTask().execute(m_extras);
 	}
