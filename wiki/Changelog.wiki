@@ -1,6 +1,10 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===0.9.8.1===
+
+ * Fixed a bug in 0.9.8 that prevents user from viewing other users' pages.
+
 ===0.9.8===
 
  * Better interface for adding, switching, and removing accounts.
