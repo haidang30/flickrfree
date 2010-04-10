@@ -63,12 +63,19 @@ public class ImageComments extends Activity implements OnClickListener {
     	try {
 			LinkedHashMap<String,String> comments = new LinkedHashMap<String,String>();
 			JSONArray comment_arr = JSONParser.getArray(m_comment_list, "comments/comment");
-			int end = (comment_arr == null) ? 0 : start + m_comments_per_page;
-			boolean overflow = comment_arr != null && comment_arr.length() > end;
-
-			if (!overflow) {
-				end = comment_arr.length();
+			
+			// If no comments exist, then we will get a null objecct for the comment array.
+			// Replace this with an empty JSONArray to avoid null pointer errors.
+			if (comment_arr == null) {
+				comment_arr = new JSONArray();
 			}
+
+			// If the number of comments exceeds the maximum comments per page, then set
+			// the "end" variable so we only interate through the comments that will be
+			// displayed on this page.
+			int end = comment_arr.length() > (start + m_comments_per_page)
+					? start + m_comments_per_page
+					: comment_arr.length();
 			
 			JSONObject comment_obj;
 			for (int i = start; i < end; i++) {
@@ -81,15 +88,20 @@ public class ImageComments extends Activity implements OnClickListener {
 				}
 			}
 
-			((TextView)findViewById(R.id.ImgCommentCount)).setText(getResources().getString(R.string.lblwordcomments)
-					                                               + " "
-					                                               + (start+1)
-					                                               + " - "
-					                                               + end
-					                                               + " "
-					                                               + getResources().getString(R.string.lblwordof)
-					                                               + " "
-					                                               + String.valueOf(comment_arr.length()));
+			if (comment_arr.length() > 0) {
+				((TextView)findViewById(R.id.ImgCommentCount)).setText(getResources().getString(R.string.lblwordcomments)
+						                                               + " "
+						                                               + (start+1)
+						                                               + " - "
+						                                               + end
+						                                               + " "
+						                                               + getResources().getString(R.string.lblwordof)
+						                                               + " "
+						                                               + String.valueOf(comment_arr.length()));
+			}
+			else {
+				((TextView)findViewById(R.id.ImgCommentCount)).setText(getResources().getString(R.string.lblnocomments));
+			}
 
 			CommentLayout entry;
 			String comment;
@@ -116,7 +128,9 @@ public class ImageComments extends Activity implements OnClickListener {
 				comment_layout.addView(entry);
 			}
 			
-			if (overflow) {
+			// If the comment array exceeds the number of comments displayed on this page,
+			// then show the "More Comments" button.
+			if (comment_arr.length() > end) {
 				View v = View.inflate(this, R.layout.entry_more_comments, null);
 				v.findViewById(R.id.BtnMoreComments).setOnClickListener(this);
 				
