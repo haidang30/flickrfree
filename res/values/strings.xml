@@ -62,6 +62,7 @@
 	<string name="lbltitle">Title</string>
 	<string name="lblvalue">Value</string>
 	<string name="lblwordcomments">Comments</string>
+	<string name="lblnocomments">No Comments</string>
 	<string name="lblwordof">of</string>
 	
     <string name="mnu_favorite">Favorite</string>
