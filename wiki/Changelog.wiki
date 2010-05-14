@@ -1,6 +1,10 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===0.9.8.3===
+
+ * Moved cache from SD card back to default (internal memory) cache location.
+
 ===0.9.8.2===
 
  * Fixed a bug that crashes the app if the user tries to open the Comments page on a picture that has no comments.
