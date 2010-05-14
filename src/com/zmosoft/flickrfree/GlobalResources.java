@@ -235,7 +235,6 @@ public class GlobalResources {
         //String cache_dir = (app_dir == null) || app_dir.equals("")
         //                   ? callingActivity.getCacheDir().getAbsolutePath()
         //		           : app_dir + "cache";
-    	String path = callingActivity.getCacheDir().getAbsolutePath();
         return callingActivity.getCacheDir().getAbsolutePath();
 
         //return CheckDir(cache_dir) ? cache_dir : "";
