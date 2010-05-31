@@ -1,6 +1,7 @@
 package com.zmosoft.flickrfree;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -8,13 +9,18 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.Vector;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.CoreProtocolPNames;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,6 +31,8 @@ public class RestClient {
     public static String m_apikey = "";
     public static String m_secret = "";
     public static String m_fulltoken = "";
+    private static String m_UPLOADURL = "http://api.flickr.com/services/upload/";
+
 
     public static void setAuth(Activity activity) {
         m_apikey = activity.getResources().getString(R.string.apikey);
@@ -60,16 +68,68 @@ public class RestClient {
 		return sb.toString();
 	}
 
-	public static JSONObject CallFunction(String methodName, String[] paramNames, String[] paramVals)
-	{
-		return CallFunction(methodName, paramNames, paramVals, true);
+	public static JSONObject UploadPicture(String filename, String title, String description, String tags,
+									 boolean is_public, boolean is_friend, boolean is_family,
+									 int safety_level){
+		String safety = "1";
+		if (safety_level > 0 && safety_level < 4) {
+			safety = Integer.toString(safety_level);
+		}
+
+		Vector<String> pNames = new Vector<String>();
+		Vector<String> pVals = new Vector<String>();
+
+		pNames.add("photo");
+		pVals.add("");
+		if (!title.equals("")) {
+			pNames.add("title");
+			pVals.add(title);
+		}
+		if (!description.equals("")) {
+			pNames.add("description");
+			pVals.add(description);
+		}
+		if (!tags.equals("")) {
+			pNames.add("tags");
+			pVals.add(tags);
+		}
+		pNames.add("is_public");
+		pVals.add(is_public ? "1" : "0");
+		pNames.add("is_friend");
+		pVals.add(is_friend ? "1" : "0");
+		pNames.add("is_family");
+		pVals.add(is_family ? "1" : "0");
+		pNames.add("safety_level");
+		pVals.add(safety);
+		pNames.add("content_type");
+		pVals.add("1");
+		pNames.add("hidden");
+		pVals.add("1");
+
+		String [] paramNames, paramVals;
+		paramNames = paramVals = new String[]{};
+		paramNames = pNames.toArray(paramNames);
+		paramVals = pVals.toArray(paramVals);
+		
+		return CallFunction("", paramNames, paramVals, true, true, filename);
 	}
 	
-
+	public static JSONObject CallFunction(String methodName, String[] paramNames, String[] paramVals)
+	{
+		return CallFunction(methodName, paramNames, paramVals, true, false, "");
+	}
+	
 	public static JSONObject CallFunction(String methodName, String[] paramNames, String[] paramVals, boolean authenticated)
+	{
+		return CallFunction(methodName, paramNames, paramVals, authenticated, false, "");
+	}
+	
+	public static JSONObject CallFunction(String methodName, String[] paramNames, String[] paramVals,
+										  boolean authenticated, boolean ispost, String filename)
 	{
 		JSONObject json = new JSONObject();
 		HttpClient httpclient = new DefaultHttpClient();
+	    httpclient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 
 		if (paramNames == null) {
 			paramNames = new String[0];
@@ -82,8 +142,15 @@ public class RestClient {
 			return json;
 		}
 
-		String url = m_RESTURL + "?method=" + methodName
-					+ "&api_key=" + m_apikey;
+		String url;
+		if (ispost) {
+			url = m_UPLOADURL;
+		}
+		else {
+			url = m_RESTURL + "?method=" + methodName;
+		}
+		
+		url += "&api_key=" + m_apikey;
 		for (int i = 0; i < paramNames.length; i++) {
 			url += "&" + paramNames[i] + "=" + paramVals[i];
 		}
@@ -100,14 +167,16 @@ public class RestClient {
 		sig_params.put("method", methodName);
 		sig_params.put("format", "json");
 		for (int i = 0; i < paramNames.length; i++) {
-			sig_params.put(paramNames[i],paramVals[i]);
+			if (!ispost || !paramNames[i].equals("photo")) {
+				sig_params.put(paramNames[i],paramVals[i]);
+			}
 		}
 		if (authenticated) {
 			sig_params.put("auth_token",m_fulltoken);
 		}
 		signature = m_secret;
 		for (Map.Entry<String,String> entry : sig_params.entrySet()) {
-			signature = signature + entry.getKey() + entry.getValue();
+			signature += entry.getKey() + entry.getValue();
 		}		
 		try {
 			signature = JavaMD5Sum.computeSum(signature).toLowerCase();
@@ -119,20 +188,37 @@ public class RestClient {
 		// Replace any spaces in the URL with "+".
 		url = url.replace(" ", "+");
 		
-		// Prepare a request object
-		HttpGet httpget = new HttpGet(url); 
+		HttpResponse response = null;
 
-		// Execute the request
-		HttpResponse response;
 		try {
-			response = httpclient.execute(httpget);
-			// Examine the response status
-
+			// Prepare a request object
+			if (ispost) {
+			    HttpPost httppost = new HttpPost(m_UPLOADURL);
+			    File file = new File(filename);
+			    FileEntity entity = new FileEntity(file, "binary/octet-stream");
+			    httppost.setEntity(entity);
+			    entity.setContentType("binary/octet-stream");
+				response = httpclient.execute(httppost);
+			}
+			else {
+				HttpGet httpget = new HttpGet(url);
+				response = httpclient.execute(httpget);
+			}
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		try {
 			// Get hold of the response entity
-			HttpEntity entity = response.getEntity();
+			HttpEntity entity = null;
+			if (response != null) {
+				entity = response.getEntity();
+			}
+
 			// If the response does not enclose an entity, there is no need
 			// to worry about connection release
-
 			if (entity != null) {
 				// A Simple JSON Response Read
 				InputStream instream = entity.getContent();
@@ -141,12 +227,9 @@ public class RestClient {
 				// A Simple JSONObject Creation
 				json = new JSONObject(result);
 			}
-			
-		} catch (ClientProtocolException e) {
+		} catch (JSONException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return json;
