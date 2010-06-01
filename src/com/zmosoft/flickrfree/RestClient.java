@@ -131,6 +131,11 @@ public class RestClient {
 		HttpClient httpclient = new DefaultHttpClient();
 	    httpclient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 
+	    File file = null;
+    	if (ispost && !filename.equals("")) {
+    		file = new File(filename);
+    	}
+	    
 		if (paramNames == null) {
 			paramNames = new String[0];
 		}
@@ -152,7 +157,14 @@ public class RestClient {
 		
 		url += "&api_key=" + m_apikey;
 		for (int i = 0; i < paramNames.length; i++) {
-			url += "&" + paramNames[i] + "=" + paramVals[i];
+			if (ispost && paramNames[i].equals("photo") && file != null) {
+				//TODO: Replace the final "" in this line with the binary photo
+				//      data that will be uploaded.
+				url += "&" + paramNames[i] + "=" + "";				
+			}
+			else {
+				url += "&" + paramNames[i] + "=" + paramVals[i];
+			}
 		}
 		
 		authenticated = authenticated && !m_fulltoken.equals("");
@@ -164,7 +176,9 @@ public class RestClient {
 		String signature = "";
 		SortedMap<String,String> sig_params = new TreeMap<String,String>();
 		sig_params.put("api_key", m_apikey);
-		sig_params.put("method", methodName);
+		if (!ispost) {
+			sig_params.put("method", methodName);
+		}
 		sig_params.put("format", "json");
 		for (int i = 0; i < paramNames.length; i++) {
 			if (!ispost || !paramNames[i].equals("photo")) {
@@ -194,7 +208,6 @@ public class RestClient {
 			// Prepare a request object
 			if (ispost) {
 			    HttpPost httppost = new HttpPost(m_UPLOADURL);
-			    File file = new File(filename);
 			    FileEntity entity = new FileEntity(file, "binary/octet-stream");
 			    httppost.setEntity(entity);
 			    entity.setContentType("binary/octet-stream");
