@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
@@ -706,6 +707,17 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 			}
 			startActivity(i);
 		}
+		else if (command.equals(m_actionnames[ACTION_UPLOAD])) {
+	        String media_dir = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)
+	        ? Environment.getExternalStorageDirectory().toString() + "/media/"
+	        : "";
+
+	        String filename = media_dir + "oswald.jpg";
+	        RestClient.UploadPicture(filename,
+	        		"Test Upload",
+	        		"This is a test of FlickrFree's upload capability",
+	        		"upload test", false, false, false, 1);
+		}
 	}
 
     private enum UsrType {
@@ -720,6 +732,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
     static final int ACTION_GROUPS = 5;
     static final int ACTION_CONTACTS = 6;
     static final int ACTION_SEARCH = 7;
+    static final int ACTION_UPLOAD = 8;
     
     static final int DIALOG_WARN_REMOVE_ACCOUNT = 8;
     

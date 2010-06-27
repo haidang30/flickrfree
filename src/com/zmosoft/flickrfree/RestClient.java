@@ -21,10 +21,12 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.util.Log;
 
 public class RestClient {
 
@@ -132,6 +134,8 @@ public class RestClient {
 	    httpclient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 
 	    File file = null;
+	    // If this is a POST call, then it is a file upload. Check to see if a
+	    // filename is given, and if so, open that file.
     	if (ispost && !filename.equals("")) {
     		file = new File(filename);
     	}
@@ -148,27 +152,26 @@ public class RestClient {
 		}
 
 		String url;
+		// Set the base of the URL. If this is a POST upload, then use the upload
+		// URL. Otherwise, use the standard REST URL and add the API key and parameter
+		// names and values.
 		if (ispost) {
 			url = m_UPLOADURL;
 		}
 		else {
-			url = m_RESTURL + "?method=" + methodName;
-		}
-		
-		url += "&api_key=" + m_apikey;
-		for (int i = 0; i < paramNames.length; i++) {
-			if (ispost && paramNames[i].equals("photo") && file != null) {
-				//TODO: Replace the final "" in this line with the binary photo
-				//      data that will be uploaded.
-				url += "&" + paramNames[i] + "=" + "";				
-			}
-			else {
+			url = m_RESTURL + "?method=" + methodName + "&api_key=" + m_apikey;
+			for (int i = 0; i < paramNames.length; i++) {
 				url += "&" + paramNames[i] + "=" + paramVals[i];
 			}
 		}
-		
+
+		// Check to see if this is an authenticated call and, if so, make sure
+		// that there is a token.
 		authenticated = authenticated && !m_fulltoken.equals("");
-		if (authenticated) {
+		
+		// If properly authenticated, and if this is a GET call, add the
+		// token to the URL.
+		if (authenticated && !ispost) {
 			url += "&auth_token=" + m_fulltoken;
 		}
 		
@@ -176,10 +179,14 @@ public class RestClient {
 		String signature = "";
 		SortedMap<String,String> sig_params = new TreeMap<String,String>();
 		sig_params.put("api_key", m_apikey);
+		// Only add the method name to the signature if this is a GET call.
+		// If it is a POST call, there is no method name.
 		if (!ispost) {
 			sig_params.put("method", methodName);
 		}
 		sig_params.put("format", "json");
+		// Add the parameter names and values. If this is a POST upload,
+		// do not add the "photo" parameter.
 		for (int i = 0; i < paramNames.length; i++) {
 			if (!ispost || !paramNames[i].equals("photo")) {
 				sig_params.put(paramNames[i],paramVals[i]);
@@ -197,7 +204,14 @@ public class RestClient {
 		} catch (NoSuchAlgorithmException e1) {
 			e1.printStackTrace();
 		}
-		url += "&api_sig=" + signature + "&format=json";
+
+		if (ispost) {
+			sig_params.put("api_sig", signature);
+			sig_params.put("format", "json");
+		}
+		else {
+			url += "&api_sig=" + signature + "&format=json";
+		}
 
 		// Replace any spaces in the URL with "+".
 		url = url.replace(" ", "+");
@@ -207,11 +221,31 @@ public class RestClient {
 		try {
 			// Prepare a request object
 			if (ispost) {
-			    HttpPost httppost = new HttpPost(m_UPLOADURL);
+			    HttpPost httppost = new HttpPost(url);
 			    FileEntity entity = new FileEntity(file, "binary/octet-stream");
 			    httppost.setEntity(entity);
 			    entity.setContentType("binary/octet-stream");
+			    
+			    // Use HttpPost.addHeader() method to add the name/value argument
+			    // pairs to the POST request.
+			    // TODO: Is this working right?
+			    String header_name, header_value;
+				for (Map.Entry<String,String> entry : sig_params.entrySet()) {
+					header_name = entry.getKey();
+					header_value = header_name.equals("photo") ? filename : entry.getValue();
+					httppost.addHeader(header_name, header_value);
+				}
+				
 				response = httpclient.execute(httppost);
+				HttpEntity resEntity = response.getEntity();
+				Log.d("HTTPPOST", response.getStatusLine().toString());
+			    if (resEntity != null) {
+			        Log.d("HTTPPOST",EntityUtils.toString(resEntity));
+			    }
+			    if (resEntity != null) {
+			    	resEntity.consumeContent();
+				}
+
 			}
 			else {
 				HttpGet httpget = new HttpGet(url);
@@ -245,6 +279,8 @@ public class RestClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		httpclient.getConnectionManager().shutdown();
+
 		return json;
 	}
 	
