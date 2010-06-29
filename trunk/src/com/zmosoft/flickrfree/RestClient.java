@@ -183,8 +183,8 @@ public class RestClient {
 		// If it is a POST call, there is no method name.
 		if (!ispost) {
 			sig_params.put("method", methodName);
+			sig_params.put("format", "json");
 		}
-		sig_params.put("format", "json");
 		// Add the parameter names and values. If this is a POST upload,
 		// do not add the "photo" parameter.
 		for (int i = 0; i < paramNames.length; i++) {
@@ -207,7 +207,6 @@ public class RestClient {
 
 		if (ispost) {
 			sig_params.put("api_sig", signature);
-			sig_params.put("format", "json");
 		}
 		else {
 			url += "&api_sig=" + signature + "&format=json";
@@ -234,6 +233,7 @@ public class RestClient {
 					header_name = entry.getKey();
 					header_value = header_name.equals("photo") ? filename : entry.getValue();
 					httppost.addHeader(header_name, header_value);
+					Log.d("HTTPPOST", "HTTP POST Header: " + httppost.getLastHeader(header_name).toString());
 				}
 				
 				response = httpclient.execute(httppost);
