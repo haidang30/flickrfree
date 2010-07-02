@@ -18,7 +18,9 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.util.EntityUtils;
@@ -133,13 +135,6 @@ public class RestClient {
 		HttpClient httpclient = new DefaultHttpClient();
 	    httpclient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 
-	    File file = null;
-	    // If this is a POST call, then it is a file upload. Check to see if a
-	    // filename is given, and if so, open that file.
-    	if (ispost && !filename.equals("")) {
-    		file = new File(filename);
-    	}
-	    
 		if (paramNames == null) {
 			paramNames = new String[0];
 		}
@@ -220,21 +215,22 @@ public class RestClient {
 		try {
 			// Prepare a request object
 			if (ispost) {
-			    HttpPost httppost = new HttpPost(url);
-			    FileEntity entity = new FileEntity(file, "binary/octet-stream");
-			    httppost.setEntity(entity);
-			    entity.setContentType("binary/octet-stream");
+			    File file = null;
+			    // If this is a POST call, then it is a file upload. Check to see if a
+			    // filename is given, and if so, open that file.
+		    	if (ispost && !filename.equals("")) {
+		    		file = new File(filename);
+		    	}
 			    
-			    // Use HttpPost.addHeader() method to add the name/value argument
-			    // pairs to the POST request.
-			    // TODO: Is this working right?
-			    String header_name, header_value;
+			    HttpPost httppost = new HttpPost(url);
+			    MultipartEntity entity = new MultipartEntity();
+
+			    entity.addPart("photo", new FileBody(file));
 				for (Map.Entry<String,String> entry : sig_params.entrySet()) {
-					header_name = entry.getKey();
-					header_value = header_name.equals("photo") ? filename : entry.getValue();
-					httppost.addHeader(header_name, header_value);
-					Log.d("HTTPPOST", "HTTP POST Header: " + httppost.getLastHeader(header_name).toString());
+					entity.addPart(entry.getKey(), new StringBody(entry.getValue()));
+					Log.d("HTTPPOST", "entity.addPart(\"" + entry.getKey() + "\", \"" + entry.getValue() + "\")");
 				}
+			    httppost.setEntity(entity);
 				
 				response = httpclient.execute(httppost);
 				HttpEntity resEntity = response.getEntity();
