@@ -223,21 +223,16 @@ public class RestClient {
 		    	}
 			    
 			    HttpPost httppost = new HttpPost(url);
-			    MultipartEntity entity = new MultipartEntity();
+			    MultipartEntity mp_entity = new MultipartEntity();
 
-			    entity.addPart("photo", new FileBody(file));
+			    mp_entity.addPart("photo", new FileBody(file));
 				for (Map.Entry<String,String> entry : sig_params.entrySet()) {
-					entity.addPart(entry.getKey(), new StringBody(entry.getValue()));
-					Log.d("HTTPPOST", "entity.addPart(\"" + entry.getKey() + "\", \"" + entry.getValue() + "\")");
+					mp_entity.addPart(entry.getKey(), new StringBody(entry.getValue()));
 				}
-			    httppost.setEntity(entity);
+			    httppost.setEntity(mp_entity);
 				
 				response = httpclient.execute(httppost);
 				HttpEntity resEntity = response.getEntity();
-				Log.d("HTTPPOST", response.getStatusLine().toString());
-			    if (resEntity != null) {
-			        Log.d("HTTPPOST",EntityUtils.toString(resEntity));
-			    }
 			    if (resEntity != null) {
 			    	resEntity.consumeContent();
 				}
@@ -253,27 +248,29 @@ public class RestClient {
 			e.printStackTrace();
 		}
 		
-		try {
-			// Get hold of the response entity
-			HttpEntity entity = null;
-			if (response != null) {
-				entity = response.getEntity();
+		if (!ispost) {
+			try {
+				// Get hold of the response entity
+				HttpEntity entity = null;
+				if (response != null) {
+					entity = response.getEntity();
+				}
+	
+				// If the response does not enclose an entity, there is no need
+				// to worry about connection release
+				if (entity != null) {
+					// A Simple JSON Response Read
+					InputStream instream = entity.getContent();
+					String result = convertStreamToString(instream);
+					result = result.substring(result.indexOf("{"),result.lastIndexOf("}") + 1);
+					// A Simple JSONObject Creation
+					json = new JSONObject(result);
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-
-			// If the response does not enclose an entity, there is no need
-			// to worry about connection release
-			if (entity != null) {
-				// A Simple JSON Response Read
-				InputStream instream = entity.getContent();
-				String result = convertStreamToString(instream);
-				result = result.substring(result.indexOf("{"),result.lastIndexOf("}") + 1);
-				// A Simple JSONObject Creation
-				json = new JSONObject(result);
-			}
-		} catch (JSONException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		httpclient.getConnectionManager().shutdown();
 
