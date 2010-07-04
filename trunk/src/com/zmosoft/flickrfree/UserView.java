@@ -544,6 +544,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 		      
 		      //TODO: Add screen to allow user to select upload options (i.e.,
 		      //      picture name, tags, permissions, etc.
+		      //TODO: Move the upload to an AsyncTask to allow background uploading.
 		      if ((new File(filename)).exists()) {
 		        RestClient.UploadPicture(filename,
 	    		"Test Upload",
