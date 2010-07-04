@@ -268,6 +268,38 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 	    }
 	}
 	
+	// AsyncTask to upload a picture in the background.
+	private class UploadPicture extends AsyncTask<Bundle, Void, Object> {
+		
+		@Override
+		protected Object doInBackground(Bundle... params) {
+			Bundle upload_info = params.length > 0 ? params[0] : null;
+			
+			if (upload_info != null) {
+		        RestClient.UploadPicture(upload_info.getString("filename"),
+						    			 upload_info.getString("title"),
+							    		 upload_info.getString("comment"),
+							    		 upload_info.getString("tags"),
+							    		 upload_info.getBoolean("is_public"),
+							    		 upload_info.getBoolean("is_friend"),
+							    		 upload_info.getBoolean("is_family"),
+							    		 upload_info.getInt("safety_level"));
+			}
+			
+			return null;
+		}
+		
+		@Override
+		protected void onPreExecute() {
+	    	setProgressBarIndeterminateVisibility(true);
+		}
+		
+		@Override
+		protected void onPostExecute(Object result) {
+	    	setProgressBarIndeterminateVisibility(false);
+		}
+	}
+	
     /** Called when the activity is first created. */
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -543,13 +575,18 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 		      cursor.close();
 		      
 		      //TODO: Add screen to allow user to select upload options (i.e.,
-		      //      picture name, tags, permissions, etc.
-		      //TODO: Move the upload to an AsyncTask to allow background uploading.
+		      //      picture name, tags, permissions, etc.)
 		      if ((new File(filename)).exists()) {
-		        RestClient.UploadPicture(filename,
-	    		"Test Upload",
-	    		"This is a test of FlickrFree's upload capability",
-	    		"upload test", false, false, false, 1);
+		    	  Bundle picture_info = new Bundle();
+		    	  picture_info.putString("filename", filename);
+		    	  picture_info.putString("title", "Test Upload");
+		    	  picture_info.putString("comment", "This is a test of FlickrFree's upload capability");
+		    	  picture_info.putString("tags", "upload test");
+		    	  picture_info.putBoolean("is_public", false);
+		    	  picture_info.putBoolean("is_friend", false);
+		    	  picture_info.putBoolean("is_family", false);
+		    	  picture_info.putInt("safety_level", 1);
+		    	  new UploadPicture().execute(picture_info);
 		      }
 		    }
 		}
