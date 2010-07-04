@@ -31,6 +31,7 @@ public class GlobalResources {
 
 	static final int ADD_ACCOUNT_REQ = 1;
 	static final int MANAGE_ACCOUNTS_REQ = 2;
+	static final int PICK_IMAGE_REQ = 999;
 	static final int IMGS_PER_PAGE = 20;
     static final int NRETRIES = 10;
 
