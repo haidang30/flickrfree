@@ -1,5 +1,6 @@
 package com.zmosoft.flickrfree;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -18,10 +19,11 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
@@ -529,6 +531,27 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 	        	new GetUserInfoTask().execute(m_extras);
 			}
 		}
+		else if (requestCode == GlobalResources.PICK_IMAGE_REQ) {
+		    Uri uri = data.getData();
+		    if (uri != null) {
+		      Cursor cursor = getContentResolver().query(uri,
+		    		  									 new String[]
+		  									            	{android.provider.MediaStore.Images.ImageColumns.DATA},
+	  									            	 null, null, null);
+		      cursor.moveToFirst();
+		      String filename = cursor.getString(0);
+		      cursor.close();
+		      
+		      //TODO: Add screen to allow user to select upload options (i.e.,
+		      //      picture name, tags, permissions, etc.
+		      if ((new File(filename)).exists()) {
+		        RestClient.UploadPicture(filename,
+	    		"Test Upload",
+	    		"This is a test of FlickrFree's upload capability",
+	    		"upload test", false, false, false, 1);
+		      }
+		    }
+		}
 	}
 	
 	@Override
@@ -714,19 +737,14 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 			startActivity(i);
 		}
 		else if (command.equals(m_actionnames[ACTION_UPLOAD])) {
-	        String media_dir = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)
-	        ? Environment.getExternalStorageDirectory().toString() + "/media/"
-	        : "";
-
-	        String filename = media_dir + "oswald.jpg";
-	        RestClient.UploadPicture(filename,
-	        		"Test Upload",
-	        		"This is a test of FlickrFree's upload capability",
-	        		"upload test", false, false, false, 1);
+			startActivityForResult(new Intent(Intent.ACTION_PICK,
+				  							   android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI),
+	  							   GlobalResources.PICK_IMAGE_REQ); 
 		}
 	}
 
-    private enum UsrType {
+
+	private enum UsrType {
     	APPUSER, OTHERUSER, NOUSER;
     }
 
