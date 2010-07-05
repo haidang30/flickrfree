@@ -3,6 +3,10 @@
 
 ===0.9.8.3===
 
+ * Now has the ability to upload photos.
+
+===0.9.8.3===
+
  * Moved cache from SD card back to default (internal memory) cache location.
 
 ===0.9.8.2===
