@@ -37,6 +37,7 @@ public class UploadOptions extends Activity implements OnClickListener {
 		
 		@Override
 		protected void onPreExecute() {
+			// TODO: Set progress indicator to display in Android notification bar.
 	    	setProgressBarIndeterminateVisibility(true);
 		}
 		
@@ -53,7 +54,7 @@ public class UploadOptions extends Activity implements OnClickListener {
 		setContentView(R.layout.upload_options);
         m_extras = getIntent().getExtras();
 		
-		((Button)findViewById(R.id.btnOK)).setOnClickListener(this);
+		((Button)findViewById(R.id.btnUpload)).setOnClickListener(this);
 		((Button)findViewById(R.id.btnCancel)).setOnClickListener(this);
 		
 		String filepath = m_extras.getString("filepath");
@@ -94,7 +95,7 @@ public class UploadOptions extends Activity implements OnClickListener {
 	
 	@Override
 	public void onClick(View v) {
-		if (v.getId() == R.id.btnOK) {
+		if (v.getId() == R.id.btnUpload) {
 			InitiateUpload();
 			finish();
 		}

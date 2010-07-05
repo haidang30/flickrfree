@@ -13,6 +13,7 @@
     <string name="btnmanageaccts">Accounts</string>
     <string name="btnmap">Show On Map</string>
     <string name="btnok">OK</string>
+    <string name="btnupload">Upload</string>
     <string name="btnremoveaccount">Remove Account</string>
     <string name="btnsearch">Search</string>
     <string name="btnsendlabel">Send</string>
