@@ -17,6 +17,10 @@
     <string name="btnsearch">Search</string>
     <string name="btnsendlabel">Send</string>
     <string name="btnuserpagelabel">User Page</string>
+    
+    <string name="chkeveryone">Everyone</string>
+    <string name="chkfriends">Friends</string>
+    <string name="chkfamily">Family</string>
     <string name="contactsview">Contacts</string>
 
     <string name="dlg_imgsize_title">Choose Download Size</string>
@@ -51,18 +55,23 @@
 	<string name="lbladdcomment">Comment:</string>
 	<string name="lblauthor">Author</string>
 	<string name="lblcomment">Comment</string>
+	<string name="lblphototags">Tags</string>
+	<string name="lblphototitle">Title</string>
 	<string name="lblgroups">Groups</string>
 	<string name="lblacccountdialog">Choose Account</string>
 	<string name="lblmanageaccounts">Manage Accounts</string>
+	<string name="lblvisibleto">Visible To:</string>
 	<string name="lblphotos">Photos</string>
 	<string name="lblcontact">Contact</string>
 	<string name="lblfriend">Friend</string>
 	<string name="lblfamily">Family</string>
 	<string name="lblnphotos">Photos</string>
+	<string name="lblsafetylevel">Safety Level</string>
 	<string name="lbltitle">Title</string>
 	<string name="lblvalue">Value</string>
 	<string name="lblwordcomments">Comments</string>
 	<string name="lblnocomments">No Comments</string>
+	<string name="lbluploadoptions">Upload Settings</string>
 	<string name="lblwordof">of</string>
 	
     <string name="mnu_favorite">Favorite</string>
@@ -94,6 +103,7 @@
 	<string name="ttlhelp">Help</string>
 	
     <string name="userview">User Page</string>
+    <string name="uploadoptions">Upload Options</string>
 
     <string name="youraccountlabel">Your Account</string>
 </resources>
