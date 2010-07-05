@@ -268,38 +268,6 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 	    }
 	}
 	
-	// AsyncTask to upload a picture in the background.
-	private class UploadPicture extends AsyncTask<Bundle, Void, Object> {
-		
-		@Override
-		protected Object doInBackground(Bundle... params) {
-			Bundle upload_info = params.length > 0 ? params[0] : null;
-			
-			if (upload_info != null) {
-		        RestClient.UploadPicture(upload_info.getString("filename"),
-						    			 upload_info.getString("title"),
-							    		 upload_info.getString("comment"),
-							    		 upload_info.getString("tags"),
-							    		 upload_info.getBoolean("is_public"),
-							    		 upload_info.getBoolean("is_friend"),
-							    		 upload_info.getBoolean("is_family"),
-							    		 upload_info.getInt("safety_level"));
-			}
-			
-			return null;
-		}
-		
-		@Override
-		protected void onPreExecute() {
-	    	setProgressBarIndeterminateVisibility(true);
-		}
-		
-		@Override
-		protected void onPostExecute(Object result) {
-	    	setProgressBarIndeterminateVisibility(false);
-		}
-	}
-	
     /** Called when the activity is first created. */
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -571,22 +539,13 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 		  									            	{android.provider.MediaStore.Images.ImageColumns.DATA},
 	  									            	 null, null, null);
 		      cursor.moveToFirst();
-		      String filename = cursor.getString(0);
+		      String filepath = cursor.getString(0);
 		      cursor.close();
 		      
-		      //TODO: Add screen to allow user to select upload options (i.e.,
-		      //      picture name, tags, permissions, etc.)
-		      if ((new File(filename)).exists()) {
-		    	  Bundle picture_info = new Bundle();
-		    	  picture_info.putString("filename", filename);
-		    	  picture_info.putString("title", "Test Upload");
-		    	  picture_info.putString("comment", "This is a test of FlickrFree's upload capability");
-		    	  picture_info.putString("tags", "upload test");
-		    	  picture_info.putBoolean("is_public", false);
-		    	  picture_info.putBoolean("is_friend", false);
-		    	  picture_info.putBoolean("is_family", false);
-		    	  picture_info.putInt("safety_level", 1);
-		    	  new UploadPicture().execute(picture_info);
+		      if ((new File(filepath)).exists()) {
+ 				  Intent i = new Intent(this, UploadOptions.class);
+ 				  i.putExtra("filepath", filepath);
+ 				  startActivity(i);
 		      }
 		    }
 		}
@@ -668,7 +627,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 	@Override
 	public void onItemClick(AdapterView parent, View view, int position, long id) {
 		String command = ((TextView)view.findViewById(R.id.ActionTitle)).getText().toString();
-		if (command.equals(m_actionnames[ACTION_PHOTOSTREAM])) {		
+		if (command.equals(m_actionnames[ACTION_PHOTOSTREAM])) {
 			Intent i = new Intent(this, ImageGrid.class);
 			i.putExtra("type", "photostream");
 			i.putExtra("nsid", m_extras.getString("nsid"));

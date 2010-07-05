@@ -45,4 +45,10 @@
 	    <item>Your Favorites</item>
 	</string-array>
 
+	<string-array name="safety_levels_list">
+		<item>Safe</item>	
+		<item>Moderate</item>	
+		<item>Restricted</item>	
+	</string-array>
+
 </resources>
