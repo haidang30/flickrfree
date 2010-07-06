@@ -1,7 +1,11 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
-===0.9.9.1 ===
+===0.9.9.2===
+
+ * Fixed another serious authentication bug for new users.
+
+===0.9.9.1===
 
  * Fixed a bug that prevents new users from setting up their accounts.
 
