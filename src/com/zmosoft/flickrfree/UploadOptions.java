@@ -37,7 +37,7 @@ public class UploadOptions extends Activity implements OnClickListener {
 		
 		@Override
 		protected void onPreExecute() {
-			// TODO: Set progress indicator to display in Android notification bar.
+			// TODO: Set progress indicator to display in Android notification bar while uploading picture.
 	    	setProgressBarIndeterminateVisibility(true);
 		}
 		
@@ -51,6 +51,7 @@ public class UploadOptions extends Activity implements OnClickListener {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //TODO: Add thumbnail of image to upload options screen.
 		setContentView(R.layout.upload_options);
         m_extras = getIntent().getExtras();
 		
