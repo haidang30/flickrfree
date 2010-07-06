@@ -276,7 +276,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.userview);
 
-    	((Button)findViewById(R.id.btnManageAccounts)).setVisibility(m_usertype == UsrType.APPUSER ? View.VISIBLE : View.INVISIBLE);
+    	((Button)findViewById(R.id.btnManageAccounts)).setVisibility(View.INVISIBLE);
 
 		((ListView)findViewById(R.id.UserListView)).setOnItemClickListener(this);
 		((Button)findViewById(R.id.btnManageAccounts)).setOnClickListener(this);
@@ -372,7 +372,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 
     	// Only show the Manage Accounts button if this is the user page of
     	// the registered app user.
-    	((Button)findViewById(R.id.btnManageAccounts)).setVisibility(m_usertype == UsrType.APPUSER ? View.VISIBLE : View.INVISIBLE);
+    	((Button)findViewById(R.id.btnManageAccounts)).setVisibility(m_usertype != UsrType.OTHERUSER? View.VISIBLE : View.INVISIBLE);
 
 //		LinearLayout cl = (LinearLayout)findViewById(R.id.LayoutContact);
 //		cl.setVisibility(View.GONE);
