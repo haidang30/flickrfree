@@ -38,7 +38,9 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 
         setContentView(R.layout.authenticate);
         
-		((Button)findViewById(R.id.btnAuthenticate)).setEnabled(checkAuthCode());
+    	RestClient.setAuth(this);
+
+    	((Button)findViewById(R.id.btnAuthenticate)).setEnabled(checkAuthCode());
 
 		((Button)findViewById(R.id.btnAuthenticate)).setOnClickListener(this);
         ((Button)findViewById(R.id.btnGetCode)).setOnClickListener(this);
