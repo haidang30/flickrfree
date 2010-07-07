@@ -12,6 +12,12 @@
 	  android:padding="5dp"
 	  android:orientation="vertical">
 	
+		<!-- TODO: Add thumbnail of image to be uploaded. -->
+		<ImageView android:id="@+id/imgupload"
+				   android:layout_width="wrap_content"
+				   android:layout_height="wrap_content">
+	   	</ImageView>
+		
 		<TextView android:text="@string/lblphototitle"
 				  android:id="@+id/lblPhotoTitle"
 				  android:padding="4dp"
@@ -119,6 +125,7 @@
 			
 		</LinearLayout>
 	
-	</LinearLayout>
+	
+</LinearLayout>
 
 </ScrollView>

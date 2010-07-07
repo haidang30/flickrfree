@@ -1,7 +1,7 @@
 package com.zmosoft.flickrfree;
 
 import android.app.Activity;
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,40 +14,6 @@ import android.widget.TextView;
 
 public class UploadOptions extends Activity implements OnClickListener {
 	
-	// AsyncTask to upload a picture in the background.
-	private class UploadPicture extends AsyncTask<Bundle, Void, Object> {
-		
-		@Override
-		protected Object doInBackground(Bundle... params) {
-			Bundle upload_info = params.length > 0 ? params[0] : null;
-			
-			if (upload_info != null) {
-		        RestClient.UploadPicture(upload_info.getString("filename"),
-						    			 upload_info.getString("title"),
-							    		 upload_info.getString("comment"),
-							    		 upload_info.getString("tags"),
-							    		 upload_info.getBoolean("is_public"),
-							    		 upload_info.getBoolean("is_friend"),
-							    		 upload_info.getBoolean("is_family"),
-							    		 upload_info.getInt("safety_level"));
-			}
-			
-			return null;
-		}
-		
-		@Override
-		protected void onPreExecute() {
-			// TODO: Set progress indicator to display in Android notification bar while uploading picture.
-	    	setProgressBarIndeterminateVisibility(true);
-		}
-		
-		@Override
-		protected void onPostExecute(Object result) {
-	    	setProgressBarIndeterminateVisibility(false);
-		}
-	}
-	
-    /** Called when the activity is first created. */
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,26 +38,26 @@ public class UploadOptions extends Activity implements OnClickListener {
 	}
 	
 	private void InitiateUpload() {		
-		Bundle picture_info = new Bundle();
+		Intent uploader = new Intent(this, Uploader.class);
 		String[] safety_levels = getResources().getStringArray(R.array.safety_levels_list);
 
-		picture_info.putString("filename", m_extras.getString("filepath"));
-		picture_info.putString("title", ((EditText)findViewById(R.id.txtPhotoTitle)).getText().toString());
-		picture_info.putString("comment", ((EditText)findViewById(R.id.txtPhotoComment)).getText().toString());
-		picture_info.putString("tags", ((EditText)findViewById(R.id.txtPhotoTags)).getText().toString());
-		picture_info.putBoolean("is_public", ((CheckBox)findViewById(R.id.chkEveryone)).isChecked());
-		picture_info.putBoolean("is_friend", ((CheckBox)findViewById(R.id.chkFriends)).isChecked());
-		picture_info.putBoolean("is_family", ((CheckBox)findViewById(R.id.chkFamily)).isChecked());
+		uploader.putExtra("filename", m_extras.getString("filepath"));
+		uploader.putExtra("title", ((EditText)findViewById(R.id.txtPhotoTitle)).getText().toString());
+		uploader.putExtra("comment", ((EditText)findViewById(R.id.txtPhotoComment)).getText().toString());
+		uploader.putExtra("tags", ((EditText)findViewById(R.id.txtPhotoTags)).getText().toString());
+		uploader.putExtra("is_public", ((CheckBox)findViewById(R.id.chkEveryone)).isChecked());
+		uploader.putExtra("is_friend", ((CheckBox)findViewById(R.id.chkFriends)).isChecked());
+		uploader.putExtra("is_family", ((CheckBox)findViewById(R.id.chkFamily)).isChecked());
 		String sl = ((TextView)((Spinner)findViewById(R.id.spnSafetyLevel)).getSelectedView()).getText().toString();
-		picture_info.putInt("safety_level", 1);
+		uploader.putExtra("safety_level", 1);
 		for (int i = 0; i < safety_levels.length; ++i) {
 			if (safety_levels[i].equals(sl)) {
-				picture_info.putInt("safety_level", i + 1);
+				uploader.putExtra("safety_level", i + 1);
 				break;
 			}
 		}
 
-		new UploadPicture().execute(picture_info);
+		startService(uploader);
 	}
 	
 	@Override

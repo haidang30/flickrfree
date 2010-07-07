@@ -34,6 +34,7 @@ public class GlobalResources {
 	static final int PICK_IMAGE_REQ = 999;
 	static final int IMGS_PER_PAGE = 20;
     static final int NRETRIES = 10;
+	static final int UPLOADER_ID = 243;
 
     private static class UpdateProgressBar implements Runnable {
 
