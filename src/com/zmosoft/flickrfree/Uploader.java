@@ -68,6 +68,7 @@ public class Uploader extends Service {
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 		if (m_notification != null) {
 			m_notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+			m_notification.flags = Notification.FLAG_NO_CLEAR;
 		}
 		
 		new UploadPicture().execute(intent.getExtras());
