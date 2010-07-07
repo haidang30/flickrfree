@@ -1,6 +1,10 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===0.9.9.4===
+
+ * Made uploader status-bar notification persistent.
+
 ===0.9.9.3===
 
  * Added status-bar notification to uploader.
