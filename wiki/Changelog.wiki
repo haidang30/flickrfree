@@ -1,6 +1,10 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===0.9.9.3===
+
+ * Added status-bar notification to uploader.
+
 ===0.9.9.2===
 
  * Fixed another serious authentication bug for new users.
