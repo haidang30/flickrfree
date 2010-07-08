@@ -81,11 +81,11 @@ public class APICalls {
     }
     
     public static JSONObject groupsPoolsGetGroups() {
-        return RestClient.CallFunction("flickr.groups.pools.getgroups",null,null);
+        return RestClient.CallFunction("flickr.groups.pools.getGroups",null,null);
     }
     
     public static JSONObject groupsPoolsGetPhotos(String groupid) {
-        return RestClient.CallFunction("flickr.groups.pools.getgroups",new String[]{"group_id"}, new String[]{groupid});
+        return RestClient.CallFunction("flickr.groups.pools.getGroups",new String[]{"group_id"}, new String[]{groupid});
     }
     
     public static JSONObject groupsSearch(String text, String perpage) {
