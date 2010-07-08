@@ -1,5 +1,8 @@
 package com.zmosoft.flickrfree;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -14,23 +17,24 @@ import android.os.IBinder;
 public class Uploader extends Service {
 
 	// AsyncTask to upload a picture in the background.
-	private class UploadPictureTask extends AsyncTask<Bundle, String, Object> {
+	private class UploadPictureTask extends AsyncTask<Void, String, Object> {
 		
 		@Override
-		protected Object doInBackground(Bundle... params) {
-			m_upload_info = params.length > 0 ? params[0] : null;
-			
-			if (m_upload_info != null) {
-				publishProgress(m_upload_info.getString("title"));
-				
-		        RestClient.UploadPicture(m_upload_info.getString("filename"),
-						    			 m_upload_info.getString("title"),
-							    		 m_upload_info.getString("comment"),
-							    		 m_upload_info.getString("tags"),
-							    		 m_upload_info.getBoolean("is_public"),
-							    		 m_upload_info.getBoolean("is_friend"),
-							    		 m_upload_info.getBoolean("is_family"),
-							    		 m_upload_info.getInt("safety_level"));
+		protected Object doInBackground(Void... params) {
+			Bundle upload_info = null;
+			while (m_uploads.size() > 0) {
+				upload_info = m_uploads.remove(0);
+				if (upload_info != null) {
+					publishProgress(upload_info.getString("title"));
+			        RestClient.UploadPicture(upload_info.getString("filename"),
+							    			 upload_info.getString("title"),
+								    		 upload_info.getString("comment"),
+								    		 upload_info.getString("tags"),
+								    		 upload_info.getBoolean("is_public"),
+								    		 upload_info.getBoolean("is_friend"),
+								    		 upload_info.getBoolean("is_family"),
+								    		 upload_info.getInt("safety_level"));
+				}
 			}
 			
 			return null;
@@ -48,9 +52,6 @@ public class Uploader extends Service {
 		
 		@Override
 		protected void onPreExecute() {
-			if (m_notification != null) {
-				((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(GlobalResources.UPLOADER_ID, m_notification);
-			}
 		}
 		
 		@Override
@@ -59,11 +60,18 @@ public class Uploader extends Service {
 			stopSelf();
 		}
 		
-		public Bundle getUploadInfo() {
-			return m_upload_info;
+		public void addUpload(Bundle upload_info) {
+			if (m_uploads == null) {
+				m_uploads = new LinkedList<Bundle>();
+			}
+			m_uploads.add(upload_info);
 		}
 		
-		Bundle m_upload_info = null;
+		public Bundle getUploadInfo() {
+			return m_uploads.get(0);
+		}
+		
+		List<Bundle> m_uploads = null;
 	}
 	
 	public class UploadBinder extends Binder {
@@ -93,7 +101,9 @@ public class Uploader extends Service {
 			m_notification.flags = Notification.FLAG_NO_CLEAR;
 		}
 		
-		m_upload_task = (UploadPictureTask)new UploadPictureTask().execute(intent.getExtras());
+		m_upload_task = (UploadPictureTask)new UploadPictureTask();
+		m_upload_task.addUpload(intent.getExtras());
+		m_upload_task.execute();
 	}
 	
 	@Override
