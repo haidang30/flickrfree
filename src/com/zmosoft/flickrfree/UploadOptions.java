@@ -8,11 +8,13 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
-public class UploadOptions extends Activity implements OnClickListener {
+public class UploadOptions extends Activity implements OnClickListener, OnCheckedChangeListener {
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,8 @@ public class UploadOptions extends Activity implements OnClickListener {
 		((EditText)findViewById(R.id.txtPhotoTitle)).setText(title);
 		((EditText)findViewById(R.id.txtPhotoTitle)).selectAll();
 		
+		((CheckBox)findViewById(R.id.chkEveryone)).setOnCheckedChangeListener(this);
+		
 		Spinner spnSafety = ((Spinner)findViewById(R.id.spnSafetyLevel));
         ArrayAdapter adapter = ArrayAdapter.createFromResource(
                 this, R.array.safety_levels_list, android.R.layout.simple_spinner_item);
@@ -46,8 +50,10 @@ public class UploadOptions extends Activity implements OnClickListener {
 		uploader.putExtra("comment", ((EditText)findViewById(R.id.txtPhotoComment)).getText().toString());
 		uploader.putExtra("tags", ((EditText)findViewById(R.id.txtPhotoTags)).getText().toString());
 		uploader.putExtra("is_public", ((CheckBox)findViewById(R.id.chkEveryone)).isChecked());
-		uploader.putExtra("is_friend", ((CheckBox)findViewById(R.id.chkFriends)).isChecked());
-		uploader.putExtra("is_family", ((CheckBox)findViewById(R.id.chkFamily)).isChecked());
+		CheckBox cb = ((CheckBox)findViewById(R.id.chkFriends));
+		uploader.putExtra("is_friend", cb.isEnabled() && cb.isChecked());
+		cb = ((CheckBox)findViewById(R.id.chkFamily));
+		uploader.putExtra("is_family", cb.isEnabled() && cb.isChecked());
 		String sl = ((TextView)((Spinner)findViewById(R.id.spnSafetyLevel)).getSelectedView()).getText().toString();
 		uploader.putExtra("safety_level", 1);
 		for (int i = 0; i < safety_levels.length; ++i) {
@@ -68,6 +74,14 @@ public class UploadOptions extends Activity implements OnClickListener {
 		}
 		else if (v.getId() == R.id.btnCancel) {
 			finish();
+		}
+	}
+
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		if (buttonView.getId() == R.id.chkEveryone) {
+			((CheckBox)findViewById(R.id.chkFamily)).setEnabled(!isChecked);
+			((CheckBox)findViewById(R.id.chkFriends)).setEnabled(!isChecked);
 		}
 	}
 
