@@ -19,7 +19,7 @@ public class UploadProgress extends Activity implements OnClickListener {
 	public class UploadBroadcastReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-	        if (intent.getAction().equals(GlobalResources.INTENT_UPLOAD_FINISHED)) {
+	        if (intent.getAction().equals(GlobalResources.INTENT_UPLOAD_STARTED)) {
 	            updateProgress();
 	        }
 		}
@@ -46,8 +46,9 @@ public class UploadProgress extends Activity implements OnClickListener {
         this.bindService(new Intent(this, Uploader.class), m_svc, 0);
         m_receiver = new UploadBroadcastReceiver();
 		if (m_receiver != null) {
-			this.registerReceiver(m_receiver, new IntentFilter(GlobalResources.INTENT_UPLOAD_FINISHED));
+			this.registerReceiver(m_receiver, new IntentFilter(GlobalResources.INTENT_UPLOAD_STARTED));
 		}
+		updateProgress();
 	}
 
 	@Override
