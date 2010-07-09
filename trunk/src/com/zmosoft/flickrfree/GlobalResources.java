@@ -26,6 +26,9 @@ import android.view.Window;
 public class GlobalResources {
     public static String m_EDITPERMS_URL = "http://www.flickr.com/services/auth/list.gne";
     
+    public static final String INTENT_UPLOAD_STARTED = "com.zmosoft.flickrfree.UPLOAD_STARTED";
+    public static final String INTENT_UPLOAD_FINISHED = "com.zmosoft.flickrfree.UPLOAD_FINISHED";
+    
 	public static int API_DELAY_MS = 1000;
 	public static int ERROR_DELAY_MS = 1000;
 

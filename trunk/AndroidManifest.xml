@@ -117,6 +117,13 @@
             </intent-filter>
         </activity>
         
+        <activity android:name=".UploadProgress" android:label="@string/uploadprogress">
+            <intent-filter>
+                <action android:name="com.zmosoft.flickrfree.UPLOADPROGRESS" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        
 		<service android:name=".Uploader" android:label="@string/uploader"/>
 		
 </application>
