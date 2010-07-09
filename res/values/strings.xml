@@ -105,6 +105,7 @@
 	
     <string name="userview">User Page</string>
     <string name="uploadoptions">Upload Options</string>
+    <string name="uploadprogress">Upload Progress</string>
     <string name="uploadingpicture">Uploading Picture</string>
     <string name="uploader">Uploader</string>
 

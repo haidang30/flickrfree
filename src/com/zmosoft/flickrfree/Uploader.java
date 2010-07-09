@@ -1,7 +1,6 @@
 package com.zmosoft.flickrfree;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -22,9 +21,13 @@ public class Uploader extends Service {
 		@Override
 		protected Object doInBackground(Void... params) {
 			Bundle upload_info = null;
+			Intent broadcast_intent = new Intent();
 			while (m_uploads.size() > 0) {
 				upload_info = m_uploads.remove(0);
 				if (upload_info != null) {
+					broadcast_intent.setAction(GlobalResources.INTENT_UPLOAD_STARTED);
+					getApplicationContext().sendBroadcast(broadcast_intent);
+					
 					publishProgress(upload_info.getString("title"));
 			        RestClient.UploadPicture(upload_info.getString("filename"),
 							    			 upload_info.getString("title"),
@@ -34,6 +37,9 @@ public class Uploader extends Service {
 								    		 upload_info.getBoolean("is_friend"),
 								    		 upload_info.getBoolean("is_family"),
 								    		 upload_info.getInt("safety_level"));
+
+			        broadcast_intent.setAction(GlobalResources.INTENT_UPLOAD_FINISHED);
+					getApplicationContext().sendBroadcast(broadcast_intent);
 				}
 			}
 			
@@ -67,11 +73,11 @@ public class Uploader extends Service {
 			m_uploads.add(upload_info);
 		}
 		
-		public Bundle getUploadInfo() {
-			return m_uploads.get(0);
+		public LinkedList<Bundle> getUploads() {
+			return m_uploads;
 		}
 		
-		List<Bundle> m_uploads = null;
+		LinkedList<Bundle> m_uploads = null;
 	}
 	
 	public class UploadBinder extends Binder {
@@ -91,7 +97,7 @@ public class Uploader extends Service {
 		int icon = android.R.drawable.stat_sys_upload;
 		CharSequence tickerText = "Uploading Picture";
 		m_notification = new Notification(icon, tickerText, System.currentTimeMillis());
-		m_notify_activity = PendingIntent.getActivity(this, 0, new Intent(this, Uploader.class), 0);
+		m_notify_activity = PendingIntent.getActivity(this, 0, new Intent(this, UploadProgress.class), 0);
 		
 		if (m_notification != null) {
 			m_notification.setLatestEventInfo(getApplicationContext(),
@@ -111,16 +117,12 @@ public class Uploader extends Service {
 		return m_binder;
 	}
 
-	public String getFilename() {
-		String rval = "";
-		if (m_upload_task != null) {
-			Bundle upload_info = m_upload_task.getUploadInfo();
-			if (upload_info != null) {
-				rval = upload_info.getString("filename");
-			}
-		}
-		
-		return rval;
+	public void addUpload(Bundle upload_info) {
+		m_upload_task.addUpload(upload_info);
+	}
+	
+	public LinkedList<Bundle> getUploads() {
+		return m_upload_task.getUploads();
 	}
 	
 	private Notification m_notification = null;
