@@ -37,7 +37,8 @@ public class Uploader extends Service {
 								    		 upload_info.getBoolean("is_public"),
 								    		 upload_info.getBoolean("is_friend"),
 								    		 upload_info.getBoolean("is_family"),
-								    		 upload_info.getInt("safety_level"));
+								    		 upload_info.getInt("safety_level"),
+								    		 getApplicationContext());
 				}
 				m_uploads.remove(0);
 				// Send out a broadcast to let us know that an upload has finished.
