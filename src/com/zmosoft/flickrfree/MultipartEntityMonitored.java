@@ -22,12 +22,7 @@ public class MultipartEntityMonitored extends MultipartEntity {
 			m_out = out;
 			m_length = length;
 			m_broadcast_trigger = Math.round((double)m_length / 100.0);
-			m_broadcast_intent = new Intent();
-			m_broadcast_intent.setAction(GlobalResources.INTENT_UPLOAD_PROGRESS_UPDATE);
-			m_broadcast_intent.putExtra("percent", 0);
-			if (m_context != null) {
-				m_context.sendBroadcast(m_broadcast_intent);
-			}
+			BroadcastPercentUploaded();
 		}
 
 		public void write(byte[] b, int off, int len) throws IOException {
@@ -43,7 +38,6 @@ public class MultipartEntityMonitored extends MultipartEntity {
 			else {
 				m_broadcast_intent.putExtra("percent", PercentUploaded());
 				if (m_context != null) {
-					Log.d("UPLOAD", "Broadcasting upload percent: " + String.valueOf(PercentUploaded()));
 					m_context.sendBroadcast(m_broadcast_intent);
 				}
 				m_broadcast_count = 0;
@@ -63,11 +57,22 @@ public class MultipartEntityMonitored extends MultipartEntity {
 			else {
 				m_broadcast_intent.putExtra("percent", PercentUploaded());
 				if (m_context != null) {
-					Log.d("UPLOAD", "Broadcasting upload percent: " + String.valueOf(PercentUploaded()));
 					m_context.sendBroadcast(m_broadcast_intent);
 				}
 				m_broadcast_count = 0;
 			}
+		}
+		
+		private void BroadcastPercentUploaded() {
+			if (m_broadcast_intent == null) {
+				m_broadcast_intent = new Intent();
+				m_broadcast_intent.setAction(GlobalResources.INTENT_UPLOAD_PROGRESS_UPDATE);
+			}
+			m_broadcast_intent.putExtra("percent", PercentUploaded());
+			if (m_context != null) {
+				m_context.sendBroadcast(m_broadcast_intent);
+			}
+			m_broadcast_count = 0;
 		}
 		
 		private long PercentUploaded() {

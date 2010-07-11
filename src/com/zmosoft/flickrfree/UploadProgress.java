@@ -16,9 +16,45 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.content.ServiceConnection;
 
 public class UploadProgress extends Activity implements OnClickListener {
+
+    private ServiceConnection m_svc = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			m_uploader = ((Uploader.UploadBinder)service).getService();
+			Intent broadcast_intent = new Intent();
+			broadcast_intent.setAction(GlobalResources.INTENT_BIND_UPLOADER);
+			getApplicationContext().sendBroadcast(broadcast_intent);
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			m_uploader = null;
+		}
+    };
+    
+	// This is the receiver that we use to update the percentage progress display
+    // for the current upload.
+	public class PercentProgressUpdateReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+	        if (intent.getAction().equals(GlobalResources.INTENT_UPLOAD_PROGRESS_UPDATE)) {
+	        	Bundle extras = intent.getExtras();
+	        	if (extras != null && extras.containsKey("percent")) {
+		        	ListView lv = ((ListView)findViewById(R.id.UploadProgressList));
+		        	if (lv != null && lv.getChildCount() > 0) {
+			        	TextView status = (TextView)(lv.getChildAt(0).findViewById(R.id.UploadPictureStatus));
+			        	if (status != null) {
+			        		status.setText("Uploading (" + String.valueOf(extras.getLong("percent")) + "%)");
+			        	}
+		        	}
+	        	}
+	        }
+		}
+	}
 
 	// This is the receiver that we use to know when an upload starts or
 	// finishes so we can update the progress display.
@@ -58,7 +94,11 @@ public class UploadProgress extends Activity implements OnClickListener {
 		if (m_bind_receiver != null) {
 			this.registerReceiver(m_bind_receiver, new IntentFilter(GlobalResources.INTENT_BIND_UPLOADER));
 		}
-
+		m_update_receiver = new PercentProgressUpdateReceiver();
+		if (m_update_receiver != null) {
+			this.registerReceiver(m_update_receiver, new IntentFilter(GlobalResources.INTENT_UPLOAD_PROGRESS_UPDATE));
+		}
+		
 		this.bindService(new Intent(this, Uploader.class), m_svc, Context.BIND_AUTO_CREATE);
 
         m_receiver = new UploadStatusReceiver();
@@ -77,6 +117,9 @@ public class UploadProgress extends Activity implements OnClickListener {
 		}
 		if (m_bind_receiver != null) {
 			this.unregisterReceiver(m_bind_receiver);
+		}
+		if (m_update_receiver != null) {
+			this.unregisterReceiver(m_update_receiver);
 		}
 	}
 	
@@ -123,21 +166,6 @@ public class UploadProgress extends Activity implements OnClickListener {
 	
 	private UploadStatusReceiver m_receiver = null;
 	private BindUploaderReceiver m_bind_receiver = null;
+	private PercentProgressUpdateReceiver m_update_receiver = null;
     private Uploader m_uploader = null;
-    
-    private ServiceConnection m_svc = new ServiceConnection() {
-		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			m_uploader = ((Uploader.UploadBinder)service).getService();
-			Intent broadcast_intent = new Intent();
-			broadcast_intent.setAction(GlobalResources.INTENT_BIND_UPLOADER);
-			getApplicationContext().sendBroadcast(broadcast_intent);
-		}
-
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
-			m_uploader = null;
-		}
-    };
-    
 }
