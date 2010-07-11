@@ -12,7 +12,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.content.ServiceConnection;
 
 public class UploadProgress extends Activity implements OnClickListener {
@@ -96,12 +97,16 @@ public class UploadProgress extends Activity implements OnClickListener {
 	public void updateProgress() {
     	if (m_uploader != null) {
 			LinkedList<Bundle> upload_list = m_uploader.getUploads();
-			String text = "";
+			String[] title_array = new String[upload_list.size()];
+			int i = 0;
 			for (Bundle upload_info : upload_list) {
-				//TODO: Put code here to display list of uploads.
-				text += upload_info.getString("filename") + "\n";
+				title_array[i] = upload_info.getString("title");
+				i++;
 			}
-			((TextView)findViewById(R.id.TextView01)).setText(text);
+			//TODO: Create custom view for upload progress list items and add some more
+			//      functionality (like the ability to cancel uploads).
+			ListView lv = ((ListView)findViewById(R.id.UploadProgressList));
+			lv.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, title_array));
     	}
 	}
 	
