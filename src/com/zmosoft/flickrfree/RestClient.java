@@ -18,7 +18,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -27,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Context;
 
 public class RestClient {
 
@@ -72,7 +72,7 @@ public class RestClient {
 
 	public static JSONObject UploadPicture(String filename, String title, String description, String tags,
 									 boolean is_public, boolean is_friend, boolean is_family,
-									 int safety_level){
+									 int safety_level, Context context){
 		String safety = "1";
 		if (safety_level > 0 && safety_level < 4) {
 			safety = Integer.toString(safety_level);
@@ -113,21 +113,28 @@ public class RestClient {
 		paramNames = pNames.toArray(paramNames);
 		paramVals = pVals.toArray(paramVals);
 		
-		return CallFunction("", paramNames, paramVals, true, true, filename);
+		return CallFunction("", paramNames, paramVals, true, true, filename, context);
 	}
 	
 	public static JSONObject CallFunction(String methodName, String[] paramNames, String[] paramVals)
 	{
-		return CallFunction(methodName, paramNames, paramVals, true, false, "");
+		return CallFunction(methodName, paramNames, paramVals, true, false, "", null);
 	}
 	
 	public static JSONObject CallFunction(String methodName, String[] paramNames, String[] paramVals, boolean authenticated)
 	{
-		return CallFunction(methodName, paramNames, paramVals, authenticated, false, "");
+		return CallFunction(methodName, paramNames, paramVals, authenticated, false, "", null);
+	}
+
+	public static JSONObject CallFunction(String methodName, String[] paramNames, String[] paramVals,
+			  boolean authenticated, boolean ispost, String filename)
+	{
+		return CallFunction(methodName, paramNames, paramVals, authenticated, ispost, null);
 	}
 	
 	public static JSONObject CallFunction(String methodName, String[] paramNames, String[] paramVals,
-										  boolean authenticated, boolean ispost, String filename)
+										  boolean authenticated, boolean ispost, String filename,
+										  Context context)
 	{
 		JSONObject json = new JSONObject();
 		HttpClient httpclient = new DefaultHttpClient();
@@ -221,7 +228,7 @@ public class RestClient {
 		    	}
 			    
 			    HttpPost httppost = new HttpPost(url);
-			    MultipartEntity mp_entity = new MultipartEntity();
+			    MultipartEntityMonitored mp_entity = new MultipartEntityMonitored(context);
 
 			    mp_entity.addPart("photo", new FileBody(file));
 				for (Map.Entry<String,String> entry : sig_params.entrySet()) {
