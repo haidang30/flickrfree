@@ -1,6 +1,13 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===0.9.9.6===
+
+ * Upload queue, allowing user to start a new upload before the current one is finished.
+
+ * Upload Progress screen, which displays the upload queue and gives percentage complete for
+    the current upload.
+
 ===0.9.9.5===
 
  * Fixed a bug in retrieving groups.
