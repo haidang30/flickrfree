@@ -5,8 +5,7 @@
 
  * Upload queue, allowing user to start a new upload before the current one is finished.
 
- * Upload Progress screen, which displays the upload queue and gives percentage complete for
-    the current upload.
+ * Upload Progress screen, which displays the upload queue and gives percentage complete for the current upload.
 
 ===0.9.9.5===
 
