@@ -1,5 +1,7 @@
 package com.zmosoft.flickrfree;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import android.app.Activity;
@@ -12,8 +14,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.content.ServiceConnection;
 
 public class UploadProgress extends Activity implements OnClickListener {
@@ -97,16 +99,25 @@ public class UploadProgress extends Activity implements OnClickListener {
 	public void updateProgress() {
     	if (m_uploader != null) {
 			LinkedList<Bundle> upload_list = m_uploader.getUploads();
-			String[] title_array = new String[upload_list.size()];
-			int i = 0;
+			ArrayList < HashMap<String, String> > uploadinfolist = new ArrayList < HashMap<String,String> >();
+			HashMap<String, String> m;
+			boolean first = true;
 			for (Bundle upload_info : upload_list) {
-				title_array[i] = upload_info.getString("title");
-				i++;
+				m = new HashMap<String, String>();
+				m.put("title", upload_info.getString("title"));
+				m.put("status", first ? "Uploading..." : "Pending");
+				uploadinfolist.add(m);
+				if (first) first = false;
 			}
 			//TODO: Create custom view for upload progress list items and add some more
 			//      functionality (like the ability to cancel uploads).
 			ListView lv = ((ListView)findViewById(R.id.UploadProgressList));
-			lv.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, title_array));
+	        lv.setAdapter(new SimpleAdapter(
+					this,
+					uploadinfolist,
+					R.layout.upload_progress_item,
+					new String[]{"title","status"},
+					new int[]{R.id.UploadPictureName, R.id.UploadPictureStatus}));
     	}
 	}
 	
