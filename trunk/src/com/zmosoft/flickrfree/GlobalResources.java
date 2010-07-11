@@ -28,6 +28,7 @@ public class GlobalResources {
     
     public static final String INTENT_UPLOAD_STARTED = "com.zmosoft.flickrfree.UPLOAD_STARTED";
     public static final String INTENT_UPLOAD_FINISHED = "com.zmosoft.flickrfree.UPLOAD_FINISHED";
+    public static final String INTENT_BIND_UPLOADER = "com.zmosoft.flickrfree.BIND_UPLOADER";
     
 	public static int API_DELAY_MS = 1000;
 	public static int ERROR_DELAY_MS = 1000;

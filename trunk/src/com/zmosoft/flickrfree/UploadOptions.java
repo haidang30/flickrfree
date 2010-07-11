@@ -41,29 +41,33 @@ public class UploadOptions extends Activity implements OnClickListener, OnChecke
         spnSafety.setAdapter(adapter);
 	}
 	
-	private void InitiateUpload() {		
-		Intent uploader = new Intent(this, Uploader.class);
+	private void InitiateUpload() {
 		String[] safety_levels = getResources().getStringArray(R.array.safety_levels_list);
 
-		uploader.putExtra("filename", m_extras.getString("filepath"));
-		uploader.putExtra("title", ((EditText)findViewById(R.id.txtPhotoTitle)).getText().toString());
-		uploader.putExtra("comment", ((EditText)findViewById(R.id.txtPhotoComment)).getText().toString());
-		uploader.putExtra("tags", ((EditText)findViewById(R.id.txtPhotoTags)).getText().toString());
-		uploader.putExtra("is_public", ((CheckBox)findViewById(R.id.chkEveryone)).isChecked());
+		// uploader_intent will contain all of the necessary information about this
+		// upload in the Extras Bundle.
+		Intent uploader_intent = new Intent(this, Uploader.class);
+		uploader_intent.putExtra("filename", m_extras.getString("filepath"));
+		uploader_intent.putExtra("title", ((EditText)findViewById(R.id.txtPhotoTitle)).getText().toString());
+		uploader_intent.putExtra("comment", ((EditText)findViewById(R.id.txtPhotoComment)).getText().toString());
+		uploader_intent.putExtra("tags", ((EditText)findViewById(R.id.txtPhotoTags)).getText().toString());
+		uploader_intent.putExtra("is_public", ((CheckBox)findViewById(R.id.chkEveryone)).isChecked());
 		CheckBox cb = ((CheckBox)findViewById(R.id.chkFriends));
-		uploader.putExtra("is_friend", cb.isEnabled() && cb.isChecked());
+		uploader_intent.putExtra("is_friend", cb.isEnabled() && cb.isChecked());
 		cb = ((CheckBox)findViewById(R.id.chkFamily));
-		uploader.putExtra("is_family", cb.isEnabled() && cb.isChecked());
+		uploader_intent.putExtra("is_family", cb.isEnabled() && cb.isChecked());
 		String sl = ((TextView)((Spinner)findViewById(R.id.spnSafetyLevel)).getSelectedView()).getText().toString();
-		uploader.putExtra("safety_level", 1);
+		uploader_intent.putExtra("safety_level", 1);
 		for (int i = 0; i < safety_levels.length; ++i) {
 			if (safety_levels[i].equals(sl)) {
-				uploader.putExtra("safety_level", i + 1);
+				uploader_intent.putExtra("safety_level", i + 1);
 				break;
 			}
 		}
-
-		startService(uploader);
+		
+		// Start the uploader service and pass in the intent containing
+		// the upload information.
+		startService(uploader_intent);
 	}
 	
 	@Override

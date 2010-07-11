@@ -23,8 +23,9 @@ public class Uploader extends Service {
 			Bundle upload_info = null;
 			Intent broadcast_intent = new Intent();
 			while (m_uploads.size() > 0) {
-				upload_info = m_uploads.remove(0);
+				upload_info = m_uploads.get(0);
 				if (upload_info != null) {
+					// Send out a broadcast to let us know that an upload is starting.
 					broadcast_intent.setAction(GlobalResources.INTENT_UPLOAD_STARTED);
 					getApplicationContext().sendBroadcast(broadcast_intent);
 					
@@ -37,10 +38,11 @@ public class Uploader extends Service {
 								    		 upload_info.getBoolean("is_friend"),
 								    		 upload_info.getBoolean("is_family"),
 								    		 upload_info.getInt("safety_level"));
-
-			        broadcast_intent.setAction(GlobalResources.INTENT_UPLOAD_FINISHED);
-					getApplicationContext().sendBroadcast(broadcast_intent);
 				}
+				m_uploads.remove(0);
+				// Send out a broadcast to let us know that an upload has finished.
+		        broadcast_intent.setAction(GlobalResources.INTENT_UPLOAD_FINISHED);
+				getApplicationContext().sendBroadcast(broadcast_intent);
 			}
 			
 			return null;
@@ -48,12 +50,17 @@ public class Uploader extends Service {
 		
 		@Override
 		protected void onProgressUpdate(String... progress) {
+			// onProgressUpdate is called each time a new upload starts. This allows
+			// us to update the notification text to let the user know which picture
+			// is being uploaded.
 			String title = progress.length > 0 ? progress[0] : "";
-			m_notification.setLatestEventInfo(getApplicationContext(),
-					  getApplicationContext().getString(R.string.app_name),
-					  getApplicationContext().getString(R.string.uploadingpicture) + " \"" + title + "\"",
-					  m_notify_activity);
-			((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(GlobalResources.UPLOADER_ID, m_notification);
+			if (m_notification != null) {
+				m_notification.setLatestEventInfo(getApplicationContext(),
+						  getApplicationContext().getString(R.string.app_name),
+						  getApplicationContext().getString(R.string.uploadingpicture) + " \"" + title + "\"",
+						  m_notify_activity);
+				((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(GlobalResources.UPLOADER_ID, m_notification);
+			}
 		}
 		
 		@Override
@@ -62,6 +69,8 @@ public class Uploader extends Service {
 		
 		@Override
 		protected void onPostExecute(Object result) {
+			// When all uploads are finished, kill the status bar upload notification and stop the
+			// Uploader service.
 			((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).cancel(GlobalResources.UPLOADER_ID);
 			stopSelf();
 		}
@@ -93,23 +102,10 @@ public class Uploader extends Service {
 	
 	@Override
 	public void onStart(Intent intent, int startId) {
-		
-		int icon = android.R.drawable.stat_sys_upload;
-		CharSequence tickerText = "Uploading Picture";
-		m_notification = new Notification(icon, tickerText, System.currentTimeMillis());
-		m_notify_activity = PendingIntent.getActivity(this, 0, new Intent(this, UploadProgress.class), 0);
-		
-		if (m_notification != null) {
-			m_notification.setLatestEventInfo(getApplicationContext(),
-											  this.getString(R.string.app_name),
-											  this.getString(R.string.uploadingpicture),
-											  m_notify_activity);
-			m_notification.flags = Notification.FLAG_NO_CLEAR;
+		Bundle extras = intent.getExtras();
+		if (extras != null) {
+			addUpload(intent.getExtras());
 		}
-		
-		m_upload_task = (UploadPictureTask)new UploadPictureTask();
-		m_upload_task.addUpload(intent.getExtras());
-		m_upload_task.execute();
 	}
 	
 	@Override
@@ -118,7 +114,31 @@ public class Uploader extends Service {
 	}
 
 	public void addUpload(Bundle upload_info) {
-		m_upload_task.addUpload(upload_info);
+		if (m_upload_task == null || (m_upload_task.getStatus() == AsyncTask.Status.FINISHED)) {
+			// If the upload task has not yet been created or if it is finished, then create
+			// a new upload task, add the upload to it, and execute.
+			m_upload_task = (UploadPictureTask)new UploadPictureTask();
+			m_upload_task.addUpload(upload_info);
+			m_upload_task.execute();
+		}
+		else {
+			// Otherwise, the upload task is currently running, so add the new upload to the
+			// list.
+			m_upload_task.addUpload(upload_info);
+		}
+
+		if (m_notification == null) {
+			// Create the status bar notification that will be displayed.
+			CharSequence tickerText = "Uploading Picture";
+			m_notification = new Notification(android.R.drawable.stat_sys_upload, tickerText, System.currentTimeMillis());
+			m_notify_activity = PendingIntent.getActivity(this, 0, new Intent(this, UploadProgress.class), 0);
+			
+			m_notification.setLatestEventInfo(getApplicationContext(),
+											  this.getString(R.string.app_name),
+											  this.getString(R.string.uploadingpicture),
+											  m_notify_activity);
+			m_notification.flags = Notification.FLAG_NO_CLEAR;
+		}
 	}
 	
 	public LinkedList<Bundle> getUploads() {
