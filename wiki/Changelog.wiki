@@ -1,6 +1,12 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===0.9.9.7===
+
+ * Upload progress screen now uses a progress bar instead of just a percentage display to show progress of current download.
+
+ * Upload progress screen closes automatically when the last upload finishes.
+
 ===0.9.9.6===
 
  * Upload queue, allowing user to start a new upload before the current one is finished.
