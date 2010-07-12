@@ -1,7 +1,10 @@
 package com.zmosoft.flickrfree;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,17 +24,9 @@ public class UploadOptions extends Activity implements OnClickListener, OnChecke
         super.onCreate(savedInstanceState);
         //TODO: Add thumbnail of image to upload options screen.
 		setContentView(R.layout.upload_options);
-        m_extras = getIntent().getExtras();
 		
 		((Button)findViewById(R.id.btnUpload)).setOnClickListener(this);
 		((Button)findViewById(R.id.btnCancel)).setOnClickListener(this);
-		
-		String filepath = m_extras.getString("filepath");
-		String title = filepath.substring(filepath.lastIndexOf("/") + 1,
-											 filepath.lastIndexOf("."));
-		((EditText)findViewById(R.id.txtPhotoTitle)).setText(title);
-		((EditText)findViewById(R.id.txtPhotoTitle)).selectAll();
-		
 		((CheckBox)findViewById(R.id.chkEveryone)).setOnCheckedChangeListener(this);
 		
 		Spinner spnSafety = ((Spinner)findViewById(R.id.spnSafetyLevel));
@@ -39,6 +34,29 @@ public class UploadOptions extends Activity implements OnClickListener, OnChecke
                 this, R.array.safety_levels_list, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spnSafety.setAdapter(adapter);
+
+        m_extras = getIntent().getExtras();
+        if (m_extras == null) {
+        	finish();
+        }
+        else {
+        	ContentResolver cr = getContentResolver();
+        	Uri uri = Uri.parse(m_extras.getString("image_uri"));
+        	
+        	// Get the filename of the image and use that as the default title.
+			Cursor cursor = cr.query(uri, new String[]{android.provider.MediaStore.Images.ImageColumns.DATA},
+									 null, null, null);
+			cursor.moveToFirst();
+			m_filepath = cursor.getString(0);
+			cursor.close();
+
+			if (m_filepath != null) {
+				String title = m_filepath.substring(m_filepath.lastIndexOf("/") + 1,
+													 m_filepath.lastIndexOf("."));
+				((EditText)findViewById(R.id.txtPhotoTitle)).setText(title);
+				((EditText)findViewById(R.id.txtPhotoTitle)).selectAll();
+			}
+        }
 	}
 	
 	private void InitiateUpload() {
@@ -47,7 +65,7 @@ public class UploadOptions extends Activity implements OnClickListener, OnChecke
 		// uploader_intent will contain all of the necessary information about this
 		// upload in the Extras Bundle.
 		Intent uploader_intent = new Intent(this, Uploader.class);
-		uploader_intent.putExtra("filename", m_extras.getString("filepath"));
+		uploader_intent.putExtra("filename", m_filepath);
 		uploader_intent.putExtra("title", ((EditText)findViewById(R.id.txtPhotoTitle)).getText().toString());
 		uploader_intent.putExtra("comment", ((EditText)findViewById(R.id.txtPhotoComment)).getText().toString());
 		uploader_intent.putExtra("tags", ((EditText)findViewById(R.id.txtPhotoTags)).getText().toString());
@@ -90,4 +108,5 @@ public class UploadOptions extends Activity implements OnClickListener, OnChecke
 	}
 
 	Bundle m_extras;
+	String m_filepath = null;
 }
