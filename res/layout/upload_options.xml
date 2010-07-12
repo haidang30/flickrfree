@@ -13,7 +13,7 @@
 	  android:orientation="vertical">
 	
 		<!-- TODO: Add thumbnail of image to be uploaded. -->
-		<ImageView android:id="@+id/imgupload"
+		<ImageView android:id="@+id/UploadImage"
 				   android:layout_width="wrap_content"
 				   android:layout_height="wrap_content">
 	   	</ImageView>
@@ -42,6 +42,7 @@
 		<EditText android:text=""
 				  android:id="@+id/txtPhotoComment"
 				  android:lines="4"
+				  android:gravity="top"
 				  android:layout_width="fill_parent"
 				  android:layout_height="wrap_content">
 	  	</EditText>

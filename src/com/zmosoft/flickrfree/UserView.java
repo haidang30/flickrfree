@@ -1,6 +1,5 @@
 package com.zmosoft.flickrfree;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -532,22 +530,14 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 			}
 		}
 		else if (requestCode == GlobalResources.PICK_IMAGE_REQ) {
-		    Uri uri = data.getData();
-		    if (uri != null) {
-		      Cursor cursor = getContentResolver().query(uri,
-		    		  									 new String[]
-		  									            	{android.provider.MediaStore.Images.ImageColumns.DATA},
-	  									            	 null, null, null);
-		      cursor.moveToFirst();
-		      String filepath = cursor.getString(0);
-		      cursor.close();
-		      
-		      if ((new File(filepath)).exists()) {
- 				  Intent i = new Intent(this, UploadOptions.class);
- 				  i.putExtra("filepath", filepath);
- 				  startActivity(i);
-		      }
-		    }
+			if (data != null) {
+			    Uri uri = data.getData();
+			    if (uri != null) {
+				  Intent i = new Intent(this, UploadOptions.class);
+				  i.putExtra("image_uri", uri.toString());
+				  startActivity(i);
+			    }
+			}
 		}
 	}
 	
