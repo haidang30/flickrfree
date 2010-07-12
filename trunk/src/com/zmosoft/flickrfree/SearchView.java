@@ -1,6 +1,7 @@
 package com.zmosoft.flickrfree;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -38,7 +39,7 @@ public class SearchView extends Activity implements OnClickListener, OnItemSelec
     }
     
 	private void SetSearchOption(long choice) {
-		if (choice == 0) {
+		if (choice == PHOTO_SEARCH) {
 			// Photo search
 	        findViewById(R.id.SearchSubOptionsSpinner).setVisibility(View.VISIBLE);
 	        Spinner s = (Spinner) findViewById(R.id.SearchSubOptionsSpinner);
@@ -47,15 +48,15 @@ public class SearchView extends Activity implements OnClickListener, OnItemSelec
 	        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 	        s.setAdapter(adapter);
 		}
-		else if (choice == 1) {
+		else if (choice == GROUP_SEARCH) {
 			// Group search
 	        findViewById(R.id.SearchSubOptionsSpinner).setVisibility(View.INVISIBLE);
 		}
-		else if (choice == 2) {
+		else if (choice == TAG_SEARCH) {
 			// Tag search
 	        findViewById(R.id.SearchSubOptionsSpinner).setVisibility(View.INVISIBLE);
 		}
-		else if (choice == 3) {
+		else if (choice == USER_SEARCH) {
 			// Username search
 	        findViewById(R.id.SearchSubOptionsSpinner).setVisibility(View.INVISIBLE);
 		}
@@ -67,7 +68,7 @@ public class SearchView extends Activity implements OnClickListener, OnItemSelec
 			Intent i;
 			Spinner s = (Spinner)findViewById(R.id.SearchOptionsSpinner); 
 			Spinner s2 = (Spinner)findViewById(R.id.SearchSubOptionsSpinner);
-			if (s.getSelectedItemId() == 0) {
+			if (s.getSelectedItemId() == PHOTO_SEARCH) {
 				// Search all photos
 				i = new Intent(this, ImageGrid.class);
 				i.putExtra("type", "photo_search");
@@ -85,18 +86,21 @@ public class SearchView extends Activity implements OnClickListener, OnItemSelec
 				}
 				startActivity(i);
 			}
-			else if (s.getSelectedItemId() == 1) {
+			else if (s.getSelectedItemId() == GROUP_SEARCH) {
 				// Search groups
-				
+				JSONObject groups_obj = APICalls.groupsSearch((((EditText)findViewById(R.id.EditSearchText)).getText().toString()), "20");
+				i = new Intent(this, Groups.class);
+				i.putExtra("grouplist", JSONParser.getString(groups_obj, "groups/group"));
+				startActivity(i);
 			}
-			else if (s.getSelectedItemId() == 2) {
+			else if (s.getSelectedItemId() == TAG_SEARCH) {
 				// Search tags
 				i = new Intent(this, ImageGrid.class);
 				i.putExtra("type", "photo_search");
 				i.putExtra("tags", (((EditText)findViewById(R.id.EditSearchText)).getText().toString()));
 				startActivity(i);
 			}
-			else if (s.getSelectedItemId() == 3) {
+			else if (s.getSelectedItemId() == USER_SEARCH) {
 				// Search by username
 				String nsid = "";
 				try {
@@ -132,4 +136,9 @@ public class SearchView extends Activity implements OnClickListener, OnItemSelec
 	@Override
 	public void onNothingSelected(AdapterView parent) {
 	}
+	
+	private final static long PHOTO_SEARCH = 0;
+	private final static long GROUP_SEARCH = 1;
+	private final static long TAG_SEARCH = 2;
+	private final static long USER_SEARCH = 3;
 }
