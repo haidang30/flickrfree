@@ -1,6 +1,10 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===0.9.9.7.1===
+
+ * Fixed bug that causes Force Close if user selects "Groups" before group information has finished loading.
+
 ===0.9.9.7===
 
  * Upload progress screen now uses a progress bar instead of just a percentage display to show progress of current download.
