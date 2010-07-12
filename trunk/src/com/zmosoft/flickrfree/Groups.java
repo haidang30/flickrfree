@@ -43,8 +43,14 @@ public class Groups extends ListActivity implements OnItemClickListener {
 		if (auth_prefs.contains("nsid") && m_nsid.equals(auth_prefs.getString("nsid", "")) && !m_nsid.equals("")) {
 	    		m_isprivate = true;
 		}
-		FillGroupMap();
-		FillListView();
+		
+		if (m_extras.containsKey("grouplist") && m_extras.getString("grouplist") != null) {
+			FillGroupMap();
+			FillListView();
+		}
+		else {
+			finish();
+		}
 	}
 	
 	private void FillGroupMap() {

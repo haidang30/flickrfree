@@ -97,10 +97,11 @@ public class Uploader extends Service {
     }
 
 	@Override
-	public void onCreate() {
-		super.onCreate();
+	public void onDestroy () {
+		super.onDestroy();
+		((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).cancel(GlobalResources.UPLOADER_ID);
 	}
-	
+
 	@Override
 	public void onStart(Intent intent, int startId) {
 		Bundle extras = intent.getExtras();
