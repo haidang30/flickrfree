@@ -16,7 +16,7 @@
 	  xmlns:android="http://schemas.android.com/apk/res/android"
 	  android:orientation="vertical"
 	  android:padding="10dp"
-	  android:layout_width="wrap_content"
+	  android:layout_width="fill_parent"
 	  android:layout_height="fill_parent">
 	  
 		<TextView android:id="@+id/UploadPictureName"
@@ -35,6 +35,16 @@
 				  android:layout_height="wrap_content">
 	    </TextView>
 	    
+		<ProgressBar android:id="@+id/UploadProgressBar"
+					 android:indeterminate="false"
+					 android:progress="0"
+					 android:max="100"
+					 android:layout_width="fill_parent"
+					 android:layout_height="wrap_content"
+					 android:visibility="gone"
+					 style="?android:attr/progressBarStyleHorizontal">
+		</ProgressBar>
+		 
 	</LinearLayout>
 
 </LinearLayout>
