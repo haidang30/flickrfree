@@ -15,6 +15,7 @@ import android.os.IBinder;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.content.ServiceConnection;
@@ -46,9 +47,14 @@ public class UploadProgress extends Activity implements OnClickListener {
 	        	if (extras != null && extras.containsKey("percent")) {
 		        	ListView lv = ((ListView)findViewById(R.id.UploadProgressList));
 		        	if (lv != null && lv.getChildCount() > 0) {
-			        	TextView status = (TextView)(lv.getChildAt(0).findViewById(R.id.UploadPictureStatus));
-			        	if (status != null) {
-			        		status.setText("Uploading (" + String.valueOf(extras.getLong("percent")) + "%)");
+			        	TextView status_text = (TextView)(lv.getChildAt(0).findViewById(R.id.UploadPictureStatus));
+			        	if (status_text != null) {
+			        		status_text.setVisibility(View.GONE);
+			        	}
+			        	ProgressBar progress = (ProgressBar)(lv.getChildAt(0).findViewById(R.id.UploadProgressBar));
+			        	if (progress != null) {
+			        		progress.setVisibility(View.VISIBLE);
+				        	progress.setProgress((int)extras.getLong("percent"));
 			        	}
 		        	}
 	        	}
@@ -142,25 +148,30 @@ public class UploadProgress extends Activity implements OnClickListener {
 	public void updateProgress() {
     	if (m_uploader != null) {
 			LinkedList<Bundle> upload_list = m_uploader.getUploads();
-			ArrayList < HashMap<String, String> > uploadinfolist = new ArrayList < HashMap<String,String> >();
-			HashMap<String, String> m;
-			boolean first = true;
-			for (Bundle upload_info : upload_list) {
-				m = new HashMap<String, String>();
-				m.put("title", upload_info.getString("title"));
-				m.put("status", first ? "Uploading..." : "Pending");
-				uploadinfolist.add(m);
-				if (first) first = false;
+			if (upload_list.isEmpty()) {
+				finish();
 			}
-			//TODO: Create custom view for upload progress list items and add some more
-			//      functionality (like the ability to cancel uploads).
-			ListView lv = ((ListView)findViewById(R.id.UploadProgressList));
-	        lv.setAdapter(new SimpleAdapter(
-					this,
-					uploadinfolist,
-					R.layout.upload_progress_item,
-					new String[]{"title","status"},
-					new int[]{R.id.UploadPictureName, R.id.UploadPictureStatus}));
+			else {
+				ArrayList < HashMap<String, String> > uploadinfolist = new ArrayList < HashMap<String,String> >();
+				HashMap<String, String> m;
+				boolean first = true;
+				for (Bundle upload_info : upload_list) {
+					m = new HashMap<String, String>();
+					m.put("title", upload_info.getString("title"));
+					m.put("status", "Pending");
+					uploadinfolist.add(m);
+					if (first) first = false;
+				}
+				//TODO: Create custom view for upload progress list items and add some more
+				//      functionality (like the ability to cancel uploads).
+				ListView lv = ((ListView)findViewById(R.id.UploadProgressList));
+		        lv.setAdapter(new SimpleAdapter(
+						this,
+						uploadinfolist,
+						R.layout.upload_progress_item,
+						new String[]{"title","status"},
+						new int[]{R.id.UploadPictureName, R.id.UploadPictureStatus}));
+			}
     	}
 	}
 	
