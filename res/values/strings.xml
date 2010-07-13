@@ -67,7 +67,7 @@
 	<string name="lblfriend">Friend</string>
 	<string name="lblfamily">Family</string>
 	<string name="lblnphotos">Photos</string>
-	<string name="lblsafetylevel">Safety Level</string>
+	<string name="lblsafetylevel">Safety Level:</string>
 	<string name="lbltitle">Title</string>
 	<string name="lblvalue">Value</string>
 	<string name="lblwordcomments">Comments</string>
