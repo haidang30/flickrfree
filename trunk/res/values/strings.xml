@@ -107,6 +107,7 @@
     <string name="picturesettings">Picture Settings</string>
     <string name="uploadprogress">Upload Progress</string>
     <string name="uploadingpicture">Uploading Picture</string>
+    <string name="uploading">Uploading</string>
     <string name="uploader">Uploader</string>
 
     <string name="youraccountlabel">Your Account</string>

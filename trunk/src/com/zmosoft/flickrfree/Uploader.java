@@ -6,14 +6,34 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.widget.RemoteViews;
 
 public class Uploader extends Service {
+
+	// This is the receiver that we use to update the percentage progress display
+    // for the current upload.
+	public class NotificationProgressUpdateReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+	        if (intent.getAction().equals(GlobalResources.INTENT_UPLOAD_PROGRESS_UPDATE)) {
+	        	Bundle extras = intent.getExtras();
+	        	if (extras != null && extras.containsKey("percent")) {
+					RemoteViews nView = m_notification.contentView;
+					nView.setProgressBar(R.id.prgNotificationUpload, 100, (int)extras.getLong("percent"), false);
+					m_notification.contentView = nView;
+					((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(GlobalResources.UPLOADER_ID, m_notification);
+	        	}
+	        }
+		}
+	}
 
 	// AsyncTask to upload a picture in the background.
 	private class UploadPictureTask extends AsyncTask<Void, String, Object> {
@@ -56,10 +76,11 @@ public class Uploader extends Service {
 			// is being uploaded.
 			String title = progress.length > 0 ? progress[0] : "";
 			if (m_notification != null) {
-				m_notification.setLatestEventInfo(getApplicationContext(),
-						  getApplicationContext().getString(R.string.app_name),
-						  getApplicationContext().getString(R.string.uploadingpicture) + " \"" + title + "\"",
-						  m_notify_activity);
+				RemoteViews nView = m_notification.contentView;
+				nView.setTextViewText(R.id.txtNotificationTitle, getResources().getString(R.string.uploading) + " \"" + title + "\"");
+				nView.setProgressBar(R.id.prgNotificationUpload, 100, 0, false);
+				m_notification.contentView = nView;
+
 				((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(GlobalResources.UPLOADER_ID, m_notification);
 			}
 		}
@@ -100,6 +121,9 @@ public class Uploader extends Service {
 	public void onDestroy () {
 		super.onDestroy();
 		((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).cancel(GlobalResources.UPLOADER_ID);
+		if (m_update_receiver != null) {
+			this.unregisterReceiver(m_update_receiver);
+		}
 	}
 
 	@Override
@@ -107,6 +131,10 @@ public class Uploader extends Service {
 		Bundle extras = intent.getExtras();
 		if (extras != null) {
 			addUpload(intent.getExtras());
+		}
+		m_update_receiver = new NotificationProgressUpdateReceiver();
+		if (m_update_receiver != null) {
+			this.registerReceiver(m_update_receiver, new IntentFilter(GlobalResources.INTENT_UPLOAD_PROGRESS_UPDATE));
 		}
 	}
 	
@@ -131,14 +159,15 @@ public class Uploader extends Service {
 
 		if (m_notification == null) {
 			// Create the status bar notification that will be displayed.
-			CharSequence tickerText = "Uploading Picture";
+			CharSequence tickerText = this.getString(R.string.uploadingpicture);
 			m_notification = new Notification(android.R.drawable.stat_sys_upload, tickerText, System.currentTimeMillis());
 			m_notify_activity = PendingIntent.getActivity(this, 0, new Intent(this, UploadProgress.class), 0);
-			
-			m_notification.setLatestEventInfo(getApplicationContext(),
-											  this.getString(R.string.app_name),
-											  this.getString(R.string.uploadingpicture),
-											  m_notify_activity);
+			m_notification.contentIntent = m_notify_activity;
+
+			RemoteViews nView = new RemoteViews(getPackageName(), R.layout.upload_notification_layout);
+			//nView.setImageViewResource(R.id.imgIcon, R.drawable.icon);
+			nView.setTextViewText(R.id.txtNotificationTitle, getResources().getString(R.string.uploading) + " \"" + upload_info.getString("title") + "\"");
+			m_notification.contentView = nView;
 			m_notification.flags = Notification.FLAG_NO_CLEAR;
 		}
 	}
@@ -148,6 +177,7 @@ public class Uploader extends Service {
 	}
 	
 	private Notification m_notification = null;
+	private NotificationProgressUpdateReceiver m_update_receiver = null;
 	private PendingIntent m_notify_activity = null;
 	private final IBinder m_binder = new UploadBinder();
 	private UploadPictureTask m_upload_task = null;
