@@ -20,7 +20,7 @@
 		
 		<TextView android:text="@string/lblphototitle"
 				  android:id="@+id/lblPhotoTitle"
-				  android:padding="4dp"
+				  android:padding="2dp"
 				  android:layout_width="fill_parent"
 				  android:layout_height="wrap_content">
 	    </TextView>
@@ -34,14 +34,14 @@
 	
 		<TextView android:text="@string/lblcomment"
 				  android:id="@+id/lblPhotoComment"
-				  android:padding="4dp"
+				  android:padding="2dp"
 				  android:layout_width="fill_parent"
 				  android:layout_height="wrap_content">
 	    </TextView>
 	
 		<EditText android:text=""
 				  android:id="@+id/txtPhotoComment"
-				  android:lines="4"
+				  android:lines="1"
 				  android:gravity="top"
 				  android:layout_width="fill_parent"
 				  android:layout_height="wrap_content">
@@ -49,7 +49,7 @@
 	
 		<TextView android:text="@string/lblphototags"
 				  android:id="@+id/lblPhotoTags"
-				  android:padding="4dp"
+				  android:padding="2dp"
 				  android:layout_width="fill_parent"
 				  android:layout_height="wrap_content">
 	    </TextView>
@@ -66,30 +66,41 @@
 				  android:layout_width="fill_parent"
 				  android:layout_height="wrap_content"
 				  android:padding="2dp"
-				  android:layout_marginBottom="10dp"
 				  android:gravity="center"
-				  android:textColor="@android:color/white"
-				  android:background="@android:color/darker_gray">
+				  android:textColor="@android:color/black"
+				  android:background="@android:color/white">
 	    </TextView>
 	
-		<CheckBox android:text="@string/chkeveryone"
-				  android:id="@+id/chkEveryone"
-				  android:layout_width="fill_parent"
-				  android:layout_height="wrap_content">
-	  	</CheckBox>
-	  	
-		<CheckBox android:text="@string/chkfriends"
-				  android:id="@+id/chkFriends"
-				  android:layout_width="fill_parent"
-				  android:layout_height="wrap_content">
-	  	</CheckBox>
-	  	
-		<CheckBox android:text="@string/chkfamily"
-				  android:id="@+id/chkFamily"
-				  android:layout_width="fill_parent"
-				  android:layout_height="wrap_content">
-	  	</CheckBox>
-	  	
+		<LinearLayout
+		  xmlns:android="http://schemas.android.com/apk/res/android"
+		  android:id="@+id/PictureSettingsLayout"
+		  android:layout_width="fill_parent"
+		  android:layout_height="wrap_content"
+		  android:gravity="center_horizontal"
+		  android:padding="2dp"
+		  android:orientation="horizontal"
+		  android:background="@android:color/darker_gray">
+		
+			<CheckBox android:text="@string/chkeveryone"
+					  android:id="@+id/chkEveryone"
+					  android:layout_width="wrap_content"
+					  android:layout_height="fill_parent">
+		  	</CheckBox>
+		  	
+			<CheckBox android:text="@string/chkfriends"
+					  android:id="@+id/chkFriends"
+					  android:layout_width="wrap_content"
+					  android:layout_height="fill_parent">
+		  	</CheckBox>
+		  	
+			<CheckBox android:text="@string/chkfamily"
+					  android:id="@+id/chkFamily"
+					  android:layout_width="wrap_content"
+					  android:layout_height="fill_parent">
+		  	</CheckBox>
+
+		</LinearLayout>
+				  	
 		<TextView android:text="@string/lblsafetylevel"
 				  android:id="@+id/lblSafetyLevel"
 				  android:padding="4dp"

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -17,7 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-public class PictureSettings extends Activity implements OnClickListener, OnCheckedChangeListener {
+public class PictureSettings extends Activity implements OnClickListener, OnCheckedChangeListener, OnFocusChangeListener {
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -28,6 +29,7 @@ public class PictureSettings extends Activity implements OnClickListener, OnChec
 		((Button)findViewById(R.id.btnUpload)).setOnClickListener(this);
 		((Button)findViewById(R.id.btnCancel)).setOnClickListener(this);
 		((CheckBox)findViewById(R.id.chkEveryone)).setOnCheckedChangeListener(this);
+		((EditText)findViewById(R.id.txtPhotoComment)).setOnFocusChangeListener(this);
 		
 		Spinner spnSafety = ((Spinner)findViewById(R.id.spnSafetyLevel));
         ArrayAdapter adapter = ArrayAdapter.createFromResource(
@@ -104,6 +106,16 @@ public class PictureSettings extends Activity implements OnClickListener, OnChec
 		if (buttonView.getId() == R.id.chkEveryone) {
 			((CheckBox)findViewById(R.id.chkFamily)).setEnabled(!isChecked);
 			((CheckBox)findViewById(R.id.chkFriends)).setEnabled(!isChecked);
+		}
+	}
+
+	@Override
+	public void onFocusChange(View v, boolean hasFocus) {
+		if (v.getId() == R.id.txtPhotoComment && hasFocus) {
+			((EditText)findViewById(R.id.txtPhotoComment)).setLines(4);
+		}
+		else {
+			((EditText)findViewById(R.id.txtPhotoComment)).setLines(1);
 		}
 	}
 
