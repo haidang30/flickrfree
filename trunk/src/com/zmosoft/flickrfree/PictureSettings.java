@@ -1,11 +1,11 @@
 package com.zmosoft.flickrfree;
 
-import android.app.Dialog;
+import android.app.Activity;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -18,35 +18,35 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-public class PictureSettings extends Dialog implements OnClickListener, OnCheckedChangeListener, OnFocusChangeListener {
+public class PictureSettings extends Activity implements OnClickListener, OnCheckedChangeListener, OnFocusChangeListener {
 	
-	public PictureSettings(Context context, Uri image_uri, int style) {
-		super(context, style);
+	@Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         //TODO: Add thumbnail of image to upload options screen.
-		
-		m_context = context;
-		
 		setContentView(R.layout.picture_settings);
 		
 		((Button)findViewById(R.id.btnUpload)).setOnClickListener(this);
 		((Button)findViewById(R.id.btnCancel)).setOnClickListener(this);
 		((CheckBox)findViewById(R.id.chkEveryone)).setOnCheckedChangeListener(this);
 		((EditText)findViewById(R.id.txtPhotoComment)).setOnFocusChangeListener(this);
-
+		
 		Spinner spnSafety = ((Spinner)findViewById(R.id.spnSafetyLevel));
         ArrayAdapter adapter = ArrayAdapter.createFromResource(
-                m_context, R.array.safety_levels_list, android.R.layout.simple_spinner_item);
+                this, R.array.safety_levels_list, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spnSafety.setAdapter(adapter);
 
-        if (image_uri == null) {
-        	dismiss();
+        m_extras = getIntent().getExtras();
+        if (m_extras == null) {
+        	finish();
         }
         else {
-        	ContentResolver cr = m_context.getContentResolver();
+        	ContentResolver cr = getContentResolver();
+        	Uri uri = Uri.parse(m_extras.getString("image_uri"));
         	
         	// Get the filename of the image and use that as the default title.
-			Cursor cursor = cr.query(image_uri, new String[]{android.provider.MediaStore.Images.ImageColumns.DATA},
+			Cursor cursor = cr.query(uri, new String[]{android.provider.MediaStore.Images.ImageColumns.DATA},
 									 null, null, null);
 			cursor.moveToFirst();
 			m_filepath = cursor.getString(0);
@@ -62,11 +62,11 @@ public class PictureSettings extends Dialog implements OnClickListener, OnChecke
 	}
 	
 	private void InitiateUpload() {
-		String[] safety_levels = m_context.getResources().getStringArray(R.array.safety_levels_list);
+		String[] safety_levels = getResources().getStringArray(R.array.safety_levels_list);
 
 		// uploader_intent will contain all of the necessary information about this
 		// upload in the Extras Bundle.
-		Intent uploader_intent = new Intent(m_context, Uploader.class);
+		Intent uploader_intent = new Intent(this, Uploader.class);
 		uploader_intent.putExtra("filename", m_filepath);
 		uploader_intent.putExtra("title", ((EditText)findViewById(R.id.txtPhotoTitle)).getText().toString());
 		uploader_intent.putExtra("comment", ((EditText)findViewById(R.id.txtPhotoComment)).getText().toString());
@@ -87,17 +87,17 @@ public class PictureSettings extends Dialog implements OnClickListener, OnChecke
 		
 		// Start the uploader service and pass in the intent containing
 		// the upload information.
-		m_context.startService(uploader_intent);
+		startService(uploader_intent);
 	}
 	
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.btnUpload) {
 			InitiateUpload();
-			dismiss();
+			finish();
 		}
 		else if (v.getId() == R.id.btnCancel) {
-			dismiss();
+			finish();
 		}
 	}
 
@@ -119,6 +119,6 @@ public class PictureSettings extends Dialog implements OnClickListener, OnChecke
 		}
 	}
 
+	Bundle m_extras;
 	String m_filepath = null;
-	Context m_context;
 }
