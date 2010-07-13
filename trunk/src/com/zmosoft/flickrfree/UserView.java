@@ -533,9 +533,8 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 			if (data != null) {
 			    Uri uri = data.getData();
 			    if (uri != null) {
-				  Intent i = new Intent(this, PictureSettings.class);
-				  i.putExtra("image_uri", uri.toString());
-				  startActivity(i);
+			    	m_image_uri = uri;
+			    	showDialog(DIALOG_PICTURE_SETTINGS);
 			    }
 			}
 		}
@@ -543,16 +542,23 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 	
 	@Override
 	protected void onPrepareDialog(int id, Dialog dialog) {
-		dialog.setTitle("Account \"" + getSelectedName() + "\"");
+    	switch(id) {
+    	case DIALOG_WARN_REMOVE_ACCOUNT:
+    		dialog.setTitle("Account \"" + getSelectedName() + "\"");
+    		break;
+    	case DIALOG_PICTURE_SETTINGS:
+    		dialog.setTitle(R.string.picturesettings);
+    		break;
+    	}
 	}
 	
 	@Override
     protected Dialog onCreateDialog(int id) {
 		Dialog dialog = null;
 		
-		AlertDialog.Builder builder;
     	switch(id) {
     	case DIALOG_WARN_REMOVE_ACCOUNT:
+    		AlertDialog.Builder builder;
     		builder = new AlertDialog.Builder(this);
 			builder.setMessage(R.string.msgremoveaccount)
 				   .setTitle("Account")
@@ -570,6 +576,9 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 		            });
 			dialog = builder.create();
 			break;
+    	case DIALOG_PICTURE_SETTINGS:
+    		dialog = new PictureSettings(this, m_image_uri, R.style.WideDialogTheme);
+    		break;
     	}
 
 		return dialog;
@@ -745,7 +754,8 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
     static final int ACTION_SEARCH = 7;
     static final int ACTION_UPLOAD = 8;
     
-    static final int DIALOG_WARN_REMOVE_ACCOUNT = 8;
+    static final int DIALOG_WARN_REMOVE_ACCOUNT = 9;
+    static final int DIALOG_PICTURE_SETTINGS = 10;
     
 	Bundle m_extras;
 	Activity m_activity = this;
@@ -757,6 +767,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 	GetExtraInfoTask m_extrainfotask;
 	String[] m_actionnames;
 	String m_tags;
+	Uri m_image_uri = null;
 	JSONObject m_userinfo;
 	JSONObject m_photosets;
 	JSONObject m_collections;
