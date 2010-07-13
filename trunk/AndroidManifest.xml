@@ -110,9 +110,9 @@
             </intent-filter>
         </activity>
         
-        <activity android:name=".UploadOptions" android:label="@string/uploadoptions">
+        <activity android:name=".PictureSettings" android:label="@string/picturesettings">
             <intent-filter>
-                <action android:name="com.zmosoft.flickrfree.UPLOADOPTIONS" />
+                <action android:name="com.zmosoft.flickrfree.PictureSettings" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
