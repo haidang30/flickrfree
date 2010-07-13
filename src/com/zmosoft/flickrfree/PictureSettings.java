@@ -17,13 +17,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-public class UploadOptions extends Activity implements OnClickListener, OnCheckedChangeListener {
+public class PictureSettings extends Activity implements OnClickListener, OnCheckedChangeListener {
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //TODO: Add thumbnail of image to upload options screen.
-		setContentView(R.layout.upload_options);
+		setContentView(R.layout.picture_settings);
 		
 		((Button)findViewById(R.id.btnUpload)).setOnClickListener(this);
 		((Button)findViewById(R.id.btnCancel)).setOnClickListener(this);

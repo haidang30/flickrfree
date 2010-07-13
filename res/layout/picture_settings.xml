@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView android:id="@+id/UploadOptionsScroll"
+<ScrollView android:id="@+id/PictureSettingsScroll"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	xmlns:android="http://schemas.android.com/apk/res/android">
 		
 	<LinearLayout
 	  xmlns:android="http://schemas.android.com/apk/res/android"
-	  android:id="@+id/UploadOptionsLayout"
+	  android:id="@+id/PictureSettingsLayout"
 	  android:layout_width="fill_parent"
 	  android:layout_height="fill_parent"
 	  android:padding="5dp"
@@ -104,7 +104,7 @@
 
 		<LinearLayout
 		  xmlns:android="http://schemas.android.com/apk/res/android"
-		  android:id="@+id/UploadOptionsButtonLayout"
+		  android:id="@+id/PictureSettingsButtonLayout"
 		  android:layout_width="fill_parent"
 		  android:layout_height="wrap_content"
 		  android:gravity="center_horizontal"
