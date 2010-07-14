@@ -16,6 +16,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class PictureSettings extends Activity implements OnClickListener, OnCheckedChangeListener, OnFocusChangeListener {
@@ -88,6 +89,8 @@ public class PictureSettings extends Activity implements OnClickListener, OnChec
 		// Start the uploader service and pass in the intent containing
 		// the upload information.
 		startService(uploader_intent);
+		
+		Toast.makeText(this, R.string.uploadstarting, Toast.LENGTH_SHORT).show();
 	}
 	
 	@Override
