@@ -75,7 +75,7 @@
 					  android:layout_height="wrap_content"
 					  android:padding="2dp"
 					  android:gravity="center"
-					  android:layout_marginTop="12dp"
+					  android:layout_marginTop="10dp"
 					  android:textColor="@android:color/black"
 					  android:background="@android:color/darker_gray">
 		    </TextView>
@@ -86,7 +86,7 @@
 			  android:layout_width="fill_parent"
 			  android:layout_height="wrap_content"
 			  android:gravity="center_horizontal"
-			  android:padding="2dp"
+			  android:padding="0dp"
 			  android:orientation="horizontal"
 			  android:background="@android:color/white">
 			
@@ -121,7 +121,7 @@
 			  android:id="@+id/SafetySettingsLayout"
 			  android:layout_width="fill_parent"
 			  android:layout_height="wrap_content"
-			  android:layout_marginTop="12dp"
+			  android:layout_marginTop="10dp"
 			  android:padding="2dp"
 			  android:orientation="horizontal">
 			
@@ -147,7 +147,7 @@
 			  android:id="@+id/PictureSettingsButtonLayout"
 			  android:layout_width="fill_parent"
 			  android:layout_height="wrap_content"
-			  android:layout_marginTop="12dp"
+			  android:layout_marginTop="10dp"
 			  android:gravity="center_horizontal"
 			  android:orientation="horizontal">
 			  
