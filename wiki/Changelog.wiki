@@ -1,6 +1,10 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===0.9.9.9===
+
+ * Improved display of Comments.
+
 ===0.9.9.8===
 
  * Added intent filter for ACTION_SEND, allowing photos to be uploaded directly from the "Share" button in the Media gallery.
