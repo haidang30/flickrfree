@@ -218,7 +218,7 @@ public class ImageComments extends Activity implements OnClickListener {
     	
     	if (href_open_start_pos >= 0 && href_open_end_pos >= 0 && href_close_pos >= 0) {
 	    	part_a = comment.substring(0, href_open_start_pos + 1);
-	    	part_b = comment.substring(href_open_end_pos);
+	    	part_b = comment.substring(href_open_end_pos + 1);
 	    	comment = part_a + "b" + part_b;
 	    	
 	    	href_close_pos = comment.indexOf(href_close, start);
