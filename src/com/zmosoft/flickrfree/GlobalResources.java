@@ -188,27 +188,29 @@ public class GlobalResources {
 		}
 
 		InputStream in = uc.getInputStream();
-		File f = new File(dlpath,filename);
-		FileOutputStream imgfile = new FileOutputStream(f);
-		byte[] buffer = new byte[1024];
-		int len1 = 0;
-		int progress;
-		double maxProgress = (double)(Window.PROGRESS_END);
-		while ((len1 = in.read(buffer)) != -1) {
-			imgfile.write(buffer,0, len1);
-			contentReceived += (double)1024;
-			progress = (int)(maxProgress * contentReceived / contentLength);
-			if (callingActivity != null && show_progress) {
-				callingActivity.runOnUiThread(new GlobalResources.UpdateProgressBar(callingActivity, progress));
+		if (in != null) {
+			File f = new File(dlpath,filename);
+			FileOutputStream imgfile = new FileOutputStream(f);
+			byte[] buffer = new byte[1024];
+			int len1 = 0;
+			int progress;
+			double maxProgress = (double)(Window.PROGRESS_END);
+			while ((len1 = in.read(buffer)) != -1) {
+				imgfile.write(buffer,0, len1);
+				contentReceived += (double)1024;
+				progress = (int)(maxProgress * contentReceived / contentLength);
+				if (callingActivity != null && show_progress) {
+					callingActivity.runOnUiThread(new GlobalResources.UpdateProgressBar(callingActivity, progress));
+				}
 			}
+	
+			if (callingActivity != null && show_progress) {
+				callingActivity.runOnUiThread(new GlobalResources.UpdateProgressBar(callingActivity, Window.PROGRESS_END));
+			}
+			
+			in.close();
+			imgfile.close();
 		}
-
-		if (callingActivity != null && show_progress) {
-			callingActivity.runOnUiThread(new GlobalResources.UpdateProgressBar(callingActivity, Window.PROGRESS_END));
-		}
-		
-		in.close();
-		imgfile.close();
     }
 
     public static boolean CheckDir(String dir_name) {

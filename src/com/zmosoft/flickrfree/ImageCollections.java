@@ -79,7 +79,7 @@ public class ImageCollections extends ListActivity implements OnItemClickListene
 		for (String key : m_collection_ids.keySet()) {
 			m = new HashMap<String, String>();
 			m.put("collection_name", key);
-			Integer size = m_collection_sets.get(key).length();
+			Integer size = m_collection_sets.containsKey(key) ? m_collection_sets.get(key).length() : 0;
 			String nSets_str = "";
 			if (size > 0) {
 				nSets_str = size.toString() + " Set";

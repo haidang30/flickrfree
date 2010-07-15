@@ -299,7 +299,8 @@ public class ImageGrid extends Activity implements OnItemClickListener, OnClickL
 	    		}
 	    		
 	    		if (json_obj != null) {
-	    			if (JSONParser.getString(json_obj, "stat").equals("fail")) {
+	    			String stat = JSONParser.getString(json_obj, "stat");
+	    			if (stat == null || stat.equals("fail")) {
 	    				m_fail_msg = JSONParser.getString(json_obj, "message");
 	    				if (m_fail_msg == null) {
 	    					m_fail_msg = "Unknown Error while reading pool";
