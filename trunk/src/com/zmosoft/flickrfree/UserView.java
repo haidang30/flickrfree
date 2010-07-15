@@ -352,7 +352,8 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 		String location = "";
 		JSONObject userinfo = new JSONObject();
 		int array_resource = R.array.no_user_view_list;
-		if (JSONParser.getString(m_userinfo, "stat").equals("ok")) {
+		String stat = JSONParser.getString(m_userinfo, "stat");
+		if (stat != null && stat.equals("ok")) {
 			userinfo = JSONParser.getObject(m_userinfo, "person");
 			nsid = userinfo.getString("nsid");
 		}
