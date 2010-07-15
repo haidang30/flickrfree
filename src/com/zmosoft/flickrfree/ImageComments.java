@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedHashMap;
 
+import android.webkit.WebView;
 import android.widget.RelativeLayout;
 
 import org.json.JSONArray;
@@ -13,7 +14,6 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -104,27 +104,25 @@ public class ImageComments extends Activity implements OnClickListener {
 			}
 
 			CommentLayout entry;
-			String comment;
-			CharSequence formatted_comment;
+			String comment = "";
 			LinearLayout comment_layout = ((LinearLayout)findViewById(R.id.ImgCommentsLayout));
 			for (String key : comments.keySet()) {
 				// Add the title/value entry pair for the set of comments.
 				entry = (CommentLayout)View.inflate(this, R.layout.image_comment_entry, null);
-				((TextView)entry.findViewById(R.id.Author)).setText(key);
-				
 				comment = comments.get(key);
+
 				// Make the comment view clickable if there are links to photos or groups
 				// in the comment.
-				entry.setClickable(ReadLinksInComment(entry, comment));
+				boolean found_links = ReadLinksInComment(entry, comment);
+				entry.findViewById(R.id.CommentLinkButton).setVisibility(found_links ? View.VISIBLE : View.GONE);
+				entry.setClickable(found_links);
 				if (entry.isClickable()) {
 					entry.setOnClickListener(this);
 				}
-				
-				// The comment might have HTML tags, so use the Html class to handle
-				// that.
-				formatted_comment = Html.fromHtml(comments.get(key),null,null);
-				((TextView)entry.findViewById(R.id.Comment)).setText(formatted_comment);
-				
+
+				comment = diableAllURLsInComment(comment);
+				((TextView)entry.findViewById(R.id.Author)).setText(key);
+				((WebView)entry.findViewById(R.id.Comment)).loadData(comment, "text/html", "utf-8");
 				comment_layout.addView(entry);
 			}
 			
@@ -144,7 +142,7 @@ public class ImageComments extends Activity implements OnClickListener {
     public boolean ReadLinksInComment(CommentLayout entry, String comment) {
     	boolean links_found = false;
     	
-    	Integer[] url_pos = findURLPosInComment(comment, 0);
+    	Integer[] url_pos = findURLPosInComment(comment);
     	
     	while (url_pos != null) {
 			String url_str = comment.substring(url_pos[0], url_pos[1]);
@@ -166,24 +164,11 @@ public class ImageComments extends Activity implements OnClickListener {
 			}
 			String path = url.getPath();
 			if (url.getProtocol().equals("http")) {
-				String id;
 				if (path.contains("groups")) {
 					String[] groupinfo = APICalls.getGroupInfoFromURL(url.toString());
 					if (groupinfo != null) {
 			    		links_found = true;
 						entry.m_group_links.put(groupinfo[0], groupinfo[1]);
-					}
-				}
-				else if (path.contains("photo")) {
-					id = path.substring(path.indexOf("photos/") + 7);
-					if (id.contains("/")) {
-						id = id.substring(id.indexOf("/") + 1);
-						id = id.substring(0,id.indexOf("/"));
-					}
-					String photo_name = APICalls.getPhotoNameFromID(id);
-					if (!photo_name.equals("")) {
-			    		links_found = true;
-						entry.m_photo_links.put(photo_name, id);
 					}
 				}
 			}
@@ -193,11 +178,11 @@ public class ImageComments extends Activity implements OnClickListener {
     	return links_found;
     }
     
-    Integer[] findURLPosInComment(String comment) {
+    private Integer[] findURLPosInComment(String comment) {
     	return findURLPosInComment(comment, 0);
     }
     
-    Integer[] findURLPosInComment(String comment, int start) {
+    private Integer[] findURLPosInComment(String comment, int start) {
     	String start_string = "<a href=\"";
     	int href_start = comment.indexOf(start_string, start);
     	int href_end = comment.indexOf("\"", href_start + start_string.length());
@@ -211,15 +196,48 @@ public class ImageComments extends Activity implements OnClickListener {
     	return range;
     }
     
+    private String diableAllURLsInComment(String comment) {
+    	int pos = 0;
+    	
+    	while (pos >= 0) {
+    		comment = disableURLInComment(comment, pos);
+    		pos = comment.indexOf("<a href=");
+    	}
+    	return comment;
+    }
+    
+    private String disableURLInComment(String comment, int start) {
+    	String href_open_start = "<a";
+    	String href_open_end = "\">";
+    	String href_close = "</a>";
+    	String part_a, part_b = null;
+    	
+    	int href_open_start_pos = comment.indexOf(href_open_start, start);
+    	int href_open_end_pos = comment.indexOf(href_open_end, start);
+    	int href_close_pos = comment.indexOf(href_close, start);
+    	
+    	if (href_open_start_pos >= 0 && href_open_end_pos >= 0 && href_close_pos >= 0) {
+	    	part_a = comment.substring(0, href_open_start_pos + 1);
+	    	part_b = comment.substring(href_open_end_pos);
+	    	comment = part_a + "b" + part_b;
+	    	
+	    	href_close_pos = comment.indexOf(href_close, start);
+	    	part_a = comment.substring(0, href_close_pos);
+	    	part_b = comment.substring(href_close_pos + 4);
+	    	comment = part_a + "</b>" + part_b;
+	    	
+    	}
+    	
+    	return comment;
+    }
+    
 	@Override
 	public void onClick(View v) {
 		if (v instanceof CommentLayout) {
 			JSONObject group_links = new JSONObject(((CommentLayout)v).m_group_links);
-			JSONObject photo_links = new JSONObject(((CommentLayout)v).m_photo_links);
 			
 			Intent i = new Intent(this, CommentLinkView.class);
 			i.putExtra("groups", group_links.toString());
-			i.putExtra("photos", photo_links.toString());
 			startActivity(i);
 		}
 		else if (v.getId() == R.id.BtnAddComment) {
