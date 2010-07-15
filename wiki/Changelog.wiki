@@ -1,6 +1,10 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===0.9.9.9.1===
+
+ * A few bug fixes.
+
 ===0.9.9.9===
 
  * Improved display of Comments.
