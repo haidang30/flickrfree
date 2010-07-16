@@ -257,4 +257,10 @@ public class APICalls {
     	RestClient.CallFunction("flickr.favorites.remove", new String[]{"photo_id"}, new String[]{photoid});
     }
 
+    public static JSONObject favoritesGetList(int page, int per_page) {
+    	return RestClient.CallFunction("flickr.favorites.getList",
+    									new String[]{"page", "per_page"},
+    									new String[]{String.valueOf(page), String.valueOf(per_page)});
+    }
+
 }

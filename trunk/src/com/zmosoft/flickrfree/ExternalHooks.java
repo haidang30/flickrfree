@@ -53,6 +53,9 @@ public class ExternalHooks extends Activity {
 					json_obj = APICalls.groupsPoolsGetPhotos(group_id, page, per_page);
 				}
 			}
+			else if (intent.getAction().equals(GlobalResources.INTENT_GET_FAVORITES)) {
+				json_obj = APICalls.favoritesGetList(page, per_page);
+			}
 			else if (intent.getAction().equals(GlobalResources.INTENT_FLICKR_SEARCH)) {
 				String text = extras.containsKey("text") ? extras.getString("text") : null;
 				String tags = extras.containsKey("tags") ? extras.getString("tags") : null;

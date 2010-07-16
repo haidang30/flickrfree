@@ -33,6 +33,7 @@ public class GlobalResources {
     public static final String INTENT_GET_PHOTOSTREAM = "com.zmosoft.flickrfree.GET_PHOTOSTREAM";
     public static final String INTENT_GET_POOL = "com.zmosoft.flickrfree.GET_POOL";
     public static final String INTENT_FLICKR_SEARCH = "com.zmosoft.flickrfree.FLICKR_SEARCH";
+    public static final String INTENT_GET_FAVORITES = "com.zmosoft.flickrfree.GET_FAVORITES";
     
 	public static int API_DELAY_MS = 1000;
 	public static int ERROR_DELAY_MS = 1000;

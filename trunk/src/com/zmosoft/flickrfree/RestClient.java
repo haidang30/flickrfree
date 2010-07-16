@@ -116,6 +116,11 @@ public class RestClient {
 		return CallFunction("", paramNames, paramVals, true, true, filename, context);
 	}
 	
+	public static JSONObject CallFunction(String methodName)
+	{
+		return CallFunction(methodName, null, null, true, false, "", null);
+	}
+	
 	public static JSONObject CallFunction(String methodName, String[] paramNames, String[] paramVals)
 	{
 		return CallFunction(methodName, paramNames, paramVals, true, false, "", null);

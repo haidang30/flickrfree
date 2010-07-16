@@ -144,6 +144,10 @@
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
             <intent-filter>
+				<action android:name="com.zmosoft.flickrfree.GET_FAVORITES" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+            <intent-filter>
 				<action android:name="com.zmosoft.flickrfree.FLICKR_SEARCH" />
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
