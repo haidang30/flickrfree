@@ -40,7 +40,7 @@ public class ImageTags extends Activity implements OnItemClickListener {
 				int i = 0, nphotos = 0;
 				while (itr.hasNext() && !isCancelled()) {
 					tag = itr.next();
-					photolist = APICalls.photosSearch(m_nsid, tag);
+					photolist = APICalls.photosSearch(m_nsid, null, tag);
 					if (photolist != null) {
 						m_tagmap.put(tag, photolist);
 						n_completed += 1;
