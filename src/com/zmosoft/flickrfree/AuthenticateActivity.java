@@ -227,13 +227,20 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 		return err_dialog;
     }
     
-    public static void SetActiveUser(SharedPreferences prefs, String username) {
+    public static boolean SetActiveUser(SharedPreferences prefs, String username) {
+    	return AuthenticateActivity.SetActiveUser(prefs, username, true);
+    }
+
+    public static boolean SetActiveUser(SharedPreferences prefs, String username, boolean logout_if_invalid) {
     	try {
 			SharedPreferences.Editor prefs_editor = prefs.edit();
 			String user_obj_str = username.equals("") ? "" : prefs.getString("FlickrUsername_" + username, "");
 
 			if (user_obj_str.equals("")) {
-				AuthenticateActivity.LogOut(prefs);
+				if (logout_if_invalid) {
+					AuthenticateActivity.LogOut(prefs);
+				}
+				return false;
 			}
 			else {
 				JSONObject user_obj = new JSONObject(user_obj_str);
@@ -254,6 +261,7 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+		return true;
     }
 
     public static void RemoveUser(SharedPreferences prefs, String username) {
