@@ -1,5 +1,7 @@
 package com.zmosoft.flickrfree;
 
+import java.util.ArrayList;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -9,14 +11,43 @@ public class APICalls {
 		return RestClient.CallFunction("flickr.people.getInfo", new String[]{"user_id"}, new String[]{userid});
 	}
 	
-	public static JSONObject peopleGetPublicGroups(String userid) {
-		return RestClient.CallFunction("flickr.people.getPublicGroups", new String[]{"user_id"}, new String[]{userid});
-	}
-	
 	public static JSONObject peopleFindByUsername(String username) {
 		return RestClient.CallFunction("flickr.people.findByUsername", new String[]{"username"}, new String[]{username});
 	}
 
+	public static JSONObject peopleGetPhotos(String userid) {
+		return APICalls.peopleGetPhotos(userid, 0, 0);
+	}
+	
+	public static JSONObject peopleGetPhotos(String userid, int page) {
+		return APICalls.peopleGetPhotos(userid, page, 0);
+	}
+	
+	public static JSONObject peopleGetPhotos(String userid, int page, int per_page) {
+    	ArrayList<String> paramNames = new ArrayList<String>();
+    	ArrayList<String> paramVals = new ArrayList<String>();
+    	String[] paramNames_arr = new String[]{};
+    	String[] paramVals_arr = new String[]{};
+    	
+    	paramNames.add("user_id");
+    	paramVals.add(userid);
+    	if (per_page > 0) {
+    		paramNames.add("per_page");
+    		paramVals.add(String.valueOf(per_page));
+    	}
+    	if (page > 0) {
+    		paramNames.add("page");
+    		paramVals.add(String.valueOf(page));
+    	}
+		return RestClient.CallFunction("flickr.people.getPhotos",
+									   paramNames.toArray(paramNames_arr),
+									   paramVals.toArray(paramVals_arr));
+	}
+
+	public static JSONObject peopleGetPublicGroups(String userid) {
+		return RestClient.CallFunction("flickr.people.getPublicGroups", new String[]{"user_id"}, new String[]{userid});
+	}
+	
     public static String getNameFromNSID(String nsid) throws JSONException {
 		JSONObject result = peopleGetInfo(nsid);
 		return (result.has("person") && result.getJSONObject("person").has("username")
@@ -52,8 +83,46 @@ public class APICalls {
 		return RestClient.CallFunction("flickr.collections.getTree",new String[]{"user_id"},new String[]{userid});
     }
 
-    public static JSONObject photosSearch(String userid, String tag) {
-    	return RestClient.CallFunction("flickr.photos.search", new String[]{"user_id", "tags"}, new String[]{userid, tag});
+    public static JSONObject photosSearch(String userid, String text, String tags) {
+    	return APICalls.photosSearch(userid, text, tags, 0, 0);
+    }
+    
+    public static JSONObject photosSearch(String userid, String text, String tags, int page) {
+    	return APICalls.photosSearch(userid, text, tags, page, 0);
+    }
+    
+    public static JSONObject photosSearch(String userid, String text, String tags, int page, int per_page) {
+    	ArrayList<String> paramNames = new ArrayList<String>();
+    	ArrayList<String> paramVals = new ArrayList<String>();
+    	String[] paramNames_arr = new String[]{};
+    	String[] paramVals_arr = new String[]{};
+
+    	paramNames.add("user_id");
+    	paramVals.add(userid);
+    	if (text != null && !text.equals("")) {
+    		paramNames.add("text");
+    		paramVals.add(text);
+    	}
+    	if (tags != null && !tags.equals("")) {
+    		paramNames.add("tags");
+    		paramVals.add(tags);
+    	}
+    	if (userid != null && !userid.equals("")) {
+    		paramNames.add("userid");
+    		paramVals.add(userid);
+    	}
+    	if (per_page > 0) {
+    		paramNames.add("per_page");
+    		paramVals.add(String.valueOf(per_page));
+    	}
+    	if (page > 0) {
+    		paramNames.add("page");
+    		paramVals.add(String.valueOf(page));
+    	}
+
+    	return RestClient.CallFunction("flickr.photos.search",
+				   paramNames.toArray(paramNames_arr),
+				   paramVals.toArray(paramVals_arr));
     }
 
     public static JSONObject photosGetInfo(String photoid) {
@@ -85,7 +154,32 @@ public class APICalls {
     }
     
     public static JSONObject groupsPoolsGetPhotos(String groupid) {
-        return RestClient.CallFunction("flickr.groups.pools.getGroups",new String[]{"group_id"}, new String[]{groupid});
+    	return APICalls.groupsPoolsGetPhotos(groupid, 0, 0);
+    }
+    
+    public static JSONObject groupsPoolsGetPhotos(String groupid, int page) {
+    	return APICalls.groupsPoolsGetPhotos(groupid, page, 0);
+    }
+    
+    public static JSONObject groupsPoolsGetPhotos(String groupid, int page, int per_page) {
+    	ArrayList<String> paramNames = new ArrayList<String>();
+    	ArrayList<String> paramVals = new ArrayList<String>();
+    	String[] paramNames_arr = new String[]{};
+    	String[] paramVals_arr = new String[]{};
+    	
+    	paramNames.add("group_id");
+    	paramVals.add(groupid);
+    	if (per_page > 0) {
+    		paramNames.add("per_page");
+    		paramVals.add(String.valueOf(per_page));
+    	}
+    	if (page > 0) {
+    		paramNames.add("page");
+    		paramVals.add(String.valueOf(page));
+    	}
+    	return RestClient.CallFunction("flickr.groups.pools.getPhotos",
+    								   paramNames.toArray(paramNames_arr),
+    								   paramVals.toArray(paramVals_arr));
     }
     
     public static JSONObject groupsSearch(String text, String perpage) {
