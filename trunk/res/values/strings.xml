@@ -90,6 +90,10 @@
 	
     <string name="otherslabel">Others</string>
 
+	<string name="readusers_permission_description">Allow app to read list of usernames authenticated with FlickrFree. Does not allow access to passwords or other confidential data.</string>
+
+	<string name="setuser_permission_description">Allow app to change the currently active user in FlickrFree. Does not allow access to passwords or other confidential data.</string>
+	
     <string name="tab1">You</string>
     <string name="tab2">Tags</string>
     <string name="tab3">Groups</string>

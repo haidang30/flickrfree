@@ -307,7 +307,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 		m_actionnames = getResources().getStringArray(R.array.main_user_view_list);
     	
     	try {
-    		GetActiveAccounts();
+    		m_accounts = GetActiveAccounts(this);
     	} catch (JSONException e) {
     		e.printStackTrace();
     	}
@@ -428,15 +428,16 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
         m_extrainfotask.execute();
 	}
 
-	private void GetActiveAccounts() throws JSONException {
-		SharedPreferences auth_prefs = getSharedPreferences("Auth",0);
-		m_accounts = new TreeMap<String, JSONObject>();
+	static public TreeMap<String, JSONObject> GetActiveAccounts(Activity activity) throws JSONException {
+		SharedPreferences auth_prefs = activity.getSharedPreferences("Auth",0);
+		TreeMap<String, JSONObject> accounts = new TreeMap<String, JSONObject>();
 		
 		for (String key : auth_prefs.getAll().keySet()) {
 			if (key.contains("FlickrUsername_") && key.indexOf("FlickrUsername_") == 0) {
-				m_accounts.put(key.substring(15), new JSONObject(auth_prefs.getString(key, "")));
+				accounts.put(key.substring(15), new JSONObject(auth_prefs.getString(key, "")));
 			}
 		}
+		return accounts;
 	}
 	
 	private void FillAccountSpinner() {
@@ -516,7 +517,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 
 			if (resultCode == AuthenticateActivity.AUTH_SUCCESS) {
 				try {
-					GetActiveAccounts();
+					m_accounts = GetActiveAccounts(this);
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
