@@ -2,6 +2,9 @@ package com.zmosoft.flickrfree;
 
 import java.util.LinkedList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -15,6 +18,7 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 public class Uploader extends Service {
 
@@ -50,7 +54,7 @@ public class Uploader extends Service {
 					getApplicationContext().sendBroadcast(broadcast_intent);
 					
 					publishProgress(upload_info.getString("title"));
-			        RestClient.UploadPicture(upload_info.getString("filename"),
+			        JSONObject result = RestClient.UploadPicture(upload_info.getString("filename"),
 							    			 upload_info.getString("title"),
 								    		 upload_info.getString("comment"),
 								    		 upload_info.getString("tags"),
@@ -59,11 +63,28 @@ public class Uploader extends Service {
 								    		 upload_info.getBoolean("is_family"),
 								    		 upload_info.getInt("safety_level"),
 								    		 getApplicationContext());
+			        if (result == null || result.has("fail")) {
+			        	String err_str = null;
+						try {
+							err_str = (result == null) ? "Unknown Failure" : result.getString("fail");
+						} catch (JSONException e) {
+							err_str = "Unknown Failure";
+						}
+
+						broadcast_intent.setAction(GlobalResources.INTENT_UPLOAD_FAILED);
+						broadcast_intent.putExtra("error", err_str);
+						getApplicationContext().sendBroadcast(broadcast_intent);
+
+						publishProgress("fail", err_str);
+			        	m_uploads.clear();
+			        }
 				}
-				m_uploads.remove(0);
-				// Send out a broadcast to let us know that an upload has finished.
-		        broadcast_intent.setAction(GlobalResources.INTENT_UPLOAD_FINISHED);
-				getApplicationContext().sendBroadcast(broadcast_intent);
+				if (!m_uploads.isEmpty()) {
+					m_uploads.remove(0);
+					// Send out a broadcast to let us know that an upload has finished.
+			        broadcast_intent.setAction(GlobalResources.INTENT_UPLOAD_FINISHED);
+					getApplicationContext().sendBroadcast(broadcast_intent);
+				}
 			}
 			
 			return null;
@@ -75,13 +96,21 @@ public class Uploader extends Service {
 			// us to update the notification text to let the user know which picture
 			// is being uploaded.
 			String title = progress.length > 0 ? progress[0] : "";
-			if (m_notification != null) {
-				RemoteViews nView = m_notification.contentView;
-				nView.setTextViewText(R.id.txtNotificationTitle, getResources().getString(R.string.uploading) + " \"" + title + "\"");
-				nView.setProgressBar(R.id.prgNotificationUpload, 100, 0, false);
-				m_notification.contentView = nView;
-
-				((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(GlobalResources.UPLOADER_ID, m_notification);
+			if (title == "fail") {
+				String err_str =  (progress.length > 1) ? progress[1] : "Unknown Error";
+				((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).cancel(GlobalResources.UPLOADER_ID);
+				Toast.makeText(getApplicationContext(), "Flickr Upload Failed:\n" + err_str, Toast.LENGTH_SHORT).show();
+				stopSelf();
+			}
+			else {
+				if (m_notification != null) {
+					RemoteViews nView = m_notification.contentView;
+					nView.setTextViewText(R.id.txtNotificationTitle, getResources().getString(R.string.uploading) + " \"" + title + "\"");
+					nView.setProgressBar(R.id.prgNotificationUpload, 100, 0, false);
+					m_notification.contentView = nView;
+	
+					((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(GlobalResources.UPLOADER_ID, m_notification);
+				}
 			}
 		}
 		

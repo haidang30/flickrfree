@@ -22,11 +22,14 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 public class RestClient {
 
@@ -143,9 +146,12 @@ public class RestClient {
 	{
 		JSONObject json = new JSONObject();
 		HttpClient httpclient = new DefaultHttpClient();
-	    httpclient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
+		HttpParams http_params = httpclient.getParams();
+	    http_params.setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
+	    HttpConnectionParams.setConnectionTimeout(http_params, CONNECTION_TIMEOUT);
+	    HttpConnectionParams.setSoTimeout(http_params, CONNECTION_TIMEOUT);
 
-		if (paramNames == null) {
+	    if (paramNames == null) {
 			paramNames = new String[0];
 		}
 		if (paramVals == null) {
@@ -255,32 +261,49 @@ public class RestClient {
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
+			json = new JSONObject();
+			try {
+				json.put("fail", e.getMessage());
+			} catch (JSONException e1) {
+				json = null;
+			}
 			e.printStackTrace();
 		}
 		
-		if (!ispost) {
-			try {
-				// Get hold of the response entity
-				HttpEntity entity = null;
-				if (response != null) {
-					entity = response.getEntity();
+		try {
+			// Get hold of the response entity
+			HttpEntity entity = null;
+			if (response != null) {
+				entity = response.getEntity();
+			}
+
+			// If the response does not enclose an entity, there is no need
+			// to worry about connection release
+			if (entity != null) {
+				// A Simple JSON Response Read
+				InputStream instream = entity.getContent();
+				String result = convertStreamToString(instream);
+				if (ispost) {
+					if (result.contains("<photoid>")) {
+						int start = result.indexOf("<photoid>") + 9;
+						int end = result.indexOf("</photoid>");
+						json.put("photoid", result.substring(start, end));
+					}
+					else {
+						json.put("fail", "Unknown Failure");
+						Log.e("FlickrFree", "Upload failure: \"" + result + "\"");
+					}
 				}
-	
-				// If the response does not enclose an entity, there is no need
-				// to worry about connection release
-				if (entity != null) {
-					// A Simple JSON Response Read
-					InputStream instream = entity.getContent();
-					String result = convertStreamToString(instream);
+				else {
 					result = result.substring(result.indexOf("{"),result.lastIndexOf("}") + 1);
 					// A Simple JSONObject Creation
 					json = new JSONObject(result);
 				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		httpclient.getConnectionManager().shutdown();
 
@@ -288,4 +311,5 @@ public class RestClient {
 	}
 	
     private static String m_RESTURL = "http://api.flickr.com/services/rest/";
+    private static final int CONNECTION_TIMEOUT = 15000000;
 }
