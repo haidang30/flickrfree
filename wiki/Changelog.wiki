@@ -1,6 +1,10 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===1.0.1===
+
+ * Fixed a NullPointerException that can cause FCs in the Collections view.
+
 ===1.0===
 
  * Better timeout handling on uploads. If there is a connection failure, it will fail gracefully and inform the user with a Toast notification. The status-bar notification won't hang around forever if the upload fails either.
