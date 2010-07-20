@@ -104,16 +104,20 @@ public class ImageCollections extends ListActivity implements OnItemClickListene
 	
 	public void onItemClick(AdapterView parent, View view, int position, long id) {
 		String collection_name = ((TextView)view.findViewById(R.id.CollectionName)).getText().toString();
-		if (m_collection_ids.containsKey(collection_name)) {
-			Intent i = new Intent(this, ImageSets.class);
-			i.putExtra("photoset_id", m_collection_ids.get(collection_name));
-			i.putExtra("type", "by_setlist");
-			i.putExtra("setlist", m_collection_sets.get(collection_name).toString());
-			i.putExtra("isprivate", m_isprivate);
-			try {
-				startActivity(i);
-			} catch (ActivityNotFoundException e) {
-				e.printStackTrace();
+		if (collection_name != null && m_collection_ids.containsKey(collection_name)) {
+			String photoset_id = m_collection_ids.get(collection_name);
+			JSONArray setlist = m_collection_sets.get(collection_name);
+			if (setlist != null && photoset_id != null) {
+				Intent i = new Intent(this, ImageSets.class);
+				i.putExtra("photoset_id", photoset_id);
+				i.putExtra("type", "by_setlist");
+				i.putExtra("setlist", setlist.toString());
+				i.putExtra("isprivate", m_isprivate);
+				try {
+					startActivity(i);
+				} catch (ActivityNotFoundException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
