@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="com.zmosoft.flickrfree" android:versionCode="206" android:versionName="1.0.1">
+      package="com.zmosoft.flickrfree" android:versionCode="210" android:versionName="1.0.2">
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:allowClearUserData="true">
         <activity android:name=".FlickrFree"
                   android:label="@string/app_name">
@@ -133,48 +133,10 @@
 			</intent-filter>
         </activity>
         
-		<activity android:name=".ExternalHooks" android:icon="@drawable/icon" android:label="@string/app_name"
-		          android:enabled="true" android:exported="true">
-            <intent-filter>
-				<action android:name="com.zmosoft.flickrfree.GET_PHOTOSTREAM" />
-				<category android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-            <intent-filter>
-				<action android:name="com.zmosoft.flickrfree.GET_POOL" />
-				<category android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-            <intent-filter>
-				<action android:name="com.zmosoft.flickrfree.GET_FAVORITES" />
-				<category android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-            <intent-filter>
-            	<permission android:name="com.zmosoft.flickrfree.READ_USERNAMES"
-            				android:protectionLevel="normal"
-            				android:description="@string/readusers_permission_description"
-            				android:icon="@drawable/icon" />
-				<action android:name="com.zmosoft.flickrfree.GET_USERLIST" />
-				<category android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-            <intent-filter>
-				<action android:name="com.zmosoft.flickrfree.FLICKR_SEARCH" />
-				<category android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-            <intent-filter>
-            	<permission android:name="com.zmosoft.flickrfree.SET_USER"
-            				android:protectionLevel="normal"
-            				android:description="@string/setuser_permission_description"
-            				android:icon="@drawable/icon" />
-				<action android:name="com.zmosoft.flickrfree.SET_USER" />
-				<category android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-        </activity>
-        
 		<service android:name=".Uploader" android:label="@string/uploader"/>
 		
 </application>
     <uses-sdk android:minSdkVersion="3" />
 
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
-<!--<uses-permission android:name="com.zmosoft.flickrfree.READ_USERNAMES"></uses-permission>-->
-<!--<uses-permission android:name="com.zmosoft.flickrfree.SET_USER"></uses-permission>-->
 </manifest> 
