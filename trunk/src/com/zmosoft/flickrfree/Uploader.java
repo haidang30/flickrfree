@@ -202,7 +202,12 @@ public class Uploader extends Service {
 	}
 	
 	public LinkedList<Bundle> getUploads() {
-		return m_upload_task.getUploads();
+		if (m_upload_task == null) {
+			return new LinkedList<Bundle>();
+		}
+		else {
+			return m_upload_task.getUploads();
+		}
 	}
 	
 	private Notification m_notification = null;

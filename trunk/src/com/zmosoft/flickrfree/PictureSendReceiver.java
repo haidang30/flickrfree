@@ -10,6 +10,7 @@ public class PictureSendReceiver extends Activity {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        RestClient.setAuth(this);
         Intent intent = getIntent();
 		if (intent.getAction().equals(Intent.ACTION_SEND)) {
 			Bundle extras = intent.getExtras();
