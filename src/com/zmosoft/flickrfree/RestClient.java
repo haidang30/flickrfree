@@ -284,14 +284,19 @@ public class RestClient {
 				InputStream instream = entity.getContent();
 				String result = convertStreamToString(instream);
 				if (ispost) {
+					if (result.contains("fail")){
+						json.put("stat", "fail");
+						json.put("fail", "Unknown Failure");
+						Log.e("FlickrFree", "Upload failure: \"" + result + "\"");
+					}
+					else {
+						json.put("stat", "ok");
+						Log.d("FlickrFree", "Upload success: \"" + result + "\"");
+					}
 					if (result.contains("<photoid>")) {
 						int start = result.indexOf("<photoid>") + 9;
 						int end = result.indexOf("</photoid>");
 						json.put("photoid", result.substring(start, end));
-					}
-					else {
-						json.put("fail", "Unknown Failure");
-						Log.e("FlickrFree", "Upload failure: \"" + result + "\"");
 					}
 				}
 				else {
