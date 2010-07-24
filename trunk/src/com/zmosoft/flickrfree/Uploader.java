@@ -122,6 +122,7 @@ public class Uploader extends Service {
 		protected void onPostExecute(Object result) {
 			// When all uploads are finished, kill the status bar upload notification and stop the
 			// Uploader service.
+			Toast.makeText(getApplicationContext(), "Upload(s) Completed", Toast.LENGTH_SHORT).show();
 			((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).cancel(GlobalResources.UPLOADER_ID);
 			stopSelf();
 		}
