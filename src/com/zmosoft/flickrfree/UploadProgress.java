@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -18,6 +19,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.content.ServiceConnection;
 
 public class UploadProgress extends Activity implements OnClickListener {
@@ -149,6 +151,8 @@ public class UploadProgress extends Activity implements OnClickListener {
     	if (m_uploader != null) {
 			LinkedList<Bundle> upload_list = m_uploader.getUploads();
 			if (upload_list.isEmpty()) {
+				Toast.makeText(getApplicationContext(), "Upload(s) Completed", Toast.LENGTH_SHORT).show();
+				((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).cancel(GlobalResources.UPLOADER_ID);
 				finish();
 			}
 			else {
