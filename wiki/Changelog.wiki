@@ -1,9 +1,13 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===1.0.3===
+
+ * Fixes for "stuck" upload notification. Sometimes the Uploader service doesn't get the broadcast notification telling it that an upload is complete, so it doesn't know to clear the notification. Now if the user taps on the notification, taking them to the UploadProgress screen, and all uploads are finished, it will know to clear the notification.
+
 ===1.0.2===
 
-* Fixed some bugs in the Uploader.
+ * Fixed some bugs in the Uploader.
 
 ===1.0.1===
 
