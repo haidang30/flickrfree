@@ -1,7 +1,6 @@
 package com.zmosoft.flickrfree;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -24,6 +23,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.zmosoft.flickrfree.GlobalResources.ImgSize;
 
@@ -266,17 +266,8 @@ public class ImageFullScreen extends Activity {
     				})
 		        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
 		        	public void onClick(DialogInterface dialog, int id) {
-						ImgSize size_chosen = m_downloadSize;
-
-						try {
-							String url = m_imgsizes.get(size_chosen);
-							GlobalResources.downloadImage(url, "", null, false);
-							dialog.dismiss();
-						} catch (MalformedURLException e) {
-							e.printStackTrace();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
+						initiateDownload(m_imgsizes.get(m_downloadSize));
+						dialog.dismiss();
 					}
 		        })
 		        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -288,6 +279,19 @@ public class ImageFullScreen extends Activity {
 			break;
     	}
     	return dialog;
+    }
+    
+    private void initiateDownload(String url) {
+		Intent downloader_intent = new Intent(this, TransferService.class);
+		downloader_intent.putExtra("url", url);
+		downloader_intent.putExtra("type", "download");
+		downloader_intent.putExtra("title", url.substring(url.lastIndexOf("/") + 1));
+
+		// Start the downloader service and pass in the intent containing
+		// the upload information.
+		startService(downloader_intent);
+		
+		Toast.makeText(this, R.string.downloadstarting, Toast.LENGTH_SHORT).show();
     }
     
     private TreeMap<ImgSize, String> GetImgSizes() throws JSONException {
