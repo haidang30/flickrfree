@@ -15,16 +15,16 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.content.ServiceConnection;
 
 public class TransferProgress extends Activity implements OnClickListener {
 
-    private ServiceConnection m_svc_upload = new ServiceConnection() {
+    private ServiceConnection m_svc = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			m_transfer_service = ((TransferService.TransferServiceBinder)service).getService();
@@ -44,40 +44,44 @@ public class TransferProgress extends Activity implements OnClickListener {
 	public class PercentProgressUpdateReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-	        if (intent.getAction().equals(GlobalResources.INTENT_UPLOAD_PROGRESS_UPDATE)) {
-	        	Bundle extras = intent.getExtras();
-	        	if (extras != null && extras.containsKey("percent")) {
-		        	ListView lv = ((ListView)findViewById(R.id.TransferProgressList));
-		        	if (lv != null && lv.getChildCount() > 0) {
-			        	TextView status_text = (TextView)(lv.getChildAt(0).findViewById(R.id.TransferPictureStatus));
-			        	if (status_text != null) {
-			        		status_text.setVisibility(View.GONE);
-			        	}
-			        	ProgressBar progress = (ProgressBar)(lv.getChildAt(0).findViewById(R.id.TransferProgressBar));
-			        	if (progress != null) {
-			        		progress.setVisibility(View.VISIBLE);
-				        	progress.setProgress((int)extras.getLong("percent"));
-			        	}
-		        	}
-	        	}
-	        }
-	        else if (intent.getAction().equals(GlobalResources.INTENT_DOWNLOAD_PROGRESS_UPDATE)) {
-	        	Bundle extras = intent.getExtras();
-	        	if (extras != null && extras.containsKey("percent")) {
-		        	ListView lv = ((ListView)findViewById(R.id.TransferProgressList));
-		        	if (lv != null && lv.getChildCount() > 1) {
-			        	TextView status_text = (TextView)(lv.getChildAt(1).findViewById(R.id.TransferPictureStatus));
-			        	if (status_text != null) {
-			        		status_text.setVisibility(View.GONE);
-			        	}
-			        	ProgressBar progress = (ProgressBar)(lv.getChildAt(1).findViewById(R.id.TransferProgressBar));
-			        	if (progress != null) {
-			        		progress.setVisibility(View.VISIBLE);
-				        	progress.setProgress((int)extras.getLong("percent"));
-			        	}
-		        	}
-	        	}
-	        }
+			ListView lv = ((ListView)findViewById(R.id.TransferProgressList));
+        	Bundle extras = intent.getExtras();
+        	if (extras != null && extras.containsKey("percent") && extras.containsKey("filename")) {
+        		String percent = extras.getString("percent");
+        		if (percent != null) {
+            		String title = "";
+        			int i = 0;
+        			LinearLayout progress_item = null;
+        			String transfer_type = "";
+        	        if (intent.getAction().equals(GlobalResources.INTENT_UPLOAD_PROGRESS_UPDATE)) {
+        	        	transfer_type = GlobalResources.TRANSFER_TYPE_UPLOAD;
+        	        	title = extras.getString("title");
+        	        }
+        	        else if (intent.getAction().equals(GlobalResources.INTENT_DOWNLOAD_PROGRESS_UPDATE)) {
+        	        	transfer_type = GlobalResources.TRANSFER_TYPE_DOWNLOAD;
+        	        	title = extras.getString("filename");
+        	        }
+        	        TextView v_tt = null, v_pn = null;
+    	        	for (i = 0; i < lv.getChildCount(); ++i) {
+    	        		progress_item = (LinearLayout)lv.getChildAt(i);
+    	        		v_tt = (TextView)progress_item.findViewById(R.id.TransferType);
+    	        		v_pn = (TextView)progress_item.findViewById(R.id.TransferPictureName);
+    	        		if (v_tt != null && v_tt.getText().equals(transfer_type)
+    	        			&& v_pn != null && v_pn.getText().equals(title)) {
+    			        	TextView status_text = (TextView)(progress_item.findViewById(R.id.TransferPictureStatus));
+    			        	if (status_text != null) {
+    			        		status_text.setVisibility(View.GONE);
+    			        	}
+    			        	ProgressBar progress = (ProgressBar)(progress_item.findViewById(R.id.TransferProgressBar));
+    			        	if (progress != null) {
+    			        		progress.setVisibility(View.VISIBLE);
+    				        	progress.setProgress(Integer.valueOf(percent));
+    			        	}
+    	        			break;
+    	        		}
+    	        	}
+        		}
+        	}
 		}
 	}
 
@@ -124,9 +128,10 @@ public class TransferProgress extends Activity implements OnClickListener {
 		m_update_receiver = new PercentProgressUpdateReceiver();
 		if (m_update_receiver != null) {
 			this.registerReceiver(m_update_receiver, new IntentFilter(GlobalResources.INTENT_UPLOAD_PROGRESS_UPDATE));
+			this.registerReceiver(m_update_receiver, new IntentFilter(GlobalResources.INTENT_DOWNLOAD_PROGRESS_UPDATE));
 		}
 		
-		this.bindService(new Intent(this, Uploader.class), m_svc_upload, Context.BIND_AUTO_CREATE);
+		this.bindService(new Intent(this, TransferService.class), m_svc, Context.BIND_AUTO_CREATE);
 
         m_receiver = new StatusReceiver();
 		if (m_receiver != null) {
@@ -136,8 +141,8 @@ public class TransferProgress extends Activity implements OnClickListener {
 	}
 
 	public void unbindTransferServiceReceiver() {
-		if (m_svc_upload != null) {
-			this.unbindService(m_svc_upload);
+		if (m_svc != null) {
+			this.unbindService(m_svc);
 		}
 		if (m_receiver != null) {
 			this.unregisterReceiver(m_receiver);
@@ -182,11 +187,9 @@ public class TransferProgress extends Activity implements OnClickListener {
 			// notification. If both are empty, then there's nothing to do here, so close the TransferProgress
 			// Activity.
 			if (upload_list.isEmpty()) {
-				Toast.makeText(getApplicationContext(), "Upload(s) Completed", Toast.LENGTH_SHORT).show();
 				((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).cancel(GlobalResources.UPLOADER_ID);
 			}
 			if (download_list.isEmpty()) {
-				Toast.makeText(getApplicationContext(), "Download(s) Completed", Toast.LENGTH_SHORT).show();
 				((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).cancel(GlobalResources.DOWNLOADER_ID);
 			}
 	        if (upload_list.isEmpty() && download_list.isEmpty()) {
@@ -201,6 +204,7 @@ public class TransferProgress extends Activity implements OnClickListener {
 					m = new HashMap<String, String>();
 					b = upload_list.remove();
 					m.put("title", b.getString("title"));
+					m.put("type", GlobalResources.TRANSFER_TYPE_UPLOAD);
 					m.put("status", "Pending");
 					transferlist.add(m);
 				}
@@ -208,6 +212,7 @@ public class TransferProgress extends Activity implements OnClickListener {
 					m = new HashMap<String, String>();
 					b = download_list.remove();
 					m.put("title", b.getString("title"));
+					m.put("type", GlobalResources.TRANSFER_TYPE_DOWNLOAD);
 					m.put("status", "Pending");
 					transferlist.add(m);
 				}
@@ -218,8 +223,8 @@ public class TransferProgress extends Activity implements OnClickListener {
 					this,
 					transferlist,
 					R.layout.transfer_progress_item,
-					new String[]{"title","status"},
-					new int[]{R.id.TransferPictureName, R.id.TransferPictureStatus}));
+					new String[]{"title","status", "type"},
+					new int[]{R.id.TransferPictureName, R.id.TransferPictureStatus, R.id.TransferType}));
     	}
 	}
 	

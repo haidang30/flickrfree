@@ -44,7 +44,10 @@ public class GlobalResources {
     public static final String INTENT_GET_USERLIST = "com.zmosoft.flickrfree.GET_USERLIST";
     public static final String INTENT_SET_USER = "com.zmosoft.flickrfree.SET_USER";
     
-	public static int API_DELAY_MS = 1000;
+    public static final String TRANSFER_TYPE_UPLOAD = "Upload";
+    public static final String TRANSFER_TYPE_DOWNLOAD = "Download";
+
+    public static int API_DELAY_MS = 1000;
 	public static int ERROR_DELAY_MS = 1000;
 
 	static final int ADD_ACCOUNT_REQ = 1;
@@ -210,7 +213,8 @@ public class GlobalResources {
 					// so only do it when the amount written since the last broadcast
 					// is at least 1% of the total size.
 					if ((progress - old_progress) >= broadcast_trigger) {
-						broadcast_intent.putExtra("percent", Math.round(progress));
+						broadcast_intent.putExtra("percent", String.valueOf(Math.round(progress)));
+						broadcast_intent.putExtra("filename", filename);
 						context.sendBroadcast(broadcast_intent);
 						old_progress = progress;
 					}

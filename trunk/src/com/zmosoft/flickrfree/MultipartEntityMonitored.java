@@ -37,6 +37,7 @@ public class MultipartEntityMonitored extends MultipartEntity {
 			}
 			else {
 				m_broadcast_intent.putExtra("percent", PercentUploaded());
+				m_broadcast_intent.putExtra("title", m_title);
 				if (m_context != null) {
 					m_context.sendBroadcast(m_broadcast_intent);
 				}
@@ -56,6 +57,7 @@ public class MultipartEntityMonitored extends MultipartEntity {
 			}
 			else {
 				m_broadcast_intent.putExtra("percent", PercentUploaded());
+				m_broadcast_intent.putExtra("title", m_title);
 				if (m_context != null) {
 					m_context.sendBroadcast(m_broadcast_intent);
 				}
@@ -69,6 +71,7 @@ public class MultipartEntityMonitored extends MultipartEntity {
 				m_broadcast_intent.setAction(GlobalResources.INTENT_UPLOAD_PROGRESS_UPDATE);
 			}
 			m_broadcast_intent.putExtra("percent", PercentUploaded());
+			m_broadcast_intent.putExtra("title", m_title);
 			if (m_context != null) {
 				m_context.sendBroadcast(m_broadcast_intent);
 			}
@@ -87,10 +90,11 @@ public class MultipartEntityMonitored extends MultipartEntity {
 		
 	}
 
-	public MultipartEntityMonitored(Context context) {
+	public MultipartEntityMonitored(Context context, String title) {
 		super();
 		
 		m_context = context;
+		m_title = title;
 	}
 
 	public MultipartEntityMonitored(HttpMultipartMode mode) {
@@ -114,4 +118,5 @@ public class MultipartEntityMonitored extends MultipartEntity {
 	private OutputStreamMonitored m_outputstream = null;
 	private Intent m_broadcast_intent = null;
 	private Context m_context = null;
+	private String m_title = null;
 }

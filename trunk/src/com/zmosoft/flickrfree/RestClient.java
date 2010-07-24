@@ -238,8 +238,18 @@ public class RestClient {
 		    		file = new File(filename);
 		    	}
 			    
+		    	// Get the title of the photo being uploaded so we can pass it into the
+		    	// MultipartEntityMonitored class to be broadcast for progress updates.
+		    	String title = "";
+		    	for (int i = 0; i < paramNames.length; ++i) {
+		    		if (paramNames[i].equals("title")) {
+		    			title = paramVals[i];
+		    			break;
+		    		}
+		    	}
+		    	
 			    HttpPost httppost = new HttpPost(url);
-			    MultipartEntityMonitored mp_entity = new MultipartEntityMonitored(context);
+			    MultipartEntityMonitored mp_entity = new MultipartEntityMonitored(context, title);
 
 			    mp_entity.addPart("photo", new FileBody(file));
 				for (Map.Entry<String,String> entry : sig_params.entrySet()) {
