@@ -117,9 +117,9 @@
             </intent-filter>
         </activity>
         
-        <activity android:name=".UploadProgress" android:label="@string/uploadprogress">
+        <activity android:name=".TransferProgress" android:label="@string/transferprogress">
             <intent-filter>
-                <action android:name="com.zmosoft.flickrfree.UPLOADPROGRESS" />
+                <action android:name="com.zmosoft.flickrfree.TRANSFERPROGRESS" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -133,7 +133,7 @@
 			</intent-filter>
         </activity>
         
-		<service android:name=".Uploader" android:label="@string/uploader"/>
+		<service android:name=".TransferService" android:label="@string/filetransfers"/>
 		
 </application>
     <uses-sdk android:minSdkVersion="3" />

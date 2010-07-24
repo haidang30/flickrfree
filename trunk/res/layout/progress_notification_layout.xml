@@ -26,7 +26,7 @@
 	<ProgressBar android:layout_below="@id/txtNotificationTitle"
 				 android:layout_toRightOf="@id/imgIcon"
 				 android:gravity="center_horizontal"
-				 android:id="@+id/prgNotificationUpload"
+				 android:id="@+id/prgNotification"
 				 android:indeterminate="false"
 				 android:progress="0"
 				 android:max="100"

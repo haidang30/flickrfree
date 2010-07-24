@@ -31,7 +31,7 @@ public class Uploader extends Service {
 	        	Bundle extras = intent.getExtras();
 	        	if (extras != null && extras.containsKey("percent")) {
 					RemoteViews nView = m_notification.contentView;
-					nView.setProgressBar(R.id.prgNotificationUpload, 100, (int)extras.getLong("percent"), false);
+					nView.setProgressBar(R.id.prgNotification, 100, (int)extras.getLong("percent"), false);
 					m_notification.contentView = nView;
 					((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(GlobalResources.UPLOADER_ID, m_notification);
 	        	}
@@ -106,7 +106,7 @@ public class Uploader extends Service {
 				if (m_notification != null) {
 					RemoteViews nView = m_notification.contentView;
 					nView.setTextViewText(R.id.txtNotificationTitle, getResources().getString(R.string.uploading) + " \"" + title + "\"");
-					nView.setProgressBar(R.id.prgNotificationUpload, 100, 0, false);
+					nView.setProgressBar(R.id.prgNotification, 100, 0, false);
 					m_notification.contentView = nView;
 	
 					((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(GlobalResources.UPLOADER_ID, m_notification);
@@ -191,10 +191,10 @@ public class Uploader extends Service {
 			// Create the status bar notification that will be displayed.
 			CharSequence tickerText = this.getString(R.string.uploadingpicture);
 			m_notification = new Notification(android.R.drawable.stat_sys_upload, tickerText, System.currentTimeMillis());
-			m_notify_activity = PendingIntent.getActivity(this, 0, new Intent(this, UploadProgress.class), 0);
+			m_notify_activity = PendingIntent.getActivity(this, 0, new Intent(this, TransferProgress.class), 0);
 			m_notification.contentIntent = m_notify_activity;
 
-			RemoteViews nView = new RemoteViews(getPackageName(), R.layout.upload_notification_layout);
+			RemoteViews nView = new RemoteViews(getPackageName(), R.layout.progress_notification_layout);
 			//nView.setImageViewResource(R.id.imgIcon, R.drawable.icon);
 			nView.setTextViewText(R.id.txtNotificationTitle, getResources().getString(R.string.uploading) + " \"" + upload_info.getString("title") + "\"");
 			m_notification.contentView = nView;

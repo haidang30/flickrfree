@@ -537,6 +537,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 			    if (uri != null) {
 				  Intent i = new Intent(this, PictureSettings.class);
 				  i.putExtra("image_uri", uri.toString());
+				  i.putExtra("action", "upload");
 				  startActivity(i);
 			    }
 			}

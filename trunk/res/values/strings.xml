@@ -26,6 +26,8 @@
 
     <string name="dlg_imgsize_title">Choose Download Size</string>
     <string name="dlg_switch_accounts">Choose Account</string>
+    <string name="downloading">Downloading</string>
+    <string name="downloadingpicture">Downloading Picture</string>
 
     <string name="entrymorecomments">More Comments...</string>
     <string name="favorites">View Favorites</string>
@@ -109,11 +111,12 @@
 	
     <string name="userview">User Page</string>
     <string name="picturesettings">Picture Settings</string>
-    <string name="uploadprogress">Upload Progress</string>
+    <string name="transferprogress">File Transfer Progress</string>
     <string name="uploadstarting">Your Upload is Starting</string>
+    <string name="downloadstarting">Your Download is Starting</string>
     <string name="uploadingpicture">Uploading Picture</string>
     <string name="uploading">Uploading</string>
-    <string name="uploader">Uploader</string>
+    <string name="filetransfers">File Transfers</string>
 
     <string name="youraccountlabel">Your Account</string>
 </resources>

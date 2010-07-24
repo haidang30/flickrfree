@@ -15,12 +15,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
-import android.view.Window;
 
 
 public class GlobalResources {
@@ -29,8 +30,13 @@ public class GlobalResources {
     public static final String INTENT_UPLOAD_STARTED = "com.zmosoft.flickrfree.UPLOAD_STARTED";
     public static final String INTENT_UPLOAD_FINISHED = "com.zmosoft.flickrfree.UPLOAD_FINISHED";
     public static final String INTENT_UPLOAD_FAILED = "com.zmosoft.flickrfree.UPLOAD_FAILED";
-    public static final String INTENT_BIND_UPLOADER = "com.zmosoft.flickrfree.BIND_UPLOADER";
+    public static final String INTENT_DOWNLOAD_STARTED = "com.zmosoft.flickrfree.DOWNLOAD_STARTED";
+    public static final String INTENT_DOWNLOAD_FINISHED = "com.zmosoft.flickrfree.DOWNLOAD_FINISHED";
+    public static final String INTENT_DOWNLOAD_FAILED = "com.zmosoft.flickrfree.DOWNLOAD_FAILED";
+    public static final String INTENT_BIND_TRANSFER_SERVICE = "com.zmosoft.flickrfree.BIND_TRANSFER_SERVICE";
+    public static final String INTENT_BIND_DOWNLOADER = "com.zmosoft.flickrfree.BIND_DOWNLOADER";
     public static final String INTENT_UPLOAD_PROGRESS_UPDATE = "com.zmosoft.flickrfree.UPLOAD_PROGRESS_UPDATE";
+    public static final String INTENT_DOWNLOAD_PROGRESS_UPDATE = "com.zmosoft.flickrfree.DOWNLOAD_PROGRESS_UPDATE";
     public static final String INTENT_GET_PHOTOSTREAM = "com.zmosoft.flickrfree.GET_PHOTOSTREAM";
     public static final String INTENT_GET_POOL = "com.zmosoft.flickrfree.GET_POOL";
     public static final String INTENT_FLICKR_SEARCH = "com.zmosoft.flickrfree.FLICKR_SEARCH";
@@ -47,27 +53,9 @@ public class GlobalResources {
 	static final int IMGS_PER_PAGE = 20;
     static final int NRETRIES = 10;
 	static final int UPLOADER_ID = 243;
+	static final int DOWNLOADER_ID = 253;
 
-    private static class UpdateProgressBar implements Runnable {
-
-    	UpdateProgressBar(Activity activity, int progress) {
-    		m_activity = activity;
-    		m_progress = progress;
-    	}
-    	
-		@Override
-		public void run() {
-			m_activity.setProgress(m_progress);
-			if (m_progress == Window.PROGRESS_END) {
-				m_activity.setProgressBarIndeterminateVisibility(false);
-			}
-		}
-    	
-		Activity m_activity;
-		int m_progress;
-    }
-    
-    public enum ImgSize {
+	public enum ImgSize {
     	SMALLSQUARE(0), THUMB(1), SMALL(2), MED(3), LARGE(4), ORIG(5);
     	
     	private int m_sizenum;
@@ -163,14 +151,17 @@ public class GlobalResources {
 		return img_url;
     }
 
-    public static void downloadImage(String url, String filename, Activity callingActivity, boolean show_progress) throws MalformedURLException, IOException {
+    public static String downloadImage(String url, String filename, boolean show_progress, Context context) throws IOException {
     	String dlpath = GetDownloadDir();
     	if (!dlpath.equals("")) {
-    		downloadImage(url, filename, dlpath, callingActivity, show_progress);
+    		return downloadImage(url, filename, dlpath, show_progress, context);
+    	}
+    	else {
+    		return "Failed to save image";
     	}
     }
     
-    public static void downloadImage(String url, String filename, String dlpath, Activity callingActivity, boolean show_progress) throws MalformedURLException, IOException {
+    public static String downloadImage(String url, String filename, String dlpath, boolean show_progress, Context context) throws IOException {
     	if (filename.equals("")) {
     		filename = url.substring(url.lastIndexOf("/") + 1);
     	}
@@ -179,6 +170,7 @@ public class GlobalResources {
 		
 		if (uc == null) {
 			Log.e("flickrfree", "Failed to open connection while trying to download \"" + url + "\".");
+			return "fail: Failed to open connection";
 		}
 		
 		double contentLength = (double)uc.getContentLength();
@@ -186,6 +178,7 @@ public class GlobalResources {
 
 		if (uc.getContentType() == null || !uc.getContentType().contains("image")) {
 			Log.e("flickrfree", "File at URL \"" + url + "\" is not an image.");
+			return "fail: File is not an image";
 		}
 
 		// Check to see if download directory exists. If not, create it.
@@ -195,29 +188,40 @@ public class GlobalResources {
 		}
 
 		InputStream in = uc.getInputStream();
-		if (in != null) {
+		if (in == null) {
+			return "fail: Failed to get input stream";
+		}
+		else {
 			File f = new File(dlpath,filename);
 			FileOutputStream imgfile = new FileOutputStream(f);
 			byte[] buffer = new byte[1024];
 			int len1 = 0;
-			int progress;
-			double maxProgress = (double)(Window.PROGRESS_END);
+			double progress = 0, old_progress = 0;
+			double broadcast_trigger = 1.0;
+			Intent broadcast_intent = new Intent();
+			broadcast_intent.setAction(GlobalResources.INTENT_DOWNLOAD_PROGRESS_UPDATE);
 			while ((len1 = in.read(buffer)) != -1) {
 				imgfile.write(buffer,0, len1);
 				contentReceived += (double)1024;
-				progress = (int)(maxProgress * contentReceived / contentLength);
-				if (callingActivity != null && show_progress) {
-					callingActivity.runOnUiThread(new GlobalResources.UpdateProgressBar(callingActivity, progress));
+				
+				if (show_progress && context != null) {
+					progress = 100.0 * contentReceived / contentLength;
+					// We don't want to send a broadcast every time data is written,
+					// so only do it when the amount written since the last broadcast
+					// is at least 1% of the total size.
+					if ((progress - old_progress) >= broadcast_trigger) {
+						broadcast_intent.putExtra("percent", Math.round(progress));
+						context.sendBroadcast(broadcast_intent);
+						old_progress = progress;
+					}
 				}
 			}
 	
-			if (callingActivity != null && show_progress) {
-				callingActivity.runOnUiThread(new GlobalResources.UpdateProgressBar(callingActivity, Window.PROGRESS_END));
-			}
-			
 			in.close();
 			imgfile.close();
 		}
+		
+		return "success: Downloaded picture \"" + filename + "\" to SD Card";
     }
 
     public static boolean CheckDir(String dir_name) {
@@ -285,7 +289,7 @@ public class GlobalResources {
 				sleep(ERROR_DELAY_MS);
 				Log.e("flickrfree", "Error retrieving image from URL \"" + url + "\". Retrying.");
 			}
-			downloadImage(url, filename, cachedir, callingActivity, show_progress);
+			downloadImage(url, filename, cachedir, show_progress, callingActivity.getApplicationContext());
 		}
 
     	return img_cache.exists();

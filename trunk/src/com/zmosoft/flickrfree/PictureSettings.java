@@ -67,8 +67,9 @@ public class PictureSettings extends Activity implements OnClickListener, OnChec
 
 		// uploader_intent will contain all of the necessary information about this
 		// upload in the Extras Bundle.
-		Intent uploader_intent = new Intent(this, Uploader.class);
+		Intent uploader_intent = new Intent(this, TransferService.class);
 		uploader_intent.putExtra("filename", m_filepath);
+		uploader_intent.putExtra("type", "upload");
 		uploader_intent.putExtra("title", ((EditText)findViewById(R.id.txtPhotoTitle)).getText().toString());
 		uploader_intent.putExtra("comment", ((EditText)findViewById(R.id.txtPhotoComment)).getText().toString());
 		uploader_intent.putExtra("tags", ((EditText)findViewById(R.id.txtPhotoTags)).getText().toString());
