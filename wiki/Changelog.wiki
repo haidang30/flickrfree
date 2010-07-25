@@ -1,6 +1,10 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===1.1===
+
+ * Big improvements to downloader. Downloads now happen in the background (i.e., no UI hang when you start a download), and there is a progress-bar notification for downloads just like there is for uploads. It can even upload and download simultaneously.
+
 ===1.0.3===
 
  * Fixes for "stuck" upload notification. Sometimes the Uploader service doesn't get the broadcast notification telling it that an upload is complete, so it doesn't know to clear the notification. Now if the user taps on the notification, taking them to the UploadProgress screen, and all uploads are finished, it will know to clear the notification.
