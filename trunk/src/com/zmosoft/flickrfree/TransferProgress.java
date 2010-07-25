@@ -188,9 +188,6 @@ public class TransferProgress extends Activity implements OnClickListener {
 			if (download_list.isEmpty()) {
 				((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).cancel(GlobalResources.DOWNLOADER_ID);
 			}
-	        if (upload_list.isEmpty() && download_list.isEmpty()) {
-				finish();
-			}
 
 	        // We want to interleave the list of uploads and downloads in the ListView.
 			HashMap<String, String> m;
@@ -221,6 +218,10 @@ public class TransferProgress extends Activity implements OnClickListener {
 					R.layout.transfer_progress_item,
 					new String[]{"title","status", "type"},
 					new int[]{R.id.TransferPictureName, R.id.TransferPictureStatus, R.id.TransferType}));
+
+	        if (transferlist.isEmpty()) {
+				finish();
+			}
     	}
 	}
 	
