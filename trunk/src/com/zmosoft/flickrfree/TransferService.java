@@ -72,7 +72,7 @@ public class TransferService extends Service {
 																	  true,
 																	  getApplicationContext());
 						m_downloads.remove();
-						publishProgress(new String[]{"finish", download_info.getString("title")});
+						publishProgress(new String[]{"finish", download_info.getString("title"), result});
 					} catch (IOException e1) {
 						e1.printStackTrace();
 						result = "fail: I/O Error";
@@ -82,18 +82,6 @@ public class TransferService extends Service {
 						err_str = (result == null) ? "Unknown Failure" : result.substring(result.indexOf("fail: ") + 6);
 						publishProgress("fail", err_str);
 			        	m_downloads.clear();
-			        }
-			        else if (result.contains("success")) {
-			        	String token = "Image path = ";
-			        	String image_path = result.substring(result.indexOf(token) + token.length());
-			        	try {
-			        		ContentResolver cr = getContentResolver();
-							MediaStore.Images.Media.insertImage(cr,image_path,null,null);
-							cr.notifyChange(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null);
-						} catch (FileNotFoundException e) {
-							Log.e("FlickrFree", "Unable to insert image \"" + image_path + "\" into media store. File not found.");
-							e.printStackTrace();
-						}
 			        }
 				}
 			}
@@ -127,7 +115,23 @@ public class TransferService extends Service {
 				}
 				else if (status.equals("finish")) {
 					// Send out a broadcast to let us know that an download has finished.
-			        broadcast_intent.setAction(GlobalResources.INTENT_DOWNLOAD_FINISHED);					getApplicationContext().sendBroadcast(broadcast_intent);
+			        broadcast_intent.setAction(GlobalResources.INTENT_DOWNLOAD_FINISHED);
+	        		getApplicationContext().sendBroadcast(broadcast_intent);
+	        		String result = progress.length > 2 ? progress[2] : "";
+			        if (result.contains("success")) {
+			        	String token = "Image path = ";
+			        	String image_path = result.substring(result.indexOf(token) + token.length());
+			        	try {
+			        		ContentResolver cr = getContentResolver();
+							MediaStore.Images.Media.insertImage(cr,image_path,null,null);
+							cr.notifyChange(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null);
+						} catch (FileNotFoundException f_e) {
+							Log.e("FlickrFree", "Unable to insert image \"" + image_path + "\" into media store. File not found.");
+							f_e.printStackTrace();
+						} catch (OutOfMemoryError om_e) {
+							om_e.printStackTrace();
+						}
+			        }
 				}
 				else if (status.equals("fail")) {
 					broadcast_intent.setAction(GlobalResources.INTENT_DOWNLOAD_FAILED);
