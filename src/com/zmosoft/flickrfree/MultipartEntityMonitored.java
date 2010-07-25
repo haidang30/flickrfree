@@ -78,8 +78,8 @@ public class MultipartEntityMonitored extends MultipartEntity {
 			m_broadcast_count = 0;
 		}
 		
-		private long PercentUploaded() {
-			return Math.round(100.0 * (double)m_bytes_transferred / (double)m_length);
+		private int PercentUploaded() {
+			return (int)Math.round(100.0 * (double)m_bytes_transferred / (double)m_length);
 		}
 		
 		private long m_length = 0;

@@ -46,41 +46,39 @@ public class TransferProgress extends Activity implements OnClickListener {
 		public void onReceive(Context context, Intent intent) {
 			ListView lv = ((ListView)findViewById(R.id.TransferProgressList));
         	Bundle extras = intent.getExtras();
-        	if (extras != null && extras.containsKey("percent") && extras.containsKey("filename")) {
-        		String percent = extras.getString("percent");
-        		if (percent != null) {
-            		String title = "";
-        			int i = 0;
-        			LinearLayout progress_item = null;
-        			String transfer_type = "";
-        	        if (intent.getAction().equals(GlobalResources.INTENT_UPLOAD_PROGRESS_UPDATE)) {
-        	        	transfer_type = GlobalResources.TRANSFER_TYPE_UPLOAD;
-        	        	title = extras.getString("title");
-        	        }
-        	        else if (intent.getAction().equals(GlobalResources.INTENT_DOWNLOAD_PROGRESS_UPDATE)) {
-        	        	transfer_type = GlobalResources.TRANSFER_TYPE_DOWNLOAD;
-        	        	title = extras.getString("filename");
-        	        }
-        	        TextView v_tt = null, v_pn = null;
-    	        	for (i = 0; i < lv.getChildCount(); ++i) {
-    	        		progress_item = (LinearLayout)lv.getChildAt(i);
-    	        		v_tt = (TextView)progress_item.findViewById(R.id.TransferType);
-    	        		v_pn = (TextView)progress_item.findViewById(R.id.TransferPictureName);
-    	        		if (v_tt != null && v_tt.getText().equals(transfer_type)
-    	        			&& v_pn != null && v_pn.getText().equals(title)) {
-    			        	TextView status_text = (TextView)(progress_item.findViewById(R.id.TransferPictureStatus));
-    			        	if (status_text != null) {
-    			        		status_text.setVisibility(View.GONE);
-    			        	}
-    			        	ProgressBar progress = (ProgressBar)(progress_item.findViewById(R.id.TransferProgressBar));
-    			        	if (progress != null) {
-    			        		progress.setVisibility(View.VISIBLE);
-    				        	progress.setProgress(Integer.valueOf(percent));
-    			        	}
-    	        			break;
-    	        		}
-    	        	}
-        		}
+        	if (extras != null && extras.containsKey("percent") && (extras.containsKey("filename") || extras.containsKey("title"))) {
+        		int percent = extras.getInt("percent");
+        		String title = "";
+    			int i = 0;
+    			LinearLayout progress_item = null;
+    			String transfer_type = "";
+    	        if (intent.getAction().equals(GlobalResources.INTENT_UPLOAD_PROGRESS_UPDATE)) {
+    	        	transfer_type = GlobalResources.TRANSFER_TYPE_UPLOAD;
+    	        	title = extras.getString("title");
+    	        }
+    	        else if (intent.getAction().equals(GlobalResources.INTENT_DOWNLOAD_PROGRESS_UPDATE)) {
+    	        	transfer_type = GlobalResources.TRANSFER_TYPE_DOWNLOAD;
+    	        	title = extras.getString("filename");
+    	        }
+    	        TextView v_tt = null, v_pn = null;
+	        	for (i = 0; i < lv.getChildCount(); ++i) {
+	        		progress_item = (LinearLayout)lv.getChildAt(i);
+	        		v_tt = (TextView)progress_item.findViewById(R.id.TransferType);
+	        		v_pn = (TextView)progress_item.findViewById(R.id.TransferPictureName);
+	        		if (v_tt != null && v_tt.getText().equals(transfer_type)
+	        			&& v_pn != null && v_pn.getText().equals(title)) {
+			        	TextView status_text = (TextView)(progress_item.findViewById(R.id.TransferPictureStatus));
+			        	if (status_text != null) {
+			        		status_text.setVisibility(View.GONE);
+			        	}
+			        	ProgressBar progress = (ProgressBar)(progress_item.findViewById(R.id.TransferProgressBar));
+			        	if (progress != null) {
+			        		progress.setVisibility(View.VISIBLE);
+				        	progress.setProgress(percent);
+			        	}
+	        			break;
+	        		}
+	        	}
         	}
 		}
 	}
@@ -90,12 +88,7 @@ public class TransferProgress extends Activity implements OnClickListener {
 	public class StatusReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-	        if (intent.getAction().equals(GlobalResources.INTENT_UPLOAD_STARTED) ||
-	        	intent.getAction().equals(GlobalResources.INTENT_UPLOAD_FINISHED) ||
-	        	intent.getAction().equals(GlobalResources.INTENT_DOWNLOAD_STARTED) ||
-	        	intent.getAction().equals(GlobalResources.INTENT_DOWNLOAD_FINISHED)) {
-	            updateProgress();
-	        }
+            updateProgress();
 		}
 	}
 
@@ -135,8 +128,11 @@ public class TransferProgress extends Activity implements OnClickListener {
 
         m_receiver = new StatusReceiver();
 		if (m_receiver != null) {
-			this.registerReceiver(m_receiver, new IntentFilter(GlobalResources.INTENT_UPLOAD_STARTED));
-			this.registerReceiver(m_receiver, new IntentFilter(GlobalResources.INTENT_UPLOAD_FINISHED));
+			IntentFilter filter = new IntentFilter(GlobalResources.INTENT_UPLOAD_STARTED);
+			filter.addAction(GlobalResources.INTENT_UPLOAD_FINISHED);
+			filter.addAction(GlobalResources.INTENT_DOWNLOAD_STARTED);
+			filter.addAction(GlobalResources.INTENT_DOWNLOAD_FINISHED);
+			this.registerReceiver(m_receiver, filter);
 		}
 	}
 

@@ -213,7 +213,7 @@ public class GlobalResources {
 					// so only do it when the amount written since the last broadcast
 					// is at least 1% of the total size.
 					if ((progress - old_progress) >= broadcast_trigger) {
-						broadcast_intent.putExtra("percent", String.valueOf(Math.round(progress)));
+						broadcast_intent.putExtra("percent", (int)Math.round(progress));
 						broadcast_intent.putExtra("filename", filename);
 						context.sendBroadcast(broadcast_intent);
 						old_progress = progress;

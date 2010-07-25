@@ -43,7 +43,7 @@ public class TransferService extends Service {
 	        	Bundle extras = intent.getExtras();
 	        	if (extras != null && extras.containsKey("percent")) {
 					RemoteViews nView = notification.contentView;
-					nView.setProgressBar(R.id.prgNotification, 100, (int)extras.getLong("percent"), false);
+					nView.setProgressBar(R.id.prgNotification, 100, extras.getInt("percent"), false);
 					notification.contentView = nView;
 					((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(id, notification);
 	        	}
@@ -58,7 +58,7 @@ public class TransferService extends Service {
 		protected Object doInBackground(Void... params) {
 			Bundle download_info = null;
 			Intent broadcast_intent = new Intent();
-			while (m_downloads.size() > 0) {
+			while (!m_downloads.isEmpty()) {
 				download_info = m_downloads.get(0);
 				if (download_info != null) {
 					// Send out a broadcast to let us know that an download is starting.
