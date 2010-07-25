@@ -1,6 +1,10 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===1.1.1===
+
+ * Fixed a memory bug that can cause a FC after downloading large pictures on some (mainly older) phones.
+
 ===1.1===
 
  * Big improvements to downloader. Downloads now happen in the background (i.e., no UI hang when you start a download), and there is a progress-bar notification for downloads just like there is for uploads. It can even upload and download simultaneously.
