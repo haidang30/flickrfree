@@ -57,21 +57,18 @@ public class TransferService extends Service {
 		@Override
 		protected Object doInBackground(Void... params) {
 			Bundle download_info = null;
-			Intent broadcast_intent = new Intent();
 			while (!m_downloads.isEmpty()) {
 				download_info = m_downloads.get(0);
 				if (download_info != null) {
-					// Send out a broadcast to let us know that an download is starting.
-					broadcast_intent.setAction(GlobalResources.INTENT_DOWNLOAD_STARTED);
-					getApplicationContext().sendBroadcast(broadcast_intent);
-					
-					publishProgress(download_info.getString("title"));
 			        String result;
 					try {
+						publishProgress(new String[]{"start", download_info.getString("title")});
 						result = GlobalResources.downloadImage(download_info.getString("url"), 
 																	  "",
 																	  true,
 																	  getApplicationContext());
+						m_downloads.remove();
+						publishProgress(new String[]{"finish", download_info.getString("title")});
 					} catch (IOException e1) {
 						e1.printStackTrace();
 						result = "fail: I/O Error";
@@ -79,20 +76,9 @@ public class TransferService extends Service {
 			        if (result == null || result.contains("fail")) {
 			        	String err_str = null;
 						err_str = (result == null) ? "Unknown Failure" : result.substring(result.indexOf("fail: ") + 6);
-
-						broadcast_intent.setAction(GlobalResources.INTENT_DOWNLOAD_FAILED);
-						broadcast_intent.putExtra("error", err_str);
-						getApplicationContext().sendBroadcast(broadcast_intent);
-
 						publishProgress("fail", err_str);
 			        	m_downloads.clear();
 			        }
-				}
-				if (!m_downloads.isEmpty()) {
-					m_downloads.remove(0);
-					// Send out a broadcast to let us know that an download has finished.
-			        broadcast_intent.setAction(GlobalResources.INTENT_DOWNLOAD_FINISHED);
-					getApplicationContext().sendBroadcast(broadcast_intent);
 				}
 			}
 			
@@ -104,21 +90,36 @@ public class TransferService extends Service {
 			// onProgressUpdate is called each time a new download starts. This allows
 			// us to update the notification text to let the user know which picture
 			// is being downloaded.
-			String title = progress.length > 0 ? progress[0] : "";
-			if (title == "fail") {
-				String err_str =  (progress.length > 1) ? progress[1] : "Unknown Error";
-				((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).cancel(GlobalResources.DOWNLOADER_ID);
-				Toast.makeText(getApplicationContext(), "Flickr Download Failed:\n" + err_str, Toast.LENGTH_SHORT).show();
-				stopSelf();
-			}
-			else {
-				if (m_download_notification != null) {
-					RemoteViews nView = m_download_notification.contentView;
-					nView.setTextViewText(R.id.txtNotificationTitle, getResources().getString(R.string.downloading) + " \"" + title + "\"");
-					nView.setProgressBar(R.id.prgNotification, 100, 0, false);
-					m_download_notification.contentView = nView;
-	
-					((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(GlobalResources.DOWNLOADER_ID, m_download_notification);
+			if (progress.length > 1) {
+				Intent broadcast_intent = new Intent();
+				String status = progress[0];
+				if (status.equals("start")) {
+					String title = progress[1];
+					// Start the download status-bar notification.
+					if (m_download_notification != null) {
+						RemoteViews nView = m_download_notification.contentView;
+						nView.setTextViewText(R.id.txtNotificationTitle, getResources().getString(R.string.downloading) + " \"" + title + "\"");
+						nView.setProgressBar(R.id.prgNotification, 100, 0, false);
+						m_download_notification.contentView = nView;
+		
+						((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(GlobalResources.DOWNLOADER_ID, m_download_notification);
+					}
+
+					// Send out a broadcast to let us know that a download is starting.
+					broadcast_intent.setAction(GlobalResources.INTENT_DOWNLOAD_STARTED);
+					getApplicationContext().sendBroadcast(broadcast_intent);
+				}
+				else if (status.equals("finish")) {
+					// Send out a broadcast to let us know that an download has finished.
+			        broadcast_intent.setAction(GlobalResources.INTENT_DOWNLOAD_FINISHED);					getApplicationContext().sendBroadcast(broadcast_intent);
+				}
+				else if (status.equals("fail")) {
+					broadcast_intent.setAction(GlobalResources.INTENT_DOWNLOAD_FAILED);
+					broadcast_intent.putExtra("error", progress[1]);
+					getApplicationContext().sendBroadcast(broadcast_intent);
+					((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).cancel(GlobalResources.DOWNLOADER_ID);
+					Toast.makeText(getApplicationContext(), "Flickr Download Failed:\n" + progress[1], Toast.LENGTH_SHORT).show();
+					stopSelf();
 				}
 			}
 		}
@@ -144,10 +145,10 @@ public class TransferService extends Service {
 		}
 		
 		public LinkedList<Bundle> getDownloads() {
-			return m_downloads;
+			return new LinkedList<Bundle>(m_downloads);
 		}
 		
-		LinkedList<Bundle> m_downloads = null;
+		private LinkedList<Bundle> m_downloads = null;
 	}
 	
 	// AsyncTask to upload a picture in the background.
@@ -156,15 +157,10 @@ public class TransferService extends Service {
 		@Override
 		protected Object doInBackground(Void... params) {
 			Bundle upload_info = null;
-			Intent broadcast_intent = new Intent();
 			while (m_uploads.size() > 0) {
 				upload_info = m_uploads.get(0);
 				if (upload_info != null) {
-					// Send out a broadcast to let us know that an upload is starting.
-					broadcast_intent.setAction(GlobalResources.INTENT_UPLOAD_STARTED);
-					getApplicationContext().sendBroadcast(broadcast_intent);
-					
-					publishProgress(upload_info.getString("title"));
+					publishProgress(new String[]{"start", upload_info.getString("title")});
 			        JSONObject result = RestClient.UploadPicture(upload_info.getString("filename"),
 							    			 upload_info.getString("title"),
 								    		 upload_info.getString("comment"),
@@ -174,6 +170,8 @@ public class TransferService extends Service {
 								    		 upload_info.getBoolean("is_family"),
 								    		 upload_info.getInt("safety_level"),
 								    		 getApplicationContext());
+					publishProgress(new String[]{"start", upload_info.getString("title")});
+					m_uploads.remove();
 			        if (result == null || result.has("fail")) {
 			        	String err_str = null;
 						try {
@@ -181,20 +179,9 @@ public class TransferService extends Service {
 						} catch (JSONException e) {
 							err_str = "Unknown Failure";
 						}
-
-						broadcast_intent.setAction(GlobalResources.INTENT_UPLOAD_FAILED);
-						broadcast_intent.putExtra("error", err_str);
-						getApplicationContext().sendBroadcast(broadcast_intent);
-
 						publishProgress("fail", err_str);
 			        	m_uploads.clear();
 			        }
-				}
-				if (!m_uploads.isEmpty()) {
-					m_uploads.remove(0);
-					// Send out a broadcast to let us know that an upload has finished.
-			        broadcast_intent.setAction(GlobalResources.INTENT_UPLOAD_FINISHED);
-					getApplicationContext().sendBroadcast(broadcast_intent);
 				}
 			}
 			
@@ -206,21 +193,37 @@ public class TransferService extends Service {
 			// onProgressUpdate is called each time a new upload starts. This allows
 			// us to update the notification text to let the user know which picture
 			// is being uploaded.
-			String title = progress.length > 0 ? progress[0] : "";
-			if (title == "fail") {
-				String err_str =  (progress.length > 1) ? progress[1] : "Unknown Error";
-				((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).cancel(GlobalResources.UPLOADER_ID);
-				Toast.makeText(getApplicationContext(), "Flickr Upload Failed:\n" + err_str, Toast.LENGTH_SHORT).show();
-				stopSelf();
-			}
-			else {
-				if (m_upload_notification != null) {
-					RemoteViews nView = m_upload_notification.contentView;
-					nView.setTextViewText(R.id.txtNotificationTitle, getResources().getString(R.string.uploading) + " \"" + title + "\"");
-					nView.setProgressBar(R.id.prgNotification, 100, 0, false);
-					m_upload_notification.contentView = nView;
-	
-					((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(GlobalResources.UPLOADER_ID, m_upload_notification);
+			if (progress.length > 1) {
+				String status = progress[0];
+				Intent broadcast_intent = new Intent();
+				if (status.equals("start")) {
+					// Start the progress status-bar notification
+					if (m_upload_notification != null) {
+						RemoteViews nView = m_upload_notification.contentView;
+						nView.setTextViewText(R.id.txtNotificationTitle, getResources().getString(R.string.uploading) + " \"" + progress[1] + "\"");
+						nView.setProgressBar(R.id.prgNotification, 100, 0, false);
+						m_upload_notification.contentView = nView;
+		
+						((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(GlobalResources.UPLOADER_ID, m_upload_notification);
+					}
+
+					// Send out a broadcast to let us know that an upload is starting.
+					broadcast_intent.setAction(GlobalResources.INTENT_UPLOAD_STARTED);
+					getApplicationContext().sendBroadcast(broadcast_intent);
+				}
+				if (status.equals("finish")) {
+					// Send out a broadcast to let us know that an upload is starting.
+					broadcast_intent.setAction(GlobalResources.INTENT_UPLOAD_FINISHED);
+					getApplicationContext().sendBroadcast(broadcast_intent);
+				}
+				else if (status == "fail") {
+					broadcast_intent.setAction(GlobalResources.INTENT_UPLOAD_FAILED);
+					broadcast_intent.putExtra("error", progress[1]);
+					getApplicationContext().sendBroadcast(broadcast_intent);
+
+					((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).cancel(GlobalResources.UPLOADER_ID);
+					Toast.makeText(getApplicationContext(), "Flickr Upload Failed:\n" + progress[1], Toast.LENGTH_SHORT).show();
+					stopSelf();
 				}
 			}
 		}
@@ -246,10 +249,10 @@ public class TransferService extends Service {
 		}
 		
 		public LinkedList<Bundle> getUploads() {
-			return m_uploads;
+			return new LinkedList<Bundle>(m_uploads);
 		}
 		
-		LinkedList<Bundle> m_uploads = null;
+		private LinkedList<Bundle> m_uploads = null;
 	}
 	
 	public class TransferServiceBinder extends Binder {
@@ -281,8 +284,9 @@ public class TransferService extends Service {
 		}
 		m_update_receiver = new NotificationProgressUpdateReceiver();
 		if (m_update_receiver != null) {
-			this.registerReceiver(m_update_receiver, new IntentFilter(GlobalResources.INTENT_DOWNLOAD_PROGRESS_UPDATE));
-			this.registerReceiver(m_update_receiver, new IntentFilter(GlobalResources.INTENT_UPLOAD_PROGRESS_UPDATE));
+			IntentFilter filter = new IntentFilter(GlobalResources.INTENT_DOWNLOAD_PROGRESS_UPDATE);
+			filter.addAction(GlobalResources.INTENT_UPLOAD_PROGRESS_UPDATE);
+			this.registerReceiver(m_update_receiver, filter);
 		}
 	}
 	
