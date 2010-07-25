@@ -225,7 +225,7 @@ public class GlobalResources {
 			imgfile.close();
 		}
 		
-		return "success: Downloaded picture \"" + filename + "\" to SD Card";
+		return "success: Image path = " +  dlpath + "/" + filename;
     }
 
     public static boolean CheckDir(String dir_name) {

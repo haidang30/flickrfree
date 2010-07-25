@@ -1,5 +1,6 @@
 package com.zmosoft.flickrfree;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -11,6 +12,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -18,6 +20,8 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -78,6 +82,18 @@ public class TransferService extends Service {
 						err_str = (result == null) ? "Unknown Failure" : result.substring(result.indexOf("fail: ") + 6);
 						publishProgress("fail", err_str);
 			        	m_downloads.clear();
+			        }
+			        else if (result.contains("success")) {
+			        	String token = "Image path = ";
+			        	String image_path = result.substring(result.indexOf(token) + token.length());
+			        	try {
+			        		ContentResolver cr = getContentResolver();
+							MediaStore.Images.Media.insertImage(cr,image_path,null,null);
+							cr.notifyChange(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null);
+						} catch (FileNotFoundException e) {
+							Log.e("FlickrFree", "Unable to insert image \"" + image_path + "\" into media store. File not found.");
+							e.printStackTrace();
+						}
 			        }
 				}
 			}
