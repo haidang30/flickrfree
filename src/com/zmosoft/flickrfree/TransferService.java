@@ -1,6 +1,5 @@
 package com.zmosoft.flickrfree;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -12,7 +11,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -20,8 +18,6 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -117,21 +113,6 @@ public class TransferService extends Service {
 					// Send out a broadcast to let us know that an download has finished.
 			        broadcast_intent.setAction(GlobalResources.INTENT_DOWNLOAD_FINISHED);
 	        		getApplicationContext().sendBroadcast(broadcast_intent);
-	        		String result = progress.length > 2 ? progress[2] : "";
-			        if (result.contains("success")) {
-			        	String token = "Image path = ";
-			        	String image_path = result.substring(result.indexOf(token) + token.length());
-			        	try {
-			        		ContentResolver cr = getContentResolver();
-							MediaStore.Images.Media.insertImage(cr,image_path,null,null);
-							cr.notifyChange(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null);
-						} catch (FileNotFoundException f_e) {
-							Log.e("FlickrFree", "Unable to insert image \"" + image_path + "\" into media store. File not found.");
-							f_e.printStackTrace();
-						} catch (OutOfMemoryError om_e) {
-							om_e.printStackTrace();
-						}
-			        }
 				}
 				else if (status.equals("fail")) {
 					broadcast_intent.setAction(GlobalResources.INTENT_DOWNLOAD_FAILED);
