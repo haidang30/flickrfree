@@ -18,6 +18,7 @@ public class PictureSendReceiver extends Activity {
 				Uri uri = (Uri)extras.get("android.intent.extra.STREAM");
 				Intent i = new Intent(this, PictureSettings.class);
 				i.putExtra("image_uri", uri.toString());
+				i.putExtra("action", "upload");
 				startActivity(i);
 			}
 		}
