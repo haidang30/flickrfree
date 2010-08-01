@@ -24,6 +24,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.webkit.CookieManager;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -41,9 +44,7 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
     	RestClient.setAuth(this);
 
     	((Button)findViewById(R.id.btnAuthenticate)).setEnabled(checkAuthCode());
-
 		((Button)findViewById(R.id.btnAuthenticate)).setOnClickListener(this);
-        ((Button)findViewById(R.id.btnGetCode)).setOnClickListener(this);
         
         ((EditText)findViewById(R.id.authnum1)).addTextChangedListener(
         		new TextWatcher() {
@@ -113,6 +114,25 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
         			
         		}
         );
+        
+        loadAuthPage();
+    }
+    
+    private void loadAuthPage() {
+    	WebView wv = ((WebView)findViewById(R.id.AuthWeb));
+    	CookieManager cookies = CookieManager.getInstance();
+    	cookies.removeAllCookie();
+    	wv.getSettings().setJavaScriptEnabled(true);
+    	wv.getSettings().setSavePassword(false);
+    	wv.setWebViewClient(new WebViewClient() {
+    	    @Override
+    	    public boolean shouldOverrideUrlLoading(WebView view, String url)
+    	    {
+	            view.loadUrl(url);
+	            return true;
+    	    }
+    	});
+    	wv.loadUrl(getResources().getString(R.string.auth_url));
     }
     
     public boolean checkAuthCode() {
@@ -172,10 +192,6 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-    	}
-    	else if (v.getId() == R.id.btnGetCode) {
-    		startActivity(new Intent(Intent.ACTION_VIEW,
-    				Uri.parse(getResources().getString(R.string.auth_url))));
     	}
     }
     

@@ -1,61 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
+<LinearLayout
 	android:id="@+id/AuthLayout"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
+	android:orientation="vertical"
 	android:gravity="center"
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	
-	<EditText
-		android:id="@+id/authnum1"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:inputType="phone"
-		android:layout_margin="5dp"
-		android:minEms="3"
-		android:text="">
-	</EditText>
-  		
-	<EditText
-		android:id="@+id/authnum2"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_toRightOf="@id/authnum1"
-		android:inputType="phone"
-		android:layout_margin="5dp"
-		android:minEms="3"
-		android:text="">
-	</EditText>
-  		
-	<EditText
-		android:id="@+id/authnum3"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_toRightOf="@id/authnum2"
-		android:inputType="phone"
-		android:layout_margin="5dp"
-		android:minEms="3"
-		android:text="">
-	</EditText>
-  		
-	<Button
-		android:id="@+id/btnGetCode"
-		android:layout_height="wrap_content"
-		android:layout_width="wrap_content"
-		android:layout_below="@id/authnum1"
-		android:layout_alignLeft="@id/authnum1"
-		android:text="@string/btngetcode">
-	</Button>
+	<WebView
+		android:id="@+id/AuthWeb"
+		android:padding="4px"
+		android:layout_weight="1"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+	</WebView>
 
-	<Button
-		android:id="@+id/btnAuthenticate"
+	<LinearLayout
+		android:id="@+id/AuthInputLayout"
+		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:layout_width="wrap_content"
-		android:layout_below="@id/authnum3"
-		android:layout_toRightOf="@id/btnGetCode"
-		android:layout_alignRight="@id/authnum3"
-		android:text="@string/btnauthenticate">
-	</Button>
+		android:orientation="horizontal"
+		android:gravity="center_horizontal"
+		xmlns:android="http://schemas.android.com/apk/res/android">
+		
+		<EditText
+			android:id="@+id/authnum1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:inputType="phone"
+			android:layout_margin="5dp"
+			android:minEms="3"
+			android:text="">
+		</EditText>
+	  		
+		<EditText
+			android:id="@+id/authnum2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:inputType="phone"
+			android:layout_margin="5dp"
+			android:minEms="3"
+			android:text="">
+		</EditText>
+	  		
+		<EditText
+			android:id="@+id/authnum3"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:inputType="phone"
+			android:layout_margin="5dp"
+			android:minEms="3"
+			android:text="">
+		</EditText>
+	  		
+		<Button
+			android:id="@+id/btnAuthenticate"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:text="@string/btnauthenticate">
+		</Button>
 	
-</RelativeLayout>
+	</LinearLayout>
+
+</LinearLayout>
