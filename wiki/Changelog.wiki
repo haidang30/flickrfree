@@ -1,6 +1,10 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===1.1.2===
+
+ * Improved authentication screen. It is now easier to set up your account(s).
+
 ===1.1.1===
 
  * Fixed a memory bug that can cause a FC after downloading large pictures on some (mainly older) phones.
