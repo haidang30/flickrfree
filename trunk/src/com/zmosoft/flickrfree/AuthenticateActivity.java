@@ -19,10 +19,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -32,10 +34,42 @@ import android.widget.Button;
 import android.widget.EditText;
 
 public class AuthenticateActivity extends Activity implements OnClickListener {
-    /** Called when the activity is first created. */
+
+	private class WebProgressTask extends AsyncTask<WebView, Integer, Object> {
+		
+		@Override
+		protected Object doInBackground(WebView... params) {
+			if (params.length > 0 && params[0] != null) {
+		    	WebView wv = (WebView)params[0];
+		    	while (wv.getProgress() < 100) {
+		    		publishProgress(wv.getProgress());
+		    	}
+			}
+	    	return null;
+		}
+		
+		@Override
+		protected void onPreExecute() {
+	    	setProgress(Window.PROGRESS_START);
+		}
+		
+		@Override
+		protected void onProgressUpdate (Integer... values) {
+			setProgress(Window.PROGRESS_END * values[0] / 100);
+		}
+		
+		@Override
+		protected void onPostExecute(Object result) {
+	    	setProgress(Window.PROGRESS_END);
+		}
+		
+	}
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_PROGRESS);
+        
     	m_auth_prefs = getSharedPreferences("Auth",0);
     	m_fail_msg = "";
 		setResult(Activity.RESULT_CANCELED);
@@ -115,7 +149,6 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
         			
         		}
         );
-        
         loadAuthPage();
     }
     
@@ -135,6 +168,7 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
     	    }
     	});
     	wv.loadUrl(getResources().getString(R.string.auth_url));
+        new WebProgressTask().execute(((WebView)findViewById(R.id.AuthWeb)));
     }
     
     public boolean checkAuthCode() {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Flickr Free</string>
-    <string name="authenticate">Authentication Screen</string>
+    <string name="authenticate">Flickr Account Authentication</string>
 
     <string name="btnaddaccount">Add Account</string>
     <string name="btnaddcommentlabel">Add Comment</string>
