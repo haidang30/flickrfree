@@ -1,6 +1,12 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===1.1.4===
+
+ * Added a progress bar to the Authentication screen when loading authentication web page.
+
+ * Fixed a potential problem in the Authentication URL.
+
 ===1.1.3===
 
  * Fixed a FC bug in authentication screen.
