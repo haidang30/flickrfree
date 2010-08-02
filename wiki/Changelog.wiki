@@ -1,6 +1,10 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===1.1.3===
+
+ * Fixed a FC bug in authentication screen.
+
 ===1.1.2===
 
  * Improved authentication screen. It is now easier to set up your account(s).
