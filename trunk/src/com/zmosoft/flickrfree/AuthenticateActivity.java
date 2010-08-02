@@ -25,6 +25,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -120,6 +121,7 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
     
     private void loadAuthPage() {
     	WebView wv = ((WebView)findViewById(R.id.AuthWeb));
+    	CookieSyncManager.createInstance(this);
     	CookieManager cookies = CookieManager.getInstance();
     	cookies.removeAllCookie();
     	wv.getSettings().setJavaScriptEnabled(true);
