@@ -24,6 +24,16 @@
 		android:gravity="center_horizontal"
 		xmlns:android="http://schemas.android.com/apk/res/android">
 		
+		<Button
+			android:text="Help"
+			android:id="@+id/btnHelp"
+			android:layout_gravity="center_vertical"
+			android:paddingLeft="12dp"
+			android:paddingRight="12dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+		</Button>
+		
 		<EditText
 			android:id="@+id/authnum1"
 			android:layout_width="wrap_content"
@@ -65,6 +75,7 @@
 			android:text="@string/btnauthenticate">
 		</Button>
 	
-	</LinearLayout>
+	
+</LinearLayout>
 
 </LinearLayout>
