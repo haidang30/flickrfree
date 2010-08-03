@@ -92,9 +92,9 @@
 	    android:layout_height="fill_parent"
 	    android:numColumns="auto_fit"
 	    android:verticalSpacing="10dp"
-	    android:horizontalSpacing="21dp"
-	    android:columnWidth="79dp"
-	    android:rowHeight="79dp"
+	    android:horizontalSpacing="10dp"
+	    android:columnWidth="84dp"
+	    android:rowHeight="84dp"
 	    android:gravity="center"
 	    android:layout_below="@+id/ImgGridHeader"/>
 	
