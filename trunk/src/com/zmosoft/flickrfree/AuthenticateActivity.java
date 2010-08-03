@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Map;
 
@@ -18,11 +19,13 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
@@ -80,6 +83,7 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 
     	((Button)findViewById(R.id.btnAuthenticate)).setEnabled(checkAuthCode());
 		((Button)findViewById(R.id.btnAuthenticate)).setOnClickListener(this);
+		((Button)findViewById(R.id.btnHelp)).setOnClickListener(this);
         
         ((EditText)findViewById(R.id.authnum1)).addTextChangedListener(
         		new TextWatcher() {
@@ -229,6 +233,9 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 				e.printStackTrace();
 			}
     	}
+    	else if (v.getId() == R.id.btnHelp) {
+			showDialog(DIALOG_HELP);
+    	}
     }
     
     protected Dialog onCreateDialog(int id) {
@@ -244,7 +251,7 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 		           .setPositiveButton("Help", new DialogInterface.OnClickListener() {
 		                             public void onClick(DialogInterface dialog, int id) {
 		                            	 m_fail_msg = "";
-		                            	 showDialog(DIALOG_HELP);
+		                            	 showDialog(DIALOG_ERR_HELP);
 		                             }
 		            })
 		           .setNegativeButton("Close", new DialogInterface.OnClickListener() {
@@ -256,7 +263,7 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 		            });
 			err_dialog = builder.create();
 			break;
-    	case DIALOG_HELP:
+    	case DIALOG_ERR_HELP:
     		builder = new AlertDialog.Builder(this);
 			builder.setMessage(R.string.msgauthhelp)
 			       .setTitle(R.string.ttlhelp)
@@ -273,6 +280,57 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 		                             }
 		            });
 			err_dialog = builder.create();
+    		break;
+    	case DIALOG_HELP:
+    		AssetManager assetManager = getAssets();
+    		InputStream stream = null;
+    		String help_text = "";
+        	try {
+        		stream = assetManager.open("authenticate_help.html");
+    	        if (stream != null) {
+    		        byte[] buffer;
+    		        int result = 0;
+    		        while (result >= 0) {
+    		        	buffer = new byte[256];
+    		        	result = stream.read(buffer);
+    		        	help_text += new String(buffer);
+    		        }
+    	        }
+        	    stream.close();
+
+        		builder = new AlertDialog.Builder(this);
+        		LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
+        	    View layout = inflater.inflate(R.layout.auth_help_dialog_layout, null);
+        	    builder.setView(layout);
+			    builder.setTitle(R.string.ttlhelp)
+			    	   .setIcon(android.R.drawable.ic_dialog_info);
+        	    
+        	    Button btn_ok = (Button)layout.findViewById(R.id.BtnOK);
+        	    btn_ok.setOnClickListener(new View.OnClickListener() {
+    			                             public void onClick(View v) {
+    			                            	 dismissDialog(DIALOG_HELP);
+    			                             }
+        	    });
+
+        	    // Replace all instances of "{AppName}" in help_text with the actual
+        	    // app name.
+        	    String app_name = getResources().getString(R.string.app_name);
+        	    String placeholder = "{AppName}";
+        	    String part_a, part_b;
+    	    	int pos = help_text.indexOf(placeholder);
+        	    while (pos >= 0) {
+        	    	part_a = help_text.substring(0, pos);
+        	    	part_b = help_text.substring(pos + placeholder.length());
+        	    	help_text = part_a + app_name + part_b;
+        	    	pos = help_text.indexOf(placeholder);
+        	    }
+        	    
+        	    WebView help_text_view = (WebView)layout.findViewById(R.id.AuthHelpInfo);
+        	    help_text_view.loadData(help_text, "text/html", "utf-8");
+        	    err_dialog = builder.create();
+	        } catch (IOException e) {
+	        }
+
     		break;
     	}
 
@@ -389,6 +447,7 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 	
     static final int DIALOG_ERR = 1;
     static final int DIALOG_HELP = 2;
+    static final int DIALOG_ERR_HELP = 3;
     static final public int AUTH_ERR = 3;
     static final public int AUTH_SUCCESS = 4;
 }
