@@ -92,6 +92,8 @@
 	
     <string name="otherslabel">Others</string>
 
+	<string name="picture_retrieve_error">Error Retrieving Picture</string>
+	
 	<string name="readusers_permission_description">Allow app to read list of usernames authenticated with FlickrFree. Does not allow access to passwords or other confidential data.</string>
 
 	<string name="setuser_permission_description">Allow app to change the currently active user in FlickrFree. Does not allow access to passwords or other confidential data.</string>

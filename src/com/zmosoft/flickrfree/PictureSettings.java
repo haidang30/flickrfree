@@ -49,15 +49,21 @@ public class PictureSettings extends Activity implements OnClickListener, OnChec
         	// Get the filename of the image and use that as the default title.
 			Cursor cursor = cr.query(uri, new String[]{android.provider.MediaStore.Images.ImageColumns.DATA},
 									 null, null, null);
-			cursor.moveToFirst();
-			m_filepath = cursor.getString(0);
-			cursor.close();
-
-			if (m_filepath != null) {
-				String title = m_filepath.substring(m_filepath.lastIndexOf("/") + 1,
-													 m_filepath.lastIndexOf("."));
-				((EditText)findViewById(R.id.txtPhotoTitle)).setText(title);
-				((EditText)findViewById(R.id.txtPhotoTitle)).selectAll();
+			if (cursor == null) {
+				Toast.makeText(this, R.string.picture_retrieve_error, Toast.LENGTH_LONG).show();
+				finish();
+			}
+			else {
+				cursor.moveToFirst();
+				m_filepath = cursor.getString(0);
+				cursor.close();
+	
+				if (m_filepath != null) {
+					String title = m_filepath.substring(m_filepath.lastIndexOf("/") + 1,
+														 m_filepath.lastIndexOf("."));
+					((EditText)findViewById(R.id.txtPhotoTitle)).setText(title);
+					((EditText)findViewById(R.id.txtPhotoTitle)).selectAll();
+				}
 			}
         }
 	}
