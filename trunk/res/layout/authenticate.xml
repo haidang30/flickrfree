@@ -16,6 +16,14 @@
 		android:layout_height="wrap_content">
 	</WebView>
 
+	<TextView
+		android:text="@string/auth_code"
+		android:id="@+id/LblAuthCode"
+		android:gravity="center"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content">
+	</TextView>
+
 	<LinearLayout
 		android:id="@+id/AuthInputLayout"
 		android:layout_width="fill_parent"
