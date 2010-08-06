@@ -153,6 +153,14 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
         			
         		}
         );
+        
+        SharedPreferences auth_prefs = getSharedPreferences("Auth",0);
+        if (!auth_prefs.contains("HasBeenRun")) {
+        	SharedPreferences.Editor auth_prefs_editor = auth_prefs.edit();
+        	auth_prefs_editor.putBoolean("HasBeenRun", true);
+        	auth_prefs_editor.commit();
+			showDialog(DIALOG_HELP);        	
+        }
         loadAuthPage();
     }
     
