@@ -321,7 +321,7 @@ public class TransferService extends Service {
 			//nView.setImageViewResource(R.id.imgIcon, R.drawable.icon);
 			nView.setTextViewText(R.id.txtNotificationTitle, getResources().getString(R.string.downloading) + " \"" + download_info.getString("title") + "\"");
 			m_download_notification.contentView = nView;
-			m_download_notification.flags = Notification.FLAG_NO_CLEAR;
+			m_download_notification.flags = Notification.FLAG_ONGOING_EVENT;
 		}
 	}
 	
@@ -350,7 +350,7 @@ public class TransferService extends Service {
 			//nView.setImageViewResource(R.id.imgIcon, R.drawable.icon);
 			nView.setTextViewText(R.id.txtNotificationTitle, getResources().getString(R.string.uploading) + " \"" + upload_info.getString("title") + "\"");
 			m_upload_notification.contentView = nView;
-			m_upload_notification.flags = Notification.FLAG_NO_CLEAR;
+			m_upload_notification.flags = Notification.FLAG_ONGOING_EVENT;
 		}
 	}
 	
