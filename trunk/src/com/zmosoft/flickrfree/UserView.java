@@ -1,6 +1,7 @@
 package com.zmosoft.flickrfree;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,13 +19,16 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -552,6 +556,9 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 	@Override
     protected Dialog onCreateDialog(int id) {
 		Dialog dialog = null;
+		AssetManager assetManager = null;
+		InputStream stream = null;
+		String dialog_text = null;
 		
 		AlertDialog.Builder builder;
     	switch(id) {
@@ -573,6 +580,65 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 		            });
 			dialog = builder.create();
 			break;
+    	case DIALOG_UPGRADE:
+    		assetManager = getAssets();
+    		stream = null;
+    		dialog_text = "";
+        	try {
+        		stream = assetManager.open("upgrade_info.html");
+    	        if (stream != null) {
+    		        byte[] buffer;
+    		        int result = 0;
+    		        while (result >= 0) {
+    		        	buffer = new byte[256];
+    		        	result = stream.read(buffer);
+    		        	dialog_text += new String(buffer);
+    		        }
+    	        }
+        	    stream.close();
+
+        		builder = new AlertDialog.Builder(this);
+        		LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
+        	    View layout = inflater.inflate(R.layout.upgrade_dialog_layout, null);
+        	    builder.setView(layout);
+			    builder.setTitle(R.string.ttlupgrade)
+			    	   .setIcon(android.R.drawable.ic_dialog_info);
+        	    
+        	    Button btn_ok = (Button)layout.findViewById(R.id.BtnUpgrade);
+        	    btn_ok.setOnClickListener(new View.OnClickListener() {
+    			                             public void onClick(View v) {
+    		                            	      Intent intent = new Intent(Intent.ACTION_VIEW);
+    		                            	      intent.setData(Uri.parse("market://search?q=pname:FlickrCompanion"));
+    		                            	      startActivity(intent);
+    			                             }
+        	    });
+        	    Button btn_no = (Button)layout.findViewById(R.id.BtnNotNow);
+        	    btn_no.setOnClickListener(new View.OnClickListener() {
+    			                             public void onClick(View v) {
+    			                            	 dismissDialog(DIALOG_UPGRADE);
+    			                             }
+        	    });
+
+        	    // Replace all instances of "{AppName}" in dialog_text with the actual
+        	    // app name.
+        	    String app_name = getResources().getString(R.string.app_name);
+        	    String placeholder = "{AppName}";
+        	    String part_a, part_b;
+    	    	int pos = dialog_text.indexOf(placeholder);
+        	    while (pos >= 0) {
+        	    	part_a = dialog_text.substring(0, pos);
+        	    	part_b = dialog_text.substring(pos + placeholder.length());
+        	    	dialog_text = part_a + app_name + part_b;
+        	    	pos = dialog_text.indexOf(placeholder);
+        	    }
+        	    
+        	    WebView dialog_text_view = (WebView)layout.findViewById(R.id.AuthHelpInfo);
+        	    dialog_text_view.loadData(dialog_text, "text/html", "utf-8");
+        	    dialog = builder.create();
+	        } catch (IOException e) {
+	        }
+
+    		break;
     	}
 
 		return dialog;
@@ -620,7 +686,10 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 	@Override
 	public void onItemClick(AdapterView parent, View view, int position, long id) {
 		String command = ((TextView)view.findViewById(R.id.ActionTitle)).getText().toString();
-		if (command.equals(m_actionnames[ACTION_PHOTOSTREAM])) {
+		if (command.equals(m_actionnames[ACTION_UPGRADE])) {
+			showDialog(DIALOG_UPGRADE);
+		}
+		else if (command.equals(m_actionnames[ACTION_PHOTOSTREAM])) {
 			Intent i = new Intent(this, ImageGrid.class);
 			i.putExtra("type", "photostream");
 			i.putExtra("nsid", m_extras.getString("nsid"));
@@ -738,17 +807,19 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
     	APPUSER, OTHERUSER, NOUSER;
     }
 
-    static final int ACTION_PHOTOSTREAM = 0;
-    static final int ACTION_SETS = 1;
-    static final int ACTION_COLLECTIONS = 2;
-    static final int ACTION_TAGS = 3;
-    static final int ACTION_FAVORITES = 4;
-    static final int ACTION_GROUPS = 5;
-    static final int ACTION_CONTACTS = 6;
-    static final int ACTION_SEARCH = 7;
-    static final int ACTION_UPLOAD = 8;
+    static final int ACTION_UPGRADE = 0;
+    static final int ACTION_PHOTOSTREAM = 1;
+    static final int ACTION_SETS = 2;
+    static final int ACTION_COLLECTIONS = 3;
+    static final int ACTION_TAGS = 4;
+    static final int ACTION_FAVORITES = 5;
+    static final int ACTION_GROUPS = 6;
+    static final int ACTION_CONTACTS = 7;
+    static final int ACTION_SEARCH = 8;
+    static final int ACTION_UPLOAD = 9;
     
-    static final int DIALOG_WARN_REMOVE_ACCOUNT = 9;
+    static final int DIALOG_WARN_REMOVE_ACCOUNT = 11;
+    static final int DIALOG_UPGRADE = 12;
     
 	Bundle m_extras;
 	Activity m_activity = this;
