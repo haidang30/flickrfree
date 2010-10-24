@@ -11,17 +11,14 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -42,6 +39,7 @@ public class ImageFullScreen extends Activity {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
+			m_isfavorite = (JSONParser.getInt(m_imginfo, "photo/isfavorite") == 1);
 			
 			return null;
 		}
@@ -152,71 +150,65 @@ public class ImageFullScreen extends Activity {
     	outState.putString("tags", m_tags);
     }
     
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
-		try {
-			if (m_imginfo.has("photo")) {
-				JSONObject photo_obj = m_imginfo.getJSONObject("photo");
-				if (photo_obj.has("isfavorite")) {
-					menu.add(0, MENU_SETFAVE, 0,  R.string.mnu_favorite).setCheckable(true)
-						.setChecked(photo_obj.getInt("isfavorite") == 1);
-				}
-			}
-			menu.add(Menu.NONE, MENU_DOWNLOAD, Menu.NONE, R.string.mnu_imgdownload);
-	    	menu.add(Menu.NONE, MENU_IMGINFO, Menu.NONE, R.string.mnu_imginfo);
-	    	menu.add(Menu.NONE, MENU_IMGCOMMENTS, Menu.NONE, R.string.mnu_imgcomments);
-	    	if (!m_tags.equals("")) {
-	    		menu.add(Menu.NONE, MENU_IMGTAGS, Menu.NONE, R.string.mnu_imgtags);
-	    	}
-    		if (m_imgcontexts.has("set") || m_imgcontexts.has("pool")) {
-    			menu.add(Menu.NONE, MENU_IMGCONTEXT, Menu.NONE, R.string.mnu_imgcontext);
-    		}
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.image_full_screen_options_menu, menu);
+        MenuItem fav_item = menu.getItem(2);
 
-    public boolean onContextItemSelected(MenuItem item) {
-    	Intent i;
-    	try {
-			switch (item.getItemId()) {
-			case MENU_DOWNLOAD:
-				showDialog(DIALOG_DOWNLOAD_IMG_SIZE);
-				return true;
-			case MENU_SETFAVE:
-				if (m_extras.containsKey("photo_id")) {
-					if (item.isChecked()) {
-						APICalls.favoritesRemove(m_extras.getString("photo_id"));
-					}
-					else {
-						APICalls.favoritesAdd(m_extras.getString("photo_id"));
-					}
-					m_imginfo = APICalls.photosGetInfo(m_extras.getString("photo_id"));
-				}
-				return true;
-			case MENU_IMGINFO:
-				i = new Intent(this, ImageInfo.class);
+        fav_item.setTitle(m_isfavorite ? getResources().getString(R.string.mnu_unfavorite)
+        							   : getResources().getString(R.string.mnu_favorite));
+		if (!m_imgcontexts.has("set") && !m_imgcontexts.has("pool")) {
+			menu.removeItem(R.id.item_context);
+		}
+
+		return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	Intent i = null;
+    	
+        // Handle item selection
+        switch (item.getItemId()) {
+        case R.id.item_info:
+			i = new Intent(this, ImageInfo.class);
+			if (i != null) {
 				i.putExtra("photo_id",m_extras.getString("photo_id"));
 				i.putExtra("isprivate", m_isprivate);
 				i.putExtra("imginfo", m_imginfo.toString());
 				i.putExtra("exif", m_exif.toString());
 				startActivity(i);
-				return true;
-			case MENU_IMGCOMMENTS:
-				i = new Intent(this, ImageComments.class);
+			}
+            return true;
+        case R.id.item_comments:
+			i = new Intent(this, ImageComments.class);
+			if (i != null) {
 				i.putExtra("photo_id",m_extras.getString("photo_id"));
 				i.putExtra("imginfo", m_imginfo.toString());
 				startActivity(i);
-				return true;
-			case MENU_IMGCONTEXT:
-				i = new Intent(this, ImageContext.class);
-				i.putExtra("photo_id",m_extras.getString("photo_id"));
-				i.putExtra("isprivate", m_isprivate);
-				i.putExtra("contexts", m_imgcontexts.toString());
-				startActivity(i);
-				return true;
-			case MENU_IMGTAGS:
-				i = new Intent(this, ImageTags.class);
+			}
+            return true;
+        case R.id.item_favorite:
+			if (m_extras.containsKey("photo_id")) {
+				if (m_isfavorite) {
+					APICalls.favoritesRemove(m_extras.getString("photo_id"));
+					Toast.makeText(this, R.string.removed_favorite, Toast.LENGTH_SHORT).show();
+					m_isfavorite = false;
+			        item.setTitle(getResources().getString(R.string.mnu_favorite));
+				}
+				else {
+					APICalls.favoritesAdd(m_extras.getString("photo_id"));
+					Toast.makeText(this, R.string.added_favorite, Toast.LENGTH_SHORT).show();
+					m_isfavorite = true;
+			        item.setTitle(getResources().getString(R.string.mnu_unfavorite));
+				}
+				m_imginfo = APICalls.photosGetInfo(m_extras.getString("photo_id"));
+			}
+        	return true;
+        case R.id.item_tags:
+			i = new Intent(this, ImageTags.class);
+			if (i != null) {
 				try {
 					i.putExtra("tags", m_tags);
 					if (m_imginfo.has("photo") && m_imginfo.getJSONObject("photo").has("owner")
@@ -227,14 +219,21 @@ public class ImageFullScreen extends Activity {
 					e.printStackTrace();
 				}
 				startActivity(i);
-			default:
-				return super.onContextItemSelected(item);
 			}
-		}
-		catch (ActivityNotFoundException e) {
-				e.printStackTrace();
-		}
-		return false;
+        	return true;
+        case R.id.item_download:
+			showDialog(DIALOG_DOWNLOAD_IMG_SIZE);
+			return true;
+        case R.id.item_context:
+			i = new Intent(this, ImageContext.class);
+			i.putExtra("photo_id",m_extras.getString("photo_id"));
+			i.putExtra("isprivate", m_isprivate);
+			i.putExtra("contexts", m_imgcontexts.toString());
+			startActivity(i);
+        	return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
     }
     
     protected Dialog onCreateDialog(int id) {
@@ -378,6 +377,7 @@ public class ImageFullScreen extends Activity {
 	JSONObject m_imgcontexts;
 	JSONObject m_comment_list;
 	boolean m_isprivate;
+	boolean m_isfavorite;
 	
 	static final int MENU_IMGINFO = 0;
 	static final int MENU_IMGCOMMENTS = 1;
