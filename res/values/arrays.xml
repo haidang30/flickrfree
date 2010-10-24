@@ -5,6 +5,7 @@
 	</string-array>
 
 	<string-array name="main_user_view_list">
+		<item>Upgrade</item>
 		<item>Photostream</item>
 	    <item>Sets</item>
 	    <item>Collections</item>

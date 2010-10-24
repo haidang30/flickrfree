@@ -179,6 +179,8 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 	            return true;
     	    }
     	});
+    	wv.getSettings().setUseWideViewPort(true);
+    	wv.setInitialScale(50);
     	wv.loadUrl(getResources().getString(R.string.auth_url));
         new WebProgressTask().execute(((WebView)findViewById(R.id.AuthWeb)));
     }
@@ -248,6 +250,9 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
     
     protected Dialog onCreateDialog(int id) {
 		Dialog err_dialog = null;
+		AssetManager assetManager = null;
+		InputStream stream = null;
+		String dialog_text = null;
 		
 		AlertDialog.Builder builder;
     	switch(id) {
@@ -290,9 +295,9 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 			err_dialog = builder.create();
     		break;
     	case DIALOG_HELP:
-    		AssetManager assetManager = getAssets();
-    		InputStream stream = null;
-    		String help_text = "";
+    		assetManager = getAssets();
+    		stream = null;
+    		dialog_text = "";
         	try {
         		stream = assetManager.open("authenticate_help.html");
     	        if (stream != null) {
@@ -301,7 +306,7 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
     		        while (result >= 0) {
     		        	buffer = new byte[256];
     		        	result = stream.read(buffer);
-    		        	help_text += new String(buffer);
+    		        	dialog_text += new String(buffer);
     		        }
     	        }
         	    stream.close();
@@ -320,21 +325,21 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
     			                             }
         	    });
 
-        	    // Replace all instances of "{AppName}" in help_text with the actual
+        	    // Replace all instances of "{AppName}" in dialog_text with the actual
         	    // app name.
         	    String app_name = getResources().getString(R.string.app_name);
         	    String placeholder = "{AppName}";
         	    String part_a, part_b;
-    	    	int pos = help_text.indexOf(placeholder);
+    	    	int pos = dialog_text.indexOf(placeholder);
         	    while (pos >= 0) {
-        	    	part_a = help_text.substring(0, pos);
-        	    	part_b = help_text.substring(pos + placeholder.length());
-        	    	help_text = part_a + app_name + part_b;
-        	    	pos = help_text.indexOf(placeholder);
+        	    	part_a = dialog_text.substring(0, pos);
+        	    	part_b = dialog_text.substring(pos + placeholder.length());
+        	    	dialog_text = part_a + app_name + part_b;
+        	    	pos = dialog_text.indexOf(placeholder);
         	    }
         	    
-        	    WebView help_text_view = (WebView)layout.findViewById(R.id.AuthHelpInfo);
-        	    help_text_view.loadData(help_text, "text/html", "utf-8");
+        	    WebView dialog_text_view = (WebView)layout.findViewById(R.id.AuthHelpInfo);
+        	    dialog_text_view.loadData(dialog_text, "text/html", "utf-8");
         	    err_dialog = builder.create();
 	        } catch (IOException e) {
 	        }
@@ -453,9 +458,9 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 
 	String m_fail_msg;
 	
-    static final int DIALOG_ERR = 1;
-    static final int DIALOG_HELP = 2;
-    static final int DIALOG_ERR_HELP = 3;
-    static final public int AUTH_ERR = 3;
-    static final public int AUTH_SUCCESS = 4;
+    static final int DIALOG_ERR = 11;
+    static final int DIALOG_HELP = 12;
+    static final int DIALOG_ERR_HELP = 14;
+    static final public int AUTH_ERR = 25;
+    static final public int AUTH_SUCCESS = 26;
 }

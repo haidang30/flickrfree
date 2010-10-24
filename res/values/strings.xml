@@ -16,6 +16,8 @@
     <string name="btnmanageaccts">Accounts</string>
     <string name="btnmap">Show On Map</string>
     <string name="btnok">OK</string>
+    <string name="btnupgrade">Upgrade</string>
+    <string name="btnnotnow">Not Now</string>
     <string name="btnupload">Upload</string>
     <string name="btnremoveaccount">Remove Account</string>
     <string name="btnsearch">Search</string>
@@ -115,6 +117,7 @@
 	<string name="ttlerror">Error</string>
     <string name="ttlwarning">Warning!</string>
 	<string name="ttlhelp">Help</string>
+	<string name="ttlupgrade">Upgrade</string>
 	
     <string name="userview">User Page</string>
     <string name="picturesettings">Picture Settings</string>
