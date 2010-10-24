@@ -550,7 +550,11 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 	
 	@Override
 	protected void onPrepareDialog(int id, Dialog dialog) {
-		dialog.setTitle("Account \"" + getSelectedName() + "\"");
+    	switch(id) {
+    	case DIALOG_WARN_REMOVE_ACCOUNT:
+    		dialog.setTitle("Account \"" + getSelectedName() + "\"");
+    		break;
+    	}
 	}
 	
 	@Override
@@ -619,20 +623,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
     			                             }
         	    });
 
-        	    // Replace all instances of "{AppName}" in dialog_text with the actual
-        	    // app name.
-        	    String app_name = getResources().getString(R.string.app_name);
-        	    String placeholder = "{AppName}";
-        	    String part_a, part_b;
-    	    	int pos = dialog_text.indexOf(placeholder);
-        	    while (pos >= 0) {
-        	    	part_a = dialog_text.substring(0, pos);
-        	    	part_b = dialog_text.substring(pos + placeholder.length());
-        	    	dialog_text = part_a + app_name + part_b;
-        	    	pos = dialog_text.indexOf(placeholder);
-        	    }
-        	    
-        	    WebView dialog_text_view = (WebView)layout.findViewById(R.id.AuthHelpInfo);
+        	    WebView dialog_text_view = (WebView)layout.findViewById(R.id.UpgradeInfo);
         	    dialog_text_view.loadData(dialog_text, "text/html", "utf-8");
         	    dialog = builder.create();
 	        } catch (IOException e) {
