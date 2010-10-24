@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Flickr Free</string>
+	<string name="added_favorite">Added photo to your favorites</string>
     <string name="authenticate">Flickr Account Authentication</string>
     <string name="auth_code">Enter Authentication Code:</string>
+	<string name="img_load_error_msg">The Image Failed to Load</string>
 
     <string name="btnaddaccount">Add Account</string>
     <string name="btnaddcommentlabel">Add Comment</string>
@@ -79,6 +81,7 @@
 	<string name="lblwordof">of</string>
 	
     <string name="mnu_favorite">Favorite</string>
+    <string name="mnu_unfavorite">Un-Fave</string>
     <string name="mnu_imgcomments">Comments</string>
     <string name="mnu_imgcontext">Belongs To...</string>
     <string name="mnu_imgdownload">Download</string>
@@ -96,6 +99,7 @@
 	<string name="picture_retrieve_error">Error Retrieving Picture</string>
 	
 	<string name="readusers_permission_description">Allow app to read list of usernames authenticated with FlickrFree. Does not allow access to passwords or other confidential data.</string>
+	<string name="removed_favorite">Removed photo from your favorites</string>
 
 	<string name="setuser_permission_description">Allow app to change the currently active user in FlickrFree. Does not allow access to passwords or other confidential data.</string>
 	
