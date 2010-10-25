@@ -1,6 +1,10 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===1.1.6.1===
+
+ * Fixed a FC that was happening for some people at startup.
+
 ===1.1.6===
 
  * Full-screen image menu changed from Context Menu to Options Menu.
