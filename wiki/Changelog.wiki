@@ -1,6 +1,12 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===1.1.6===
+
+* Full-screen image menu changed from Context Menu to Options Menu.
+* New icon (thanks to Aaron Delani!)
+* Link provided to upgrade to Flickr Companion.
+
 ===1.1.5===
 
  * Fixed authentication screen to make the authentication procedure a little more clear and avoid confusion between the Flickr login itself and the authentication code used by the app.
