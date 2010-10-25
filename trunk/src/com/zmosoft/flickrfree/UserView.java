@@ -213,6 +213,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 		@Override
 		protected void onPostExecute(Object result) {
 	    	setProgressBarIndeterminateVisibility(false);
+	    	finalizeLoad();
 		}
 	}
 	
@@ -432,6 +433,16 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
         m_extrainfotask.execute();
 	}
 
+	private void finalizeLoad() {
+    	SharedPreferences user_prefs = getSharedPreferences("UserPrefs",0);
+    	if (!user_prefs.getBoolean(GlobalResources.HAS_NOTIFIED_UPGRADE, false)) {
+    		SharedPreferences.Editor user_prefs_editor = user_prefs.edit();
+    		user_prefs_editor.putBoolean(GlobalResources.HAS_NOTIFIED_UPGRADE, true);
+    		user_prefs_editor.commit();
+    		showDialog(DIALOG_UPGRADE);
+    	}
+	}
+	
 	static public TreeMap<String, JSONObject> GetActiveAccounts(Activity activity) throws JSONException {
 		SharedPreferences auth_prefs = activity.getSharedPreferences("Auth",0);
 		TreeMap<String, JSONObject> accounts = new TreeMap<String, JSONObject>();
@@ -612,7 +623,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
         	    btn_ok.setOnClickListener(new View.OnClickListener() {
     			                             public void onClick(View v) {
     		                            	      Intent intent = new Intent(Intent.ACTION_VIEW);
-    		                            	      intent.setData(Uri.parse("market://search?q=pname:FlickrCompanion"));
+    		                            	      intent.setData(Uri.parse("market://search?q=pname:com.zmosoft.flickrcompanion"));
     		                            	      startActivity(intent);
     			                             }
         	    });

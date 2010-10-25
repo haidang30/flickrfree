@@ -44,6 +44,8 @@ public class GlobalResources {
     public static final String INTENT_GET_USERLIST = "com.zmosoft.flickrfree.GET_USERLIST";
     public static final String INTENT_SET_USER = "com.zmosoft.flickrfree.SET_USER";
     
+    public static final String HAS_NOTIFIED_UPGRADE = "has_notified_upgrade";
+    
     public static final String TRANSFER_TYPE_UPLOAD = "Upload";
     public static final String TRANSFER_TYPE_DOWNLOAD = "Download";
 
