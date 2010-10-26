@@ -1,5 +1,8 @@
 package com.zmosoft.flickrfree;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -68,11 +71,19 @@ public class SearchView extends Activity implements OnClickListener, OnItemSelec
 			Intent i;
 			Spinner s = (Spinner)findViewById(R.id.SearchOptionsSpinner); 
 			Spinner s2 = (Spinner)findViewById(R.id.SearchSubOptionsSpinner);
+			String search_text;
 			if (s.getSelectedItemId() == PHOTO_SEARCH) {
 				// Search all photos
+				search_text = (((EditText)findViewById(R.id.EditSearchText)).getText().toString());
+				try {
+					search_text = URLEncoder.encode(search_text, "UTF-8");
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				
 				i = new Intent(this, ImageGrid.class);
 				i.putExtra("type", "photo_search");
-				i.putExtra("text", (((EditText)findViewById(R.id.EditSearchText)).getText().toString()));
+				i.putExtra("text", search_text);
 				if (s2.getSelectedItemId() == 0) {
 					// Search all photos
 				}
@@ -95,9 +106,16 @@ public class SearchView extends Activity implements OnClickListener, OnItemSelec
 			}
 			else if (s.getSelectedItemId() == TAG_SEARCH) {
 				// Search tags
+				search_text = (((EditText)findViewById(R.id.EditSearchText)).getText().toString());
+				try {
+					search_text = URLEncoder.encode(search_text, "UTF-8");
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				
 				i = new Intent(this, ImageGrid.class);
 				i.putExtra("type", "photo_search");
-				i.putExtra("tags", (((EditText)findViewById(R.id.EditSearchText)).getText().toString()));
+				i.putExtra("tags", search_text);
 				startActivity(i);
 			}
 			else if (s.getSelectedItemId() == USER_SEARCH) {
