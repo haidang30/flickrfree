@@ -233,7 +233,7 @@ public class GlobalResources {
     public static boolean CheckDir(String dir_name) {
     	boolean result = false;
     	
-        if (dir_name != null && dir_name != "") {
+        if (dir_name != null && !dir_name.equals("")) {
     		File Dir = new File(dir_name);
     		if (Dir.exists() || Dir.mkdir()) {
     			result = true;
