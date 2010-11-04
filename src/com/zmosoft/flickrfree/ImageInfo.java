@@ -138,10 +138,6 @@ public class ImageInfo extends Activity implements OnClickListener {
 						e.printStackTrace();
 					}
 				}
-				else if (key.equals(getResources().getString(R.string.imageinfo_locationtaken))) {
-					// TODO Set the button image to the Maps icon.
-					entry_button.setTag("map");
-				}
 				else {
 					entry_button.setVisibility(View.GONE);
 				}
@@ -175,9 +171,6 @@ public class ImageInfo extends Activity implements OnClickListener {
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-			}
-			else if (((Button)v).getText().equals(getResources().getString(R.string.btnmap))) {
-				// TODO Add code to load Google Maps and move to given location.
 			}
 		}
 	}
