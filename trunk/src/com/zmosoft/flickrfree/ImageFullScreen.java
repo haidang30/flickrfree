@@ -158,7 +158,7 @@ public class ImageFullScreen extends Activity {
 
         fav_item.setTitle(m_isfavorite ? getResources().getString(R.string.mnu_unfavorite)
         							   : getResources().getString(R.string.mnu_favorite));
-		if (!m_imgcontexts.has("set") && !m_imgcontexts.has("pool")) {
+		if (m_imgcontexts == null || (!m_imgcontexts.has("set") && !m_imgcontexts.has("pool"))) {
 			menu.removeItem(R.id.item_context);
 		}
 
@@ -228,7 +228,7 @@ public class ImageFullScreen extends Activity {
 			i = new Intent(this, ImageContext.class);
 			i.putExtra("photo_id",m_extras.getString("photo_id"));
 			i.putExtra("isprivate", m_isprivate);
-			i.putExtra("contexts", m_imgcontexts.toString());
+			i.putExtra("contexts", m_imgcontexts != null ? m_imgcontexts.toString() : "");
 			startActivity(i);
         	return true;
         default:
