@@ -281,16 +281,21 @@ public class ImageFullScreen extends Activity {
     }
     
     private void initiateDownload(String url) {
-		Intent downloader_intent = new Intent(this, TransferService.class);
-		downloader_intent.putExtra("url", url);
-		downloader_intent.putExtra("type", "download");
-		downloader_intent.putExtra("title", url.substring(url.lastIndexOf("/") + 1));
-
-		// Start the downloader service and pass in the intent containing
-		// the upload information.
-		startService(downloader_intent);
-		
-		Toast.makeText(this, R.string.downloadstarting, Toast.LENGTH_SHORT).show();
+    	if (url == null) {
+			Toast.makeText(this, R.string.picture_retrieve_error, Toast.LENGTH_LONG).show();
+    	}
+    	else {
+			Intent downloader_intent = new Intent(this, TransferService.class);
+			downloader_intent.putExtra("url", url);
+			downloader_intent.putExtra("type", "download");
+			downloader_intent.putExtra("title", url.substring(url.lastIndexOf("/") + 1));
+	
+			// Start the downloader service and pass in the intent containing
+			// the upload information.
+			startService(downloader_intent);
+			
+			Toast.makeText(this, R.string.downloadstarting, Toast.LENGTH_SHORT).show();
+    	}
     }
     
     private TreeMap<ImgSize, String> GetImgSizes() throws JSONException {
