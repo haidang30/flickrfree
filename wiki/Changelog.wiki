@@ -1,6 +1,10 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===1.1.7===
+
+ * Fixed FC when opening Options Menu for some images.
+
 ===1.1.6.1===
 
  * Fixed a FC that was happening for some people at startup.
