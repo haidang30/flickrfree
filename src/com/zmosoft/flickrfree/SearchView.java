@@ -1,7 +1,5 @@
 package com.zmosoft.flickrfree;
 
-import java.io.UnsupportedEncodingException;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
