@@ -1,7 +1,6 @@
 package com.zmosoft.flickrfree;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,11 +74,6 @@ public class SearchView extends Activity implements OnClickListener, OnItemSelec
 			if (s.getSelectedItemId() == PHOTO_SEARCH) {
 				// Search all photos
 				search_text = (((EditText)findViewById(R.id.EditSearchText)).getText().toString());
-				try {
-					search_text = URLEncoder.encode(search_text, "UTF-8");
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				}
 				
 				i = new Intent(this, ImageGrid.class);
 				i.putExtra("type", "photo_search");
@@ -107,11 +101,6 @@ public class SearchView extends Activity implements OnClickListener, OnItemSelec
 			else if (s.getSelectedItemId() == TAG_SEARCH) {
 				// Search tags
 				search_text = (((EditText)findViewById(R.id.EditSearchText)).getText().toString());
-				try {
-					search_text = URLEncoder.encode(search_text, "UTF-8");
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				}
 				
 				i = new Intent(this, ImageGrid.class);
 				i.putExtra("type", "photo_search");
