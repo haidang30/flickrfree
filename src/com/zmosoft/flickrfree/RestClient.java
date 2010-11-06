@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.SortedMap;
@@ -172,7 +174,13 @@ public class RestClient {
 		else {
 			url = m_RESTURL + "?method=" + methodName + "&api_key=" + m_apikey;
 			for (int i = 0; i < paramNames.length; i++) {
-				url += "&" + paramNames[i] + "=" + paramVals[i];
+				try {
+					String paramVal = URLEncoder.encode(paramVals[i], "UTF-8");
+					url += "&" + paramNames[i] + "=" + paramVal;
+				} catch (UnsupportedEncodingException e) {
+					Log.e("FlickrFree", "RestClient UnsupportedEncodingException while buliding REST URL");
+					Log.e("FlickrFree", "\t" + e.getLocalizedMessage());
+				}
 			}
 		}
 
