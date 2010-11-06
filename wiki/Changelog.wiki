@@ -1,6 +1,11 @@
 #summary Changelog for FlickrFree.
 #labels Featured
 
+===1.1.8===
+
+ * Fixed FC when searching and commenting.
+ * Fixed "invalid signature" error when searching.
+
 ===1.1.7===
 
  * Fixed FC when opening Options Menu for some images.
