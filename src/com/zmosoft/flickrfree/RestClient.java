@@ -318,9 +318,15 @@ public class RestClient {
 					}
 				}
 				else {
-					result = result.substring(result.indexOf("{"),result.lastIndexOf("}") + 1);
-					// A Simple JSONObject Creation
-					json = new JSONObject(result);
+					try {
+						result = result.substring(result.indexOf("{"),result.lastIndexOf("}") + 1);
+						json = new JSONObject(result);
+					} catch (StringIndexOutOfBoundsException e) {
+						Log.e("FlickrFree", "HTTP GET failed to retrieve valid JSON result: \"" + result + "\"");
+						json = new JSONObject();
+						json.put("stat", "fail");
+						json.put("fail", "Failed to retrieve data");
+					}
 				}
 			}
 		} catch (JSONException e) {
