@@ -354,7 +354,11 @@ public class GlobalResources {
     public static double LatLongToDecimal(double deg, double min, double sec) {
     	double val = (deg + (min / 60.0) + (sec / 3600.0));
     	
-		return Double.valueOf((new DecimalFormat("#.#######")).format(val)).doubleValue();
+    	try {
+    		return Double.valueOf((new DecimalFormat("#.#######")).format(val)).doubleValue();
+    	} catch (NumberFormatException e) {
+    		return 0.0;
+    	}
     }
     
     public static void LogSharedPrefs(SharedPreferences pref) {
