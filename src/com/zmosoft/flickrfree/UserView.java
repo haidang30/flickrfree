@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -627,9 +628,14 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
         	    Button btn_ok = (Button)layout.findViewById(R.id.BtnUpgrade);
         	    btn_ok.setOnClickListener(new View.OnClickListener() {
     			                             public void onClick(View v) {
-    		                            	      Intent intent = new Intent(Intent.ACTION_VIEW);
-    		                            	      intent.setData(Uri.parse("market://search?q=pname:com.zmosoft.flickrcompanion"));
-    		                            	      startActivity(intent);
+    			                            	 try {
+	    		                            	     Intent intent = new Intent(Intent.ACTION_VIEW);
+	    		                            	     intent.setData(Uri.parse("market://search?q=pname:com.zmosoft.flickrcompanion"));
+	    		                            	     startActivity(intent);
+    			                            	 } catch (ActivityNotFoundException e) {
+    			                            		 //TODO: Display error dialog when this exception is caught. Something
+    			                            		 // along the lines of "Cannot open Market".
+    			                            	 }
     			                             }
         	    });
         	    Button btn_no = (Button)layout.findViewById(R.id.BtnNotNow);
@@ -803,9 +809,15 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 			startActivity(i);
 		}
 		else if (command.equals(m_actionnames[ACTION_UPLOAD])) {
-			startActivityForResult(new Intent(Intent.ACTION_PICK,
-				  							   android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI),
-	  							   GlobalResources.PICK_IMAGE_REQ); 
+			try {
+				startActivityForResult(new Intent(Intent.ACTION_PICK,
+					  							   android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI),
+		  							   GlobalResources.PICK_IMAGE_REQ);
+			} catch (ActivityNotFoundException e) {
+				// TODO: If this exception comes up, that means that the Media app is not working or has been
+				// disabled by the user. Pop up an error dialog here explaining the problem so the user knows
+				// that something is wrong with their system.
+			}
 		}
 	}
 
