@@ -52,8 +52,6 @@ public class ImageFullScreen extends Activity {
 		protected void onPostExecute(Object result) {
 			try {
 				ShowImage();
-			} catch (JSONException e) {
-				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -61,23 +59,15 @@ public class ImageFullScreen extends Activity {
 		
 	    private String GetTags() throws JSONException {
 			String tags_str = "";
-			if (m_imginfo.has("photo")) {
-				JSONObject photo = m_imginfo.getJSONObject("photo");
-				if (photo.has("tags")) {
-					JSONObject t = photo.getJSONObject("tags");
-					if (t.has("tag") && !t.getString("tag").equals("")) {
-						JSONArray tags = t.getJSONArray("tag");
-						for (int i = 0; i < tags.length(); i++) {
-							if (tags.getJSONObject(i).has("raw") && !tags.getJSONObject(i).getString("_content").equals("")) {
-								tags_str = tags_str + tags.getJSONObject(i).getString("_content");
-								if (i < tags.length() - 1) {
-									tags_str = tags_str + " ";
-								}
-							}
-						}
-					}
+			JSONArray tags = JSONParser.getArray(m_imginfo, "photo/tags/tag");
+			if (tags != null) {
+				for (int i = 0; i < tags.length(); i++) {
+					JSONObject tag_obj = tags.getJSONObject(i);
+					String new_tag = JSONParser.getString(tag_obj, "_content");
+					tags_str += ((new_tag != null) ? new_tag : "")
+							  + ((i < tags.length() - 1) ? " " : "");
 				}
-	    	}
+			}
 	    	return tags_str;
 	    }
 	}
@@ -135,8 +125,6 @@ public class ImageFullScreen extends Activity {
 				e.printStackTrace();
 			}
         }
-    	
-		registerForContextMenu(findViewById(R.id.imgview));
     }
 
     @Override
@@ -176,8 +164,8 @@ public class ImageFullScreen extends Activity {
 			if (i != null) {
 				i.putExtra("photo_id",m_extras.getString("photo_id"));
 				i.putExtra("isprivate", m_isprivate);
-				i.putExtra("imginfo", m_imginfo.toString());
-				i.putExtra("exif", m_exif.toString());
+				i.putExtra("imginfo", m_imginfo != null ? m_imginfo.toString() : "");
+				i.putExtra("exif", m_exif != null ? m_exif.toString() : "");
 				startActivity(i);
 			}
             return true;
@@ -185,7 +173,7 @@ public class ImageFullScreen extends Activity {
 			i = new Intent(this, ImageComments.class);
 			if (i != null) {
 				i.putExtra("photo_id",m_extras.getString("photo_id"));
-				i.putExtra("imginfo", m_imginfo.toString());
+				i.putExtra("imginfo", m_imginfo != null ? m_imginfo.toString() : "");
 				startActivity(i);
 			}
             return true;
@@ -209,15 +197,9 @@ public class ImageFullScreen extends Activity {
         case R.id.item_tags:
 			i = new Intent(this, ImageTags.class);
 			if (i != null) {
-				try {
-					i.putExtra("tags", m_tags);
-					if (m_imginfo.has("photo") && m_imginfo.getJSONObject("photo").has("owner")
-						&& m_imginfo.getJSONObject("photo").getJSONObject("owner").has("nsid")) {
-						i.putExtra("nsid", m_imginfo.getJSONObject("photo").getJSONObject("owner").getString("nsid"));
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
+				i.putExtra("tags", m_tags);
+				String nsid = JSONParser.getString(m_imginfo, "photo/owner/nsid");
+				i.putExtra("nsid", (nsid != null) ? nsid : "");
 				startActivity(i);
 			}
         	return true;
@@ -305,25 +287,29 @@ public class ImageFullScreen extends Activity {
 	        
 			imgsizesmap = new TreeMap<ImgSize, String>();
 			JSONObject imgsizes_obj = APICalls.photosGetSizes(m_extras.getString("photo_id"));
-			if (imgsizes_obj.has("sizes")) {
-				JSONArray imgsizes = imgsizes_obj.getJSONObject("sizes").getJSONArray("size");
+			JSONArray imgsizes = JSONParser.getArray(imgsizes_obj, "sizes/size");
+			if (imgsizes != null) {
 				// Iterate through the Image Sizes array and fill the imgsizesmap hash map.
 				for (int i = 0; i < imgsizes.length(); i++) {
 					JSONObject imgsize = imgsizes.getJSONObject(i);
-					if (imgsize.getString("label").equals("Square")) {
-						imgsizesmap.put(ImgSize.SMALLSQUARE, imgsize.getString("source"));
-					}
-					else if (imgsize.getString("label").equals("Thumbnail")) {
-						imgsizesmap.put(ImgSize.THUMB, imgsize.getString("source"));
-					}
-					else if (imgsize.getString("label").equals("Small")) {
-						imgsizesmap.put(ImgSize.SMALL, imgsize.getString("source"));
-					}
-					else if (imgsize.getString("label").equals("Medium")) {
-						imgsizesmap.put(ImgSize.MED, imgsize.getString("source"));
-					}
-					else if (imgsize.getString("label").equals("Original")) {
-						imgsizesmap.put(ImgSize.ORIG, imgsize.getString("source"));
+					String label = JSONParser.getString(imgsize, "label");
+					String source = JSONParser.getString(imgsize, "source");
+					if (label != null && source != null) {
+						if (label.equals("Square")) {
+							imgsizesmap.put(ImgSize.SMALLSQUARE, source);
+						}
+						else if (label.equals("Thumbnail")) {
+							imgsizesmap.put(ImgSize.THUMB, source);
+						}
+						else if (label.equals("Small")) {
+							imgsizesmap.put(ImgSize.SMALL, source);
+						}
+						else if (label.equals("Medium")) {
+							imgsizesmap.put(ImgSize.MED, source);
+						}
+						else if (label.equals("Original")) {
+							imgsizesmap.put(ImgSize.ORIG, source);
+						}
 					}
 				}
 			}
@@ -331,7 +317,7 @@ public class ImageFullScreen extends Activity {
     	return imgsizesmap;
     }
     
-    private void ShowImage() throws JSONException, IOException {
+    private void ShowImage() throws IOException {
     	String img_url = "";
 
     	if (m_imgsizes.containsKey(ImgSize.MED)) {
@@ -356,9 +342,8 @@ public class ImageFullScreen extends Activity {
     		this.finish();
     	}
 
-    	if (m_imginfo.has("photo") && m_imginfo.getJSONObject("photo").has("title")) {
-    		setTitle("\t" + m_imginfo.getJSONObject("photo").getJSONObject("title").getString("_content"));
-    	}
+    	String title = JSONParser.getString(m_imginfo, "photo/title/_content");
+		setTitle("\t" + ((title != null) ? title : ""));
     }
 
     private CharSequence[] GetImageSizeNames() {
