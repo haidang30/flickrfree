@@ -349,6 +349,7 @@ public class ImageFullScreen extends Activity {
     private CharSequence[] GetImageSizeNames() {
     	CharSequence[] size_names_array = {};
 		Vector<CharSequence> size_names = new Vector<CharSequence>();
+		if (m_imgsizes == null) m_imgsizes = new TreeMap<ImgSize, String>();
 		for (ImgSize key : m_imgsizes.keySet()) {
 			if (key != ImgSize.SMALLSQUARE && key != ImgSize.THUMB) {
 				size_names.add(key.toString());
