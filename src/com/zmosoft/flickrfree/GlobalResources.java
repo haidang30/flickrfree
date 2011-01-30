@@ -253,17 +253,12 @@ public class GlobalResources {
     }
     
     public static String GetCacheDir(Activity callingActivity) {
-    	//String app_dir = GetAppDir();
-    	
-    	// If the app directory can be found, set the cache directory to be the subdirectory
-    	// "cache" in the app directory. If not, it will be the default Android cache
-    	// location for this app.
-        //String cache_dir = (app_dir == null) || app_dir.equals("")
-        //                   ? callingActivity.getCacheDir().getAbsolutePath()
-        //		           : app_dir + "cache";
-        return callingActivity.getCacheDir().getAbsolutePath();
-
-        //return CheckDir(cache_dir) ? cache_dir : "";
+    	if (callingActivity != null && callingActivity.getCacheDir() != null) {
+    		return callingActivity.getCacheDir().getAbsolutePath();
+    	}
+    	else {
+    		return "";
+    	}
     }
     
     public static String GetDownloadDir() {
