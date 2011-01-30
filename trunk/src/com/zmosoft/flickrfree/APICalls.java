@@ -141,6 +141,10 @@ public class APICalls {
         return RestClient.CallFunction("flickr.photos.getAllContexts",new String[]{"photo_id"},new String[]{photoid});
     }
     
+    public static JSONObject ping() {
+    	return RestClient.CallFunction("flickr.test.null");
+    }
+    
     public static JSONObject tagsGetListUser(String userid) {
     	return RestClient.CallFunction("flickr.tags.getListUser", new String[]{"user_id"}, new String[]{userid});
     }

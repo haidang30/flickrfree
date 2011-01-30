@@ -436,17 +436,17 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 	}
 
 	private void finalizeLoad() {
-		try {
-	    	SharedPreferences user_prefs = getSharedPreferences("UserPrefs",0);
-	    	if (!user_prefs.getBoolean(GlobalResources.HAS_NOTIFIED_UPGRADE, false)) {
-	    		SharedPreferences.Editor user_prefs_editor = user_prefs.edit();
-	    		user_prefs_editor.putBoolean(GlobalResources.HAS_NOTIFIED_UPGRADE, true);
-	    		user_prefs_editor.commit();
-	    		showDialog(DIALOG_UPGRADE);
-	    	}
-		} catch (BadTokenException e) {
-			
-		}
+//		try {
+//	    	SharedPreferences user_prefs = getSharedPreferences("UserPrefs",0);
+//	    	if (!user_prefs.getBoolean(GlobalResources.HAS_NOTIFIED_UPGRADE, false)) {
+//	    		SharedPreferences.Editor user_prefs_editor = user_prefs.edit();
+//	    		user_prefs_editor.putBoolean(GlobalResources.HAS_NOTIFIED_UPGRADE, true);
+//	    		user_prefs_editor.commit();
+//	    		showDialog(DIALOG_UPGRADE);
+//	    	}
+//		} catch (BadTokenException e) {
+//			
+//		}
 	}
 	
 	static public TreeMap<String, JSONObject> GetActiveAccounts(Activity activity) throws JSONException {

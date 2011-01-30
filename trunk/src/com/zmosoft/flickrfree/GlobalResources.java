@@ -20,6 +20,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Environment;
 import android.util.Log;
 
@@ -102,6 +104,20 @@ public class GlobalResources {
     	}
     }
     
+	public static boolean CheckNetwork(Context context) {
+		ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		NetworkInfo.State wifi_state = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState();
+		NetworkInfo.State mobile_state = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState();
+		
+		if ((wifi_state == NetworkInfo.State.CONNECTED) || (mobile_state == NetworkInfo.State.CONNECTED)) {
+			 return (!APICalls.ping().has("fail"));
+		}
+		else {
+			return false;
+		}
+    }
+	
     public static boolean isAppUser(Activity a, String nsid) {
     	return (nsid != "" && a.getSharedPreferences("Auth",0).getString("nsid", "").equals(nsid));
     }
