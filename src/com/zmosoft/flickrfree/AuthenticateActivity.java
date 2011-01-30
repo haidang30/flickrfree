@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -35,10 +36,23 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 public class AuthenticateActivity extends Activity implements OnClickListener {
 
-	private class WebProgressTask extends AsyncTask<WebView, Integer, Object> {
+	SharedPreferences m_auth_prefs;
+
+	String m_fail_msg;
+	
+	static final String TOKEN_INPUT_URL = "http://m.flickr.com/#/services/auth/";
+    static final int DIALOG_ERR = 11;
+    static final int DIALOG_HELP = 12;
+    static final int DIALOG_ERR_HELP = 13;
+    static final int DIALOG_NO_NETWORK = 14;
+    static final public int AUTH_ERR = 23;
+    static final public int AUTH_SUCCESS = 24;
+
+    private class WebProgressTask extends AsyncTask<WebView, Integer, Object> {
 		
 		@Override
 		protected Object doInBackground(WebView... params) {
@@ -153,7 +167,6 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
         			
         		}
         );
-        
         SharedPreferences auth_prefs = getSharedPreferences("Auth",0);
         if (!auth_prefs.contains("HasBeenRun")) {
         	SharedPreferences.Editor auth_prefs_editor = auth_prefs.edit();
@@ -161,7 +174,13 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
         	auth_prefs_editor.commit();
 			showDialog(DIALOG_HELP);        	
         }
-        loadAuthPage();
+        
+        if (GlobalResources.CheckNetwork(this)) {
+        	loadAuthPage();
+        }
+        else {
+        	showDialog(DIALOG_NO_NETWORK);
+        }
     }
     
     private void loadAuthPage() {
@@ -171,7 +190,30 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
     	cookies.removeAllCookie();
     	wv.getSettings().setJavaScriptEnabled(true);
     	wv.getSettings().setSavePassword(false);
+    	
     	wv.setWebViewClient(new WebViewClient() {
+    		
+    		@Override
+    		public void onPageFinished (WebView view, String url) {
+				// Resize text entry boxes to fix the screwed-up password entry
+				// box. This is a bit of a hack, but it seems to work.
+    			// TODO: Test code on 2.2 and 1.6; this may not be necessary on
+    			// those OS versions.
+    			view.loadUrl("javascript:" + 
+    					"var inputCollection = document.getElementsByTagName(\"input\");" +
+    				    "for (var i=0; i<inputCollection.length; i++) {" +
+    				    "    inputCollection[i].style.height = '36px';" +
+    				    "    inputCollection[i].style.fontSize = '14px';" +
+    				    "}");
+    			if (url.equals(TOKEN_INPUT_URL)) {
+    				((LinearLayout)findViewById(R.id.TokenInputLayout)).setVisibility(View.VISIBLE);
+    				((EditText)findViewById(R.id.authnum1)).requestFocus();
+    		        view.loadUrl("javascript:(function() {\n" +
+    			    "window.scrollTo(window.screen.height, 0);\n" +
+    			    "})()\n");
+    			}
+    		}
+    		
     	    @Override
     	    public boolean shouldOverrideUrlLoading(WebView view, String url)
     	    {
@@ -179,8 +221,6 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 	            return true;
     	    }
     	});
-    	wv.getSettings().setUseWideViewPort(true);
-    	wv.setInitialScale(50);
     	wv.loadUrl(getResources().getString(R.string.auth_url));
         new WebProgressTask().execute(((WebView)findViewById(R.id.AuthWeb)));
     }
@@ -250,9 +290,6 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
     
     protected Dialog onCreateDialog(int id) {
 		Dialog err_dialog = null;
-		AssetManager assetManager = null;
-		InputStream stream = null;
-		String dialog_text = null;
 		
 		AlertDialog.Builder builder;
     	switch(id) {
@@ -295,9 +332,9 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 			err_dialog = builder.create();
     		break;
     	case DIALOG_HELP:
-    		assetManager = getAssets();
-    		stream = null;
-    		dialog_text = "";
+    		AssetManager assetManager = getAssets();
+    		InputStream stream = null;
+    		String help_text = "";
         	try {
         		stream = assetManager.open("authenticate_help.html");
     	        if (stream != null) {
@@ -306,7 +343,7 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
     		        while (result >= 0) {
     		        	buffer = new byte[256];
     		        	result = stream.read(buffer);
-    		        	dialog_text += new String(buffer);
+    		        	help_text += new String(buffer);
     		        }
     	        }
         	    stream.close();
@@ -325,26 +362,37 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
     			                             }
         	    });
 
-        	    // Replace all instances of "{AppName}" in dialog_text with the actual
+        	    // Replace all instances of "{AppName}" in help_text with the actual
         	    // app name.
         	    String app_name = getResources().getString(R.string.app_name);
         	    String placeholder = "{AppName}";
         	    String part_a, part_b;
-    	    	int pos = dialog_text.indexOf(placeholder);
+    	    	int pos = help_text.indexOf(placeholder);
         	    while (pos >= 0) {
-        	    	part_a = dialog_text.substring(0, pos);
-        	    	part_b = dialog_text.substring(pos + placeholder.length());
-        	    	dialog_text = part_a + app_name + part_b;
-        	    	pos = dialog_text.indexOf(placeholder);
+        	    	part_a = help_text.substring(0, pos);
+        	    	part_b = help_text.substring(pos + placeholder.length());
+        	    	help_text = part_a + app_name + part_b;
+        	    	pos = help_text.indexOf(placeholder);
         	    }
         	    
-        	    WebView dialog_text_view = (WebView)layout.findViewById(R.id.AuthHelpInfo);
-        	    dialog_text_view.loadData(dialog_text, "text/html", "utf-8");
+        	    WebView help_text_view = (WebView)layout.findViewById(R.id.AuthHelpInfo);
+        	    help_text_view.loadData(help_text, "text/html", "utf-8");
         	    err_dialog = builder.create();
 	        } catch (IOException e) {
 	        }
-
     		break;
+    	case DIALOG_NO_NETWORK:
+    		builder = new AlertDialog.Builder(this);
+			builder.setMessage(R.string.msgnnetworkerror)
+			       .setTitle(R.string.ttlerror)
+			       .setIcon(android.R.drawable.ic_dialog_alert)
+		           .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+		                             public void onClick(DialogInterface dialog, int id) {
+		                            	 dialog.dismiss();
+		                             }
+		            });
+			err_dialog = builder.create();
+			break;
     	}
 
 		return err_dialog;
@@ -354,6 +402,12 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
     	return AuthenticateActivity.SetActiveUser(prefs, username, true);
     }
 
+    public static boolean IsLoggedIn(Context context) {
+    	String token = ((SharedPreferences)context.getSharedPreferences("Auth",0)).getString("full_token", "");
+    	
+    	return (!token.equals(""));
+    }
+    
     public static boolean SetActiveUser(SharedPreferences prefs, String username, boolean logout_if_invalid) {
     	try {
 			SharedPreferences.Editor prefs_editor = prefs.edit();
@@ -453,14 +507,4 @@ public class AuthenticateActivity extends Activity implements OnClickListener {
 			e.printStackTrace();
 		}
     }
-    
-	SharedPreferences m_auth_prefs;
-
-	String m_fail_msg;
-	
-    static final int DIALOG_ERR = 11;
-    static final int DIALOG_HELP = 12;
-    static final int DIALOG_ERR_HELP = 14;
-    static final public int AUTH_ERR = 25;
-    static final public int AUTH_SUCCESS = 26;
 }
