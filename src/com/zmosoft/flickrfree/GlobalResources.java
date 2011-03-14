@@ -18,6 +18,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -28,6 +29,10 @@ import android.util.Log;
 
 public class GlobalResources {
     public static String m_EDITPERMS_URL = "http://www.flickr.com/services/auth/list.gne";
+	public static String MARKET_URI = "market://details?id=com.zmosoft.flickrcompanionfree";
+	public static String UPGRADE_MARKET_URI = "market://details?id=com.zmosoft.flickrcompanion";
+	public static String UPGRADE_MARKET_FREE_URI = "market://details?id=com.zmosoft.flickrcompanionfree";
+	public static String FEEDBACK_EMAIL = "russell@zmosoft.com";
     
     public static final String INTENT_UPLOAD_STARTED = "com.zmosoft.flickrfree.UPLOAD_STARTED";
     public static final String INTENT_UPLOAD_FINISHED = "com.zmosoft.flickrfree.UPLOAD_FINISHED";
@@ -118,6 +123,15 @@ public class GlobalResources {
 		}
     }
 	
+	public static String getVersionName(Context context) {
+	  try {
+	    PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+	    return pinfo.versionName;
+	  } catch (android.content.pm.PackageManager.NameNotFoundException e) {
+	    return null;
+	  }
+	}
+
     public static boolean isAppUser(Activity a, String nsid) {
     	return (nsid != "" && a.getSharedPreferences("Auth",0).getString("nsid", "").equals(nsid));
     }

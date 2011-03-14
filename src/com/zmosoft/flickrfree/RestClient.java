@@ -175,7 +175,7 @@ public class RestClient {
 			url = m_RESTURL + "?method=" + methodName + "&api_key=" + m_apikey;
 			for (int i = 0; i < paramNames.length; i++) {
 				try {
-					String paramVal = URLEncoder.encode(paramVals[i], "UTF-8");
+					String paramVal = (paramVals[i] == null) ? "" : URLEncoder.encode(paramVals[i], "UTF-8");
 					url += "&" + paramNames[i] + "=" + paramVal;
 				} catch (UnsupportedEncodingException e) {
 					Log.e("FlickrFree", "RestClient UnsupportedEncodingException while buliding REST URL");
