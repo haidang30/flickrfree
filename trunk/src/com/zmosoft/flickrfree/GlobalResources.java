@@ -29,7 +29,6 @@ import android.util.Log;
 
 public class GlobalResources {
     public static String m_EDITPERMS_URL = "http://www.flickr.com/services/auth/list.gne";
-	public static String MARKET_URI = "market://details?id=com.zmosoft.flickrcompanionfree";
 	public static String UPGRADE_MARKET_URI = "market://details?id=com.zmosoft.flickrcompanion";
 	public static String UPGRADE_MARKET_FREE_URI = "market://details?id=com.zmosoft.flickrcompanionfree";
 	public static String FEEDBACK_EMAIL = "russell@zmosoft.com";

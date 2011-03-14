@@ -57,7 +57,7 @@ public class AboutActivity extends Activity implements OnClickListener {
 			break;
 		case R.id.ButtonUpgrade:
 			try {
-				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(GlobalResources.MARKET_URI)));
+				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(GlobalResources.UPGRADE_MARKET_URI)));
 			} catch (ActivityNotFoundException e) {
 			}
 			break;
