@@ -29,8 +29,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
-import android.view.WindowManager.BadTokenException;
 import android.webkit.WebView;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -284,6 +284,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
     	((Button)findViewById(R.id.btnManageAccounts)).setVisibility(View.INVISIBLE);
 
 		((ListView)findViewById(R.id.UserListView)).setOnItemClickListener(this);
+		((TextView)findViewById(R.id.notification_text)).setOnClickListener(this);
 		((Button)findViewById(R.id.btnManageAccounts)).setOnClickListener(this);
 		((Button)findViewById(R.id.btnOK)).setOnClickListener(this);
 		((Button)findViewById(R.id.btnCancel)).setOnClickListener(this);
@@ -302,6 +303,18 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
     		m_extras.putString("nsid", getSharedPreferences("Auth",0).getString("nsid", ""));
     	}
 
+    	SharedPreferences sp = getSharedPreferences("Run",0);
+		TextView tv = (TextView)findViewById(R.id.notification_text);
+    	if (!sp.getBoolean("HasNotified", false)) {
+    		tv.setVisibility(View.VISIBLE);
+    		SharedPreferences.Editor sp_edit = sp.edit();
+    		sp_edit.putBoolean("HasNotified", true);
+    		sp_edit.commit();
+    	}
+    	else {
+    		tv.setVisibility(View.GONE);
+    	}
+    	
 		refresh();
 	}
 	
@@ -665,6 +678,13 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
     		FillAccountSpinner();
 			setSpinnerTo(getSharedPreferences("Auth",0).getString("username", ""));
 		}
+		else if (v.getId() == R.id.notification_text) {
+			v.setVisibility(View.GONE);
+			Intent i = new Intent(this, AboutActivity.class);
+			if (i != null) {
+				startActivity(i);
+			}
+		}
 		else if (v.getId() == R.id.btnRemoveAccount) {
 			showDialog(DIALOG_WARN_REMOVE_ACCOUNT);
 		}
@@ -699,23 +719,29 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 	@Override
 	public void onItemClick(AdapterView parent, View view, int position, long id) {
 		String command = ((TextView)view.findViewById(R.id.ActionTitle)).getText().toString();
-		if (command.equals(m_actionnames[ACTION_UPGRADE])) {
-			showDialog(DIALOG_UPGRADE);
+		Intent i = null;
+		if (command.equals(m_actionnames[ACTION_ABOUT])) {
+			i = new Intent(this, AboutActivity.class);
+			if (i != null) {
+				startActivity(i);
+			}
 		}
 		else if (command.equals(m_actionnames[ACTION_PHOTOSTREAM])) {
-			Intent i = new Intent(this, ImageGrid.class);
-			i.putExtra("type", "photostream");
-			i.putExtra("nsid", m_extras.getString("nsid"));
-			if (m_extrainfotask != null && m_extrainfotask.getStatus() != AsyncTask.Status.FINISHED) {
-				m_extrainfotask.cancel(true);
-				while (!m_extrainfotask.isCancelled()) {
-					GlobalResources.sleep(50);
+			i = new Intent(this, ImageGrid.class);
+			if (i != null) {
+				i.putExtra("type", "photostream");
+				i.putExtra("nsid", m_extras.getString("nsid"));
+				if (m_extrainfotask != null && m_extrainfotask.getStatus() != AsyncTask.Status.FINISHED) {
+					m_extrainfotask.cancel(true);
+					while (!m_extrainfotask.isCancelled()) {
+						GlobalResources.sleep(50);
+					}
 				}
+				startActivity(i);
 			}
-			startActivity(i);
 		}
 		else if (command.equals(m_actionnames[ACTION_SETS])) {
-			Intent i = new Intent(this, ImageSets.class);
+			i = new Intent(this, ImageSets.class);
 			if (m_photosets == null) {
 				i.putExtra("type","by_nsid");
 				i.putExtra("nsid", m_extras.getString("nsid"));
@@ -733,7 +759,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 			startActivity(i);
 		}
 		else if (command.equals(m_actionnames[ACTION_COLLECTIONS])) {
-			Intent i = new Intent(this, ImageCollections.class);
+			i = new Intent(this, ImageCollections.class);
 			i.putExtra("nsid", m_extras.getString("nsid"));
 			if (m_extrainfotask != null && m_extrainfotask.getStatus() != AsyncTask.Status.FINISHED) {
 				m_extrainfotask.cancel(true);
@@ -744,7 +770,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 			startActivity(i);
 		}
 		else if (command.equals(m_actionnames[ACTION_TAGS])) {
-			Intent i = new Intent(this, ImageTags.class);
+			i = new Intent(this, ImageTags.class);
 			i.putExtra("nsid", m_extras.getString("nsid"));
 			i.putExtra("tags", m_tags);
 			if (m_extrainfotask != null && m_extrainfotask.getStatus() != AsyncTask.Status.FINISHED) {
@@ -756,7 +782,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 			startActivity(i);
 		}
 		else if (command.equals(m_actionnames[ACTION_FAVORITES])) {
-			Intent i = new Intent(this, ImageGrid.class);
+			i = new Intent(this, ImageGrid.class);
 			try {
 				i.putExtra("type", "favorites");
 				i.putExtra("nsid", m_extras.getString("nsid"));
@@ -776,7 +802,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 			}
 		}
 		else if (command.equals(m_actionnames[ACTION_GROUPS])) {
-			Intent i = new Intent(this, Groups.class);
+			i = new Intent(this, Groups.class);
 			i.putExtra("grouplist", JSONParser.getString(m_groups, "groups/group"));
 			if (m_extrainfotask != null && m_extrainfotask.getStatus() != AsyncTask.Status.FINISHED) {
 				m_extrainfotask.cancel(true);
@@ -787,7 +813,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 			startActivity(i);
 		}
 		else if (command.equals(m_actionnames[ACTION_CONTACTS])) {
-			Intent i = new Intent(this, ContactsView.class);
+			i = new Intent(this, ContactsView.class);
 			i.putExtra("nsid", getSharedPreferences("Auth",0).getString("nsid", ""));
 			if (m_extrainfotask != null && m_extrainfotask.getStatus() != AsyncTask.Status.FINISHED) {
 				m_extrainfotask.cancel(true);
@@ -798,7 +824,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
 			startActivity(i);
 		}
 		else if (command.equals(m_actionnames[ACTION_SEARCH])) {
-			Intent i = new Intent(this, SearchView.class);
+			i = new Intent(this, SearchView.class);
 			i.putExtra("nsid", getSharedPreferences("Auth",0).getString("nsid", ""));
 			if (m_extrainfotask != null && m_extrainfotask.getStatus() != AsyncTask.Status.FINISHED) {
 				m_extrainfotask.cancel(true);
@@ -826,7 +852,7 @@ public class UserView extends Activity implements OnItemClickListener, OnItemSel
     	APPUSER, OTHERUSER, NOUSER;
     }
 
-    static final int ACTION_UPGRADE = 0;
+    static final int ACTION_ABOUT = 0;
     static final int ACTION_PHOTOSTREAM = 1;
     static final int ACTION_SETS = 2;
     static final int ACTION_COLLECTIONS = 3;

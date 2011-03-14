@@ -71,7 +71,7 @@ public class ImageInfo extends Activity implements OnClickListener {
 			}
 
 			String location = JSONParser.getString(owner, "location");
-			if (!location.equals("")) {
+			if (location != null && !location.equals("")) {
 				info.put(getResources().getString(R.string.imageinfo_owner_location),location);
 			}
 

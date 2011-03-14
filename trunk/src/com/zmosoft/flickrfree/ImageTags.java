@@ -133,7 +133,7 @@ public class ImageTags extends Activity implements OnItemClickListener {
     	// Use a SortedSet to sort the tag values and put them
     	// in an array.
        	SortedSet<String> tagset = new TreeSet<String>();
-       	String[] tag_arr = tags.split(" ");
+       	String[] tag_arr = (tags == null) ? new String[]{} : tags.split(" ");
        	for (int i = 0; i < tag_arr.length; i++) {
        		tagset.add(tag_arr[i]);
        	}

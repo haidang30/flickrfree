@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Flickr Free</string>
+    <string name="about">About</string>
 	<string name="added_favorite">Added photo to your favorites</string>
     <string name="authenticate">Flickr Account Authentication</string>
     <string name="auth_code">Enter Authentication Code:</string>
@@ -120,6 +121,21 @@
 	<string name="ttlhelp">Help</string>
 	<string name="ttlupgrade">Upgrade</string>
 	
+    <string name="txtcontactus">Contact Zmo Software</string>
+    <string name="txtimportantnotice">Important Notice</string>
+    <string name="txtupgradefree">Upgrade to Free Version of FlickrCompanion</string>
+    <string name="txtupgrade">Upgrade to Paid Version of FlickrCompanion</string>
+    <string name="txtupgradenotice">
+        FlickrFree is being retired so that I can put more time into developing the advanced version of this app, FlickrCompanion. I have made a free, ad-supported version of FlickrCompanion available on the Market; it has all of the features of the paid version, and includes minimal, non-intrusive advertising to help support the development of the app. If you enjoy FlickrFree, please check out FlickrCompanion; you will love it.\n\n
+        
+        The buttons below will take you to the Market pages for FlickrCompanion (either the free or paid version, whichever you prefer). From there, you can review the features and screenshots of the app and decide whether you want to install it.\n\n
+        
+        FlickrFree will remain on the Market, and its source code will always be available on Google Code. But it will probably not be receiving any further updates; I intend to put all of my development efforts into FlickrCompanion.\n\n
+        
+        Thank you for your support and use of this app, and I hope you will give the upgraded version a try.
+    </string>
+    <string name="txtversion">Version {%VER}</string>
+    
     <string name="userview">User Page</string>
     <string name="picturesettings">Picture Settings</string>
     <string name="transferprogress">File Transfer Progress</string>
